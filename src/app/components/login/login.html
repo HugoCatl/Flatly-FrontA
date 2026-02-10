@@ -1,23 +1,44 @@
-<div class="login-container">
+<div class="animated-bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
 
-  <div class="login-card">
+<div class="auth-page">
 
-    <div class="header">
+  <div class="auth-card glass-card">
+
+    <div class="auth-header">
+      <div class="logo-wrapper">
+        <div class="logo">F</div>
+      </div>
       <h1>Flatly</h1>
-      <p>Tu piso, bajo control</p>
+      <p class="subtitle">Tu piso, bajo control</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <div class="form-group">
+      <div class="form-group" [class.has-error]="form.get('email')?.touched && form.get('email')?.invalid">
         <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" placeholder="hola@flatly.com" autocomplete="email">
+        <div class="input-wrapper">
+          <input id="email" type="email" formControlName="email" placeholder="hola@flatly.com"
+            autocomplete="email">
+        </div>
+        <span class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+          Email no valido
+        </span>
       </div>
 
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" formControlName="password" placeholder="••••••••"
-          autocomplete="current-password">
+      <div class="form-group" [class.has-error]="form.get('password')?.touched && form.get('password')?.invalid">
+        <label for="password">Contrasena</label>
+        <div class="input-wrapper">
+          <input id="password" type="password" formControlName="password" placeholder="********"
+            autocomplete="current-password">
+        </div>
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+          Minimo 6 caracteres
+        </span>
       </div>
 
       <button type="submit" class="btn-primary" [disabled]="form.invalid">
@@ -26,9 +47,17 @@
 
     </form>
 
-    <div class="footer">
-      <p>¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
+    <div class="auth-divider">
+      <span>o</span>
+    </div>
+
+    <div class="auth-footer">
+      <p>No tienes cuenta?</p>
+      <a routerLink="/register" class="link-alt">Crear cuenta gratis</a>
     </div>
 
   </div>
+
+  <p class="auth-branding">Flatly &copy; 2025</p>
+
 </div>

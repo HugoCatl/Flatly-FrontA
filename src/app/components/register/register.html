@@ -1,36 +1,74 @@
-<div class="auth-container">
-  <div class="header">
-    <h1>Únete</h1>
-    <p>Crea tu cuenta en segundos</p>
-  </div>
+<div class="animated-bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
 
-  <div class="card">
+<div class="auth-page">
+
+  <div class="auth-card glass-card">
+
+    <div class="auth-header">
+      <div class="logo-wrapper">
+        <div class="logo">F</div>
+      </div>
+      <h1>Unete a Flatly</h1>
+      <p class="subtitle">Crea tu cuenta en segundos</p>
+    </div>
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <div class="form-group">
-        <label>Nombre Completo</label>
-        <input type="text" formControlName="name" placeholder="Tu Nombre">
+      <div class="form-group" [class.has-error]="form.get('name')?.touched && form.get('name')?.invalid">
+        <label for="name">Nombre completo</label>
+        <div class="input-wrapper">
+          <input id="name" type="text" formControlName="name" placeholder="Tu nombre"
+            autocomplete="name">
+        </div>
+        <span class="error" *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+          El nombre es obligatorio
+        </span>
       </div>
 
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" formControlName="email" placeholder="tu@email.com">
+      <div class="form-group" [class.has-error]="form.get('email')?.touched && form.get('email')?.invalid">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <input id="email" type="email" formControlName="email" placeholder="tu@email.com"
+            autocomplete="email">
+        </div>
+        <span class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+          Email no valido
+        </span>
       </div>
 
-      <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+      <div class="form-group" [class.has-error]="form.get('password')?.touched && form.get('password')?.invalid">
+        <label for="password">Contrasena</label>
+        <div class="input-wrapper">
+          <input id="password" type="password" formControlName="password" placeholder="Minimo 6 caracteres"
+            autocomplete="new-password">
+        </div>
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+          Minimo 6 caracteres
+        </span>
       </div>
 
-      <button type="submit" [disabled]="form.invalid">
-        Registrarme
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        Crear cuenta
       </button>
 
     </form>
+
+    <div class="auth-divider">
+      <span>o</span>
+    </div>
+
+    <div class="auth-footer">
+      <p>Ya tienes cuenta?</p>
+      <a routerLink="/login" class="link-alt">Iniciar sesion</a>
+    </div>
+
   </div>
 
-  <div class="footer">
-    <p>¿Ya tienes cuenta?</p>
-    <a routerLink="/login" class="link-btn">Inicia sesión aquí</a>
-  </div>
+  <p class="auth-branding">Flatly &copy; 2025</p>
+
 </div>

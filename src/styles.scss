@@ -1,128 +1,216 @@
-/* 🎨 DEFINICIÓN DEL TEMA (DESIGN TOKENS) */
+/* DESIGN TOKENS - Flatly Student Edition */
 :root {
-    /* Paleta de Colores - Tu Índigo Vibrante */
-    --primary-color: #4F46E5;
-    --primary-hover: #4338CA;
+    --primary: #10B981;
+    --primary-dark: #059669;
+    --primary-light: #D1FAE5;
+    --primary-glow: rgba(16, 185, 129, 0.3);
 
-    /* Fondos */
-    --bg-app: #F3F4F6;
-    /* Scaffold Background */
-    --bg-card: #FFFFFF;
-    /* Surface Color */
+    --bg-page: #F0FDF4;
+    --bg-glass: rgba(255, 255, 255, 0.55);
+    --border-glass: rgba(255, 255, 255, 0.7);
 
-    /* Textos */
-    --text-main: #111827;
-    /* Títulos */
-    --text-secondary: #6B7280;
-    /* Subtítulos */
+    --text-dark: #1E293B;
+    --text-mid: #475569;
+    --text-light: #94A3B8;
     --text-on-primary: #FFFFFF;
-    /* Texto en botones */
-    --text-placeholder: #9CA3AF;
 
-    /* Formas (Bordes) */
-    --radius-xl: 16px;
-    /* Para las Cards (Como en Flutter) */
+    --radius-xl: 24px;
+    --radius-lg: 16px;
     --radius-md: 12px;
-    /* Para Inputs y Botones */
-    --radius-sm: 8px;
-    /* Detalles */
 
-    /* Sombras (Elevation) */
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
-    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-glow: 0 4px 20px rgba(16, 185, 129, 0.25);
+    --shadow-input: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-/* 🛠️ RESET BÁSICO */
+/* RESET */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: var(--bg-app);
-    /* Color de fondo tipo Scaffold */
-    color: var(--text-main);
+    color: var(--text-dark);
+    min-height: 100vh;
+    background: var(--bg-page);
     -webkit-font-smoothing: antialiased;
-    /* Texto nítido en móviles */
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
-h1,
-h2,
-h3 {
+h1, h2, h3 {
     font-weight: 700;
-    letter-spacing: -0.025em;
-    /* Ese toque "tight" moderno */
+    letter-spacing: -0.03em;
     margin: 0;
 }
 
-/* 🧱 COMPONENTES REUTILIZABLES (Tus "Widgets") */
-
-/* 1. La Card (Como el Widget Card de Flutter) */
-.card {
-    background: var(--bg-card);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-card);
-    padding: 24px;
-    box-sizing: border-box;
+a {
+    transition: all 0.2s ease;
 }
 
-/* 2. El Botón Principal (Como ElevatedButton) */
+/* ANIMATED MESH BACKGROUND */
+.animated-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: linear-gradient(160deg, #ECFDF5 0%, #F0FDF4 25%, #EEF2FF 50%, #FDF2F8 75%, #FFFBEB 100%);
+}
+
+.animated-bg .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    will-change: transform;
+}
+
+.animated-bg .blob-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.25), transparent 70%);
+    top: -15%;
+    right: -10%;
+    animation: float1 14s ease-in-out infinite;
+}
+
+.animated-bg .blob-2 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%);
+    bottom: -15%;
+    left: -10%;
+    animation: float2 18s ease-in-out infinite;
+}
+
+.animated-bg .blob-3 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.18), transparent 70%);
+    top: 40%;
+    left: 45%;
+    animation: float3 16s ease-in-out infinite;
+}
+
+.animated-bg .blob-4 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(244, 114, 182, 0.15), transparent 70%);
+    top: 10%;
+    left: 20%;
+    animation: float1 20s ease-in-out infinite reverse;
+}
+
+@keyframes float1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(40px, -30px) scale(1.08); }
+    50% { transform: translate(-20px, 20px) scale(0.95); }
+    75% { transform: translate(25px, 10px) scale(1.03); }
+}
+
+@keyframes float2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(-35px, 25px) scale(1.05); }
+    50% { transform: translate(30px, -15px) scale(0.97); }
+    75% { transform: translate(-15px, -20px) scale(1.06); }
+}
+
+@keyframes float3 {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    33% { transform: translate(calc(-50% + 25px), calc(-50% - 20px)) scale(1.1); }
+    66% { transform: translate(calc(-50% - 20px), calc(-50% + 15px)) scale(0.93); }
+}
+
+/* GLASS CARD */
+.glass-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    padding: 2.25rem 2rem;
+}
+
+/* BUTTON */
 .btn-primary {
     width: 100%;
-    padding: 14px;
-    background-color: var(--primary-color);
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: var(--text-on-primary);
     border: none;
     border-radius: var(--radius-md);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.02em;
+    position: relative;
 
-    &:hover {
-        background-color: var(--primary-hover);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        /* Resplandor índigo */
-        transform: translateY(-1px);
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow);
     }
 
-    &:active {
-        transform: translateY(0);
+    &:active:not(:disabled) {
+        transform: translateY(0) scale(0.98);
     }
 
     &:disabled {
-        background-color: var(--text-secondary);
-        opacity: 0.5;
+        background: linear-gradient(135deg, #CBD5E1, #94A3B8);
+        opacity: 0.6;
         cursor: not-allowed;
-        box-shadow: none;
     }
 }
 
-/* 3. Inputs (TextField) */
+/* INPUTS */
 input {
     width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #E5E7EB;
+    padding: 13px 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid rgba(0, 0, 0, 0.06);
     border-radius: var(--radius-md);
-    font-size: 1rem;
-    background-color: #F9FAFB;
-    color: var(--text-main);
+    font-size: 0.95rem;
+    color: var(--text-dark);
     font-family: inherit;
-    box-sizing: border-box;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-input);
 
     &::placeholder {
-        color: var(--text-placeholder);
+        color: var(--text-light);
+    }
+
+    &:hover {
+        border-color: rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.8);
     }
 
     &:focus {
         outline: none;
-        border-color: var(--primary-color);
-        background-color: var(--bg-card);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        /* Halo de foco */
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), var(--shadow-input);
     }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+}
+
+/* SELECTION */
+::selection {
+    background: var(--primary-light);
+    color: var(--text-dark);
 }
