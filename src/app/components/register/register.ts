@@ -16,7 +16,8 @@ export class Register {
   private data = inject(DataService);
   private router = inject(Router);
 
-  // Campos exactos del PDF: email, password, name 
+  showPassword = false;
+
   form = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],

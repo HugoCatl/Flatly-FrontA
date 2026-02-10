@@ -16,7 +16,8 @@ export class Login {
   private data = inject(DataService);
   private router = inject(Router);
 
-  // Formulario reactivo simple
+  showPassword = false;
+
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]

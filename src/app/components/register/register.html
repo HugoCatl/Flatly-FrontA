@@ -1,53 +1,51 @@
-<div class="animated-bg">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
-  <div class="blob blob-4"></div>
+<div class="bg-scene">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
 </div>
 
 <div class="auth-page">
 
-  <div class="auth-card glass-card">
+  <div class="brand">
+    <h1>flatly</h1>
+    <p>Crea tu cuenta en segundos</p>
+  </div>
 
-    <div class="auth-header">
-      <div class="logo-wrapper">
-        <div class="logo">F</div>
-      </div>
-      <h1>Unete a Flatly</h1>
-      <p class="subtitle">Crea tu cuenta en segundos</p>
-    </div>
+  <div class="auth-card glass-card">
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <div class="form-group" [class.has-error]="form.get('name')?.touched && form.get('name')?.invalid">
-        <label for="name">Nombre completo</label>
-        <div class="input-wrapper">
-          <input id="name" type="text" formControlName="name" placeholder="Tu nombre"
-            autocomplete="name">
+      <div class="field">
+        <div class="input-field">
+          <span class="material-icons-round">person_outline</span>
+          <input id="name" type="text" formControlName="name" placeholder="Nombre completo" autocomplete="name">
         </div>
-        <span class="error" *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+        <span class="field-error" *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
           El nombre es obligatorio
         </span>
       </div>
 
-      <div class="form-group" [class.has-error]="form.get('email')?.touched && form.get('email')?.invalid">
-        <label for="email">Email</label>
-        <div class="input-wrapper">
-          <input id="email" type="email" formControlName="email" placeholder="tu@email.com"
-            autocomplete="email">
+      <div class="field">
+        <div class="input-field">
+          <span class="material-icons-round">mail_outline</span>
+          <input id="email" type="email" formControlName="email" placeholder="Email" autocomplete="email">
         </div>
-        <span class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+        <span class="field-error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
           Email no valido
         </span>
       </div>
 
-      <div class="form-group" [class.has-error]="form.get('password')?.touched && form.get('password')?.invalid">
-        <label for="password">Contrasena</label>
-        <div class="input-wrapper">
-          <input id="password" type="password" formControlName="password" placeholder="Minimo 6 caracteres"
-            autocomplete="new-password">
+      <div class="field">
+        <div class="input-field">
+          <span class="material-icons-round">lock_outline</span>
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+            placeholder="Contrasena" autocomplete="new-password">
+          <button type="button" class="btn-toggle" (click)="showPassword = !showPassword">
+            <span class="material-icons-round">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
+          </button>
         </div>
-        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+        <span class="field-error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
           Minimo 6 caracteres
         </span>
       </div>
@@ -58,17 +56,20 @@
 
     </form>
 
-    <div class="auth-divider">
-      <span>o</span>
+    <div class="divider">
+      <span>o continua con</span>
     </div>
 
-    <div class="auth-footer">
-      <p>Ya tienes cuenta?</p>
-      <a routerLink="/login" class="link-alt">Iniciar sesion</a>
-    </div>
+    <button class="btn-google" type="button">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      Continuar con Google
+    </button>
 
   </div>
 
-  <p class="auth-branding">Flatly &copy; 2025</p>
+  <div class="auth-bottom">
+    <span>Ya tienes cuenta?</span>
+    <a routerLink="/login">Inicia sesion</a>
+  </div>
 
 </div>
