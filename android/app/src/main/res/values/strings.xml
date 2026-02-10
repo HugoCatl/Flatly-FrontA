@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Flatly</string>
+    <string name="title_activity_main">Flatly</string>
+    <string name="package_name">com.flatly</string>
+    <string name="custom_url_scheme">com.flatly</string>
+</resources>
