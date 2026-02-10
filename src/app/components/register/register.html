@@ -1,0 +1,30 @@
+<div class="container">
+  <h2>Crea tu cuenta en Flatly</h2>
+  
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    
+    <div>
+      <label>Nombre Completo</label>
+      <input type="text" formControlName="name" placeholder="Ej: Hugo García">
+    </div>
+
+    <div>
+      <label>Email</label>
+      <input type="email" formControlName="email" placeholder="usuario@ejemplo.com">
+    </div>
+
+    <div>
+      <label>Contraseña</label>
+      <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">
+      Crear Cuenta
+    </button>
+
+  </form>
+
+  <p>
+    ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+  </p>
+</div>

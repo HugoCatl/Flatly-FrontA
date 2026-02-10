@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'dist/mi-app-mobile/browser',
   server: {
     // Usamos 10.0.2.2 porque es el "localhost" de tu PC visto desde el emulador
-    url: 'http://10.0.2.2:4200', 
+    url: 'http://192.168.1.64:4200', 
     cleartext: true
   }
 };
