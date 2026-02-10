@@ -1,0 +1,105 @@
+// --- VARIABLES (Si no las pilla del global, las aseguramos aquí) ---
+$primary-color: #4F46E5;
+$bg-color: #F3F4F6;
+$nav-height: 70px;
+$header-height: 60px;
+
+// --- HEADER SUPERIOR ---
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $header-height;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box; // Para que el padding no rompa el ancho
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    z-index: 1000; // Siempre encima de todo
+
+    .logo-text {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: 1.5rem;
+        color: $primary-color;
+        letter-spacing: -1px;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        background-color: #E0E7FF; // Índigo muy clarito
+        color: $primary-color;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+}
+
+// --- CONTENIDO CENTRAL ---
+.content-area {
+    // Dejamos hueco arriba y abajo para que las barras no tapen nada
+    padding-top: $header-height + 10px;
+    padding-bottom: $nav-height + 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background-color: $bg-color;
+}
+
+// --- BARRA INFERIOR ---
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: $nav-height;
+    background-color: white;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #9CA3AF; // Gris desactivado
+    font-size: 0.75rem;
+    width: 100%;
+    height: 100%;
+    transition: color 0.2s ease;
+
+    .icon {
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+        transition: transform 0.2s;
+    }
+
+    // ESTADO ACTIVO (Cuando estás en esa página)
+    &.active {
+        color: $primary-color;
+        font-weight: 600;
+
+        .icon {
+            transform: translateY(-2px); // Pequeño saltito
+        }
+    }
+
+    // Efecto al pulsar
+    &:active {
+        background-color: #f9fafb;
+    }
+}
