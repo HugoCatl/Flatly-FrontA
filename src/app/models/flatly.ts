@@ -30,10 +30,12 @@ export interface Household {
 
 export interface Expense {
   id?: number;
+  title: string;
   description: string;
   amount: number;
   year: number;
   month: number;
+  dueDate: string;
 }
 
 // --- Bloque de Admin ---

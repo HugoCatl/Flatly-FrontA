@@ -1,1 +1,66 @@
-<p>home works!</p>
+<div class="home-container" *ngIf="!loading; else loader">
+
+    <div class="hero-card">
+        <div class="hero-content">
+            <h2>Hola, {{ user?.name }} 👋</h2>
+            <div class="pill">Usuario: {{ user?.email || 'Tu cuenta' }}</div>
+        </div>
+    </div>
+
+    <div class="section-title">Resumen del mes</div>
+    <div class="card summary-card">
+        <div class="amount-row">
+            <span class="currency">€</span>
+            <span class="amount">482.35</span>
+            <span class="badge-success">↘ 8.2%</span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 60%"></div>
+        </div>
+        <div class="progress-labels">
+            <span>60%</span>
+            <span>Límite €800</span>
+        </div>
+    </div>
+
+    <div class="section-title">Pagos pendientes</div>
+    <div class="pending-list">
+
+        <div *ngIf="expenses.length === 0" class="empty-state">
+            <p>¡Todo pagado! No tienes deudas. 🎉</p>
+        </div>
+
+        <div class="card payment-item" *ngFor="let expense of expenses">
+            <div class="payment-icon">💸</div>
+            <div class="payment-details">
+                <div class="payment-title">{{ expense?.title || 'Gasto vario' }}</div>
+                <div class="payment-date">Vence: {{ expense?.dueDate | date:'dd/MM/yyyy' }}</div>
+            </div>
+            <div class="payment-amount">€{{ expense?.amount }}</div>
+        </div>
+
+    </div>
+
+    <div class="section-title">Acciones rápidas</div>
+    <div class="actions-grid">
+        <div class="action-card blue" routerLink="/map">
+            <div class="action-icon">🔍</div>
+            <h3>Buscar piso</h3>
+            <p>Explora cerca de ti</p>
+        </div>
+
+        <div class="action-card pink" routerLink="/expenses">
+            <div class="action-icon">💳</div>
+            <h3>Añadir gasto</h3>
+            <p>Registra en 10s</p>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #loader>
+    <div class="loading-screen">
+        <p>Cargando tus datos...</p>
+    </div>
+</ng-template>

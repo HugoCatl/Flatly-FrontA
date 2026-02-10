@@ -4,7 +4,7 @@ import { Register } from './components/register/register';
 import { Chat } from './components/chat/chat';
 import { Expenses } from './components/expenses/expenses';
 import { Map } from './components/map/map';
-import { Home } from './components/home/home';
+import { HomeComponent } from './components/home/home';
 import { MainLayoutComponent } from './components/shared/main-layout/main-layout';
 
 export const routes: Routes = [
@@ -17,7 +17,7 @@ export const routes: Routes = [
         component: MainLayoutComponent,
         children: [
 
-            { path: 'home', component: Home },
+            { path: 'home', component: HomeComponent },
             { path: 'chat', component: Chat },
             { path: 'expenses', component: Expenses },
             { path: 'map', component: Map },
