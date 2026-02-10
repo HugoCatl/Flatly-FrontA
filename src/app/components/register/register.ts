@@ -9,7 +9,7 @@ import { DataService } from '../../services/data';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.scss'
+  styleUrls: ['./register.scss']
 })
 export class Register {
   private fb = inject(FormBuilder);

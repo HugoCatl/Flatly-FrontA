@@ -9,7 +9,7 @@ import { DataService } from '../../services/data'; // Importando directo de data
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html', // Nombre limpio
-  styleUrl: './login.scss'     // Nombre limpio
+  styleUrls: ['./login.scss']
 })
 export class Login {
   private fb = inject(FormBuilder);

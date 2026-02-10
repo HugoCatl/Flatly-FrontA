@@ -1,8 +1,9 @@
-<div class="login-container">
+<div class="auth-page">
 
-  <div class="login-card">
+  <div class="auth-card glass-card">
 
-    <div class="header">
+    <div class="auth-header">
+      <div class="logo">F</div>
       <h1>Flatly</h1>
       <p>Tu piso, bajo control</p>
     </div>
@@ -11,13 +12,20 @@
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" placeholder="hola@flatly.com" autocomplete="email">
+        <input id="email" type="email" formControlName="email" placeholder="hola@flatly.com"
+          autocomplete="email">
+        <span class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+          Email no valido
+        </span>
       </div>
 
       <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" formControlName="password" placeholder="••••••••"
+        <label for="password">Contrasena</label>
+        <input id="password" type="password" formControlName="password" placeholder="********"
           autocomplete="current-password">
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+          Minimo 6 caracteres
+        </span>
       </div>
 
       <button type="submit" class="btn-primary" [disabled]="form.invalid">
@@ -26,9 +34,10 @@
 
     </form>
 
-    <div class="footer">
-      <p>¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
+    <div class="auth-footer">
+      <p>No tienes cuenta? <a routerLink="/register">Registrate</a></p>
     </div>
 
   </div>
+
 </div>

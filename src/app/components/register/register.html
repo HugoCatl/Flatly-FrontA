@@ -1,36 +1,52 @@
-<div class="auth-container">
-  <div class="header">
-    <h1>Únete</h1>
-    <p>Crea tu cuenta en segundos</p>
-  </div>
+<div class="auth-page">
 
-  <div class="card">
+  <div class="auth-card glass-card">
+
+    <div class="auth-header">
+      <div class="logo">F</div>
+      <h1>Unete</h1>
+      <p>Crea tu cuenta en segundos</p>
+    </div>
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
       <div class="form-group">
-        <label>Nombre Completo</label>
-        <input type="text" formControlName="name" placeholder="Tu Nombre">
+        <label for="name">Nombre completo</label>
+        <input id="name" type="text" formControlName="name" placeholder="Tu nombre"
+          autocomplete="name">
+        <span class="error" *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+          El nombre es obligatorio
+        </span>
       </div>
 
       <div class="form-group">
-        <label>Email</label>
-        <input type="email" formControlName="email" placeholder="tu@email.com">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" placeholder="tu@email.com"
+          autocomplete="email">
+        <span class="error" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+          Email no valido
+        </span>
       </div>
 
       <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+        <label for="password">Contrasena</label>
+        <input id="password" type="password" formControlName="password" placeholder="Minimo 6 caracteres"
+          autocomplete="new-password">
+        <span class="error" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')">
+          Minimo 6 caracteres
+        </span>
       </div>
 
-      <button type="submit" [disabled]="form.invalid">
-        Registrarme
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        Crear cuenta
       </button>
 
     </form>
+
+    <div class="auth-footer">
+      <p>Ya tienes cuenta? <a routerLink="/login">Inicia sesion</a></p>
+    </div>
+
   </div>
 
-  <div class="footer">
-    <p>¿Ya tienes cuenta?</p>
-    <a routerLink="/login" class="link-btn">Inicia sesión aquí</a>
-  </div>
 </div>
