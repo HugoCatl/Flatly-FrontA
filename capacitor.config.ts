@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'dist/mi-app-mobile/browser',
   server: {
     // Forzamos tu IP local de casa, no la de la VPN
-    url: 'http://192.168.1.64:4200', 
+    url: 'http://172.20.10.13:4200',
     cleartext: true
   }
 };
