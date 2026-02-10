@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Flatly',
   webDir: 'dist/mi-app-mobile/browser',
   server: {
-    // Usamos 10.0.2.2 porque es el "localhost" de tu PC visto desde el emulador
+    // Forzamos tu IP local de casa, no la de la VPN
     url: 'http://192.168.1.64:4200', 
     cleartext: true
   }
