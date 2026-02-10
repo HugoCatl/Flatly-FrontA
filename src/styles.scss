@@ -1,1 +1,128 @@
-/* You can add global styles to this file, and also import other style files */
+/* 🎨 DEFINICIÓN DEL TEMA (DESIGN TOKENS) */
+:root {
+    /* Paleta de Colores - Tu Índigo Vibrante */
+    --primary-color: #4F46E5;
+    --primary-hover: #4338CA;
+
+    /* Fondos */
+    --bg-app: #F3F4F6;
+    /* Scaffold Background */
+    --bg-card: #FFFFFF;
+    /* Surface Color */
+
+    /* Textos */
+    --text-main: #111827;
+    /* Títulos */
+    --text-secondary: #6B7280;
+    /* Subtítulos */
+    --text-on-primary: #FFFFFF;
+    /* Texto en botones */
+    --text-placeholder: #9CA3AF;
+
+    /* Formas (Bordes) */
+    --radius-xl: 16px;
+    /* Para las Cards (Como en Flutter) */
+    --radius-md: 12px;
+    /* Para Inputs y Botones */
+    --radius-sm: 8px;
+    /* Detalles */
+
+    /* Sombras (Elevation) */
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* 🛠️ RESET BÁSICO */
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-app);
+    /* Color de fondo tipo Scaffold */
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    /* Texto nítido en móviles */
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    /* Ese toque "tight" moderno */
+    margin: 0;
+}
+
+/* 🧱 COMPONENTES REUTILIZABLES (Tus "Widgets") */
+
+/* 1. La Card (Como el Widget Card de Flutter) */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+/* 2. El Botón Principal (Como ElevatedButton) */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: var(--primary-hover);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        /* Resplandor índigo */
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    &:disabled {
+        background-color: var(--text-secondary);
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+}
+
+/* 3. Inputs (TextField) */
+input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    background-color: #F9FAFB;
+    color: var(--text-main);
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: all 0.2s;
+
+    &::placeholder {
+        color: var(--text-placeholder);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: var(--bg-card);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        /* Halo de foco */
+    }
+}

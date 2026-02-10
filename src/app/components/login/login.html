@@ -1,25 +1,34 @@
-<div class="container">
-  <h2>Bienvenido a Flatly</h2>
-  
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    
-    <div>
-      <label>Email</label>
-      <input type="email" formControlName="email" placeholder="usuario@ejemplo.com">
+<div class="login-container">
+
+  <div class="login-card">
+
+    <div class="header">
+      <h1>Flatly</h1>
+      <p>Tu piso, bajo control</p>
     </div>
 
-    <div>
-      <label>Contraseña</label>
-      <input type="password" formControlName="password" placeholder="******">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" placeholder="hola@flatly.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" formControlName="password" placeholder="••••••••"
+          autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        Entrar
+      </button>
+
+    </form>
+
+    <div class="footer">
+      <p>¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
     </div>
 
-    <button type="submit" [disabled]="form.invalid">
-      Entrar
-    </button>
-
-  </form>
-
-  <p>
-    ¿No tienes cuenta? <a routerLink="/register">Regístrate aquí</a>
-  </p>
+  </div>
 </div>

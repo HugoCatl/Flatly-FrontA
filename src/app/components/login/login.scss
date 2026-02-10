@@ -1,0 +1,81 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    /* El background-color ya viene del body en styles.scss */
+}
+
+.login-card {
+    /* Usamos los estilos de .card definidos globalmente, más ancho específico */
+    @extend .card;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+
+    /* Animación suave de entrada */
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header {
+    margin-bottom: 2rem;
+
+    h1 {
+        font-size: 2.25rem;
+        color: var(--primary-color);
+    }
+
+    p {
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+    text-align: left;
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-main);
+    }
+}
+
+.footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #E5E7EB;
+
+    p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
