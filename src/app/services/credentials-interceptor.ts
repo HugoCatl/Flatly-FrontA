@@ -1,10 +1,17 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const credentialsInterceptor: HttpInterceptorFn = (req, next) => {
-  // Clonamos la petición y le decimos que envíe las Cookies (credenciales)
-  const authReq = req.clone({
-    withCredentials: true
-  });
+  const session = localStorage.getItem('user_session');
 
-  return next(authReq);
+  if (session) {
+    // Enviamos la sesión como Bearer token (el backend acepta el JSON directamente)
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${session}`
+      }
+    });
+    return next(authReq);
+  }
+
+  return next(req);
 };

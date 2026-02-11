@@ -34,10 +34,10 @@
         <div class="card payment-item" *ngFor="let expense of expenses">
             <div class="payment-icon">💸</div>
             <div class="payment-details">
-                <div class="payment-title">{{ expense?.title || 'Gasto vario' }}</div>
-                <div class="payment-date">Vence: {{ expense?.dueDate | date:'dd/MM/yyyy' }}</div>
+                <div class="payment-title">{{ expense?.type || 'Gasto vario' }}</div>
+                <div class="payment-date">Vence: {{ expense?.due_date | date:'dd/MM/yyyy' }}</div>
             </div>
-            <div class="payment-amount">€{{ expense?.amount }}</div>
+            <div class="payment-amount">€{{ expense?.amount_total }}</div>
         </div>
 
     </div>

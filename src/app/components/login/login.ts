@@ -23,13 +23,10 @@ export class Login implements OnInit {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  // Comprobación al cargar
   ngOnInit() {
-    // Al usar cookies, el token ya no se guarda en localStorage.
-    // Comprobamos si existe el nombre de usuario para saber si ya estabas logueado.
-    const userName = localStorage.getItem('user_name');
-    if (userName) {
-      console.log('Sesión detectada (nombre encontrado), saltando al Home...');
+    const session = localStorage.getItem('user_session');
+    if (session) {
+      console.log('Sesión detectada, saltando al Home...');
       this.router.navigate(['/home']);
     }
   }
@@ -38,15 +35,19 @@ export class Login implements OnInit {
     if (this.form.valid) {
       this.data.login(this.form.value).subscribe({
         next: (res: any) => {
-          console.log('Login OK, cookie recibida');
+          console.log('Login OK:', res);
 
-          // 1. Guardamos el nombre para el saludo "Hola, Hugo" (Opcional pero recomendado)
-          if (res && res.name) {
-            localStorage.setItem('user_name', res.name);
+          // Guardamos la sesión para el header Authorization
+          if (res?.user) {
+            const session = {
+              email: res.user.email,
+              id: res.user.id,
+              role: res.user.role
+            };
+            localStorage.setItem('user_session', JSON.stringify(session));
+            localStorage.setItem('user_name', res.user.name);
           }
 
-          // 2. Ya no guardamos token manual. El navegador gestiona la cookie.
-          // 3. Redirigimos al Home
           this.router.navigate(['/home']);
         },
         error: (err) => {
