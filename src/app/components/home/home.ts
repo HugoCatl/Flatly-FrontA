@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DataService } from '../../services/data';
-import { UserProfile, Expense } from '../../models/flatly';
+import { Usuario, Factura } from '../../models/flatly';
 
 @Component({
   selector: 'app-home',
@@ -14,8 +14,8 @@ import { UserProfile, Expense } from '../../models/flatly';
 export class HomeComponent implements OnInit {
   private dataService = inject(DataService);
 
-  user?: UserProfile;
-  expenses: Expense[] = [];
+  user?: Usuario;
+  expenses: Factura[] = [];
   loading = true;
 
   ngOnInit() {
