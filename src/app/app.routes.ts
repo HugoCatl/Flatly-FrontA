@@ -6,6 +6,7 @@ import { Expenses } from './components/expenses/expenses';
 import { Map } from './components/map/map';
 import { HomeComponent } from './components/home/home';
 import { MainLayoutComponent } from './components/shared/main-layout/main-layout';
+import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -15,6 +16,7 @@ export const routes: Routes = [
     {
         path: '',
         component: MainLayoutComponent,
+        canActivate: [authGuard],
         children: [
 
             { path: 'home', component: HomeComponent },

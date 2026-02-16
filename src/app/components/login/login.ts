@@ -24,11 +24,18 @@ export class Login implements OnInit {
   });
 
   ngOnInit() {
-    const session = localStorage.getItem('user_session');
-    if (session) {
-      console.log('Sesión detectada, saltando al Home...');
-      this.router.navigate(['/home']);
-    }
+    // Verificar sesión con el backend (cookie)
+    this.data.checkSession().subscribe({
+      next: () => {
+        console.log('Sesión activa, redirigiendo al Home...');
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        // No hay sesión válida, quedarse en login
+        localStorage.removeItem('user_session');
+        localStorage.removeItem('user_name');
+      }
+    });
   }
 
   onSubmit() {
@@ -37,7 +44,7 @@ export class Login implements OnInit {
         next: (res: any) => {
           console.log('Login OK:', res);
 
-          // Guardamos la sesión para el header Authorization
+          // Guardamos info del usuario solo para la UI (no para auth)
           if (res?.user) {
             const session = {
               email: res.user.email,
