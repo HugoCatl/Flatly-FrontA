@@ -43,7 +43,7 @@ export class DataService {
   createHousehold(name: string, propertyId: number) {
     return this.http.post(`${this.url}/owners/households`, { name, propertyId });
   }
-  getHouseholdTenants(id: number) { return this.http.get(`${this.url}/owners/households/${id}/tenar`); }
+  getHouseholdTenants(id: number) { return this.http.get(`${this.url}/owners/households/${id}/tenants`); }
   deleteHousehold(id: number) { return this.http.delete(`${this.url}/owners/households/${id}`); }
 
   // --- 5. BLOQUE: ADMIN  ---

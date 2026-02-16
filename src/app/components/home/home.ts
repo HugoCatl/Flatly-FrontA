@@ -19,34 +19,22 @@ export class HomeComponent implements OnInit {
   loading = true;
 
   ngOnInit() {
-    this.loadHomeData();
+    //this.dataService.logout();
+    this.checkSession();
+  }
+
+  checkSession() {
+    this.dataService.checkSession();
+    if (this.loading) {
+      this.loadHomeData();
+    }else {
+      this.dataService.logout()
+      console.warn('No se cargan datos porque loading es false. Esto puede ser un error en el flujo de la aplicación.');
+    }
   }
 
   loadHomeData() {
-    // 1. Pedimos tu perfil (GET /users/me) 
-    this.dataService.getMyProfile().subscribe({
-      next: (profile) => {
-        console.log('Perfil cargado con éxito:', profile);
-        this.user = profile;
-        this.loading = false; // Quitamos el cargador
-      },
-      error: (err) => {
-        console.error('Error al cargar perfil:', err);
-        this.loading = false; // ¡IMPORTANTE! Quitamos el cargador aunque falle
-
-        if (err.status === 401 || err.status === 403) {
-          alert('Tu sesión ha caducado o no tienes permiso.');
-        }
-      }
-    });
-
-    // 2. Pedimos los gastos (GET /students/expenses) 
-    this.dataService.getPendingExpenses().subscribe({
-      next: (list) => {
-        console.log('Gastos cargados:', list);
-        this.expenses = list;
-      },
-      error: (err) => console.error('Error al cargar gastos:', err)
-    });
+    this.dataService.getMyProfile()
+    this.dataService.getPendingExpenses()
   }
 }

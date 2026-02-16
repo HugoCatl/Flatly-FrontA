@@ -24,18 +24,7 @@ export class Login implements OnInit {
   });
 
   ngOnInit() {
-    // Verificar sesión con el backend (cookie)
-    this.data.checkSession().subscribe({
-      next: () => {
-        console.log('Sesión activa, redirigiendo al Home...');
-        this.router.navigate(['/home']);
-      },
-      error: () => {
-        // No hay sesión válida, quedarse en login
-        localStorage.removeItem('user_session');
-        localStorage.removeItem('user_name');
-      }
-    });
+
   }
 
   onSubmit() {
