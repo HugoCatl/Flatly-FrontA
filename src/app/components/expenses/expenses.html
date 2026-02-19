@@ -1,1 +1,77 @@
-<p>expenses works!</p>
+<div class="bg-scene">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<div class="expenses-page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="flat-avatar">🏙️</div>
+    <div class="header-info">
+      <h2 class="flat-name">Piso Madrid Centro</h2>
+      <span class="flat-members">Alex · Julia · Guillermo</span>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-row">
+    <div class="summary-card glass-card">
+      <span class="summary-label">Mis Gastos</span>
+      <span class="summary-amount mine">{{ myExpenses | number:'1.2-2' }} €</span>
+    </div>
+    <div class="summary-card glass-card">
+      <span class="summary-label">Total Piso</span>
+      <span class="summary-amount total">{{ totalExpenses | number:'1.2-2' }} €</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-wrapper glass-card">
+    @for (tab of tabs; track tab.key) {
+      <button
+        class="tab"
+        [class.active]="activeTab === tab.key"
+        (click)="setTab(tab.key)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Tab Gastos -->
+  @if (activeTab === 'gastos') {
+
+    <div class="month-label">Febrero 2026</div>
+
+    <div class="expense-list">
+      @for (expense of expenses; track expense.name) {
+        <div class="expense-card glass-card">
+          <div class="expense-icon" [ngClass]="expense.iconClass">
+            {{ expense.icon }}
+          </div>
+          <div class="expense-info">
+            <span class="expense-name">{{ expense.name }}</span>
+            <span class="expense-payer">Pagado por {{ expense.paidBy }}</span>
+          </div>
+          <span class="expense-amount">{{ expense.amount | number:'1.2-2' }} €</span>
+        </div>
+      }
+    </div>
+
+  } @else {
+    <div class="empty-tab glass-card">
+      <span class="empty-icon">🚧</span>
+      <p>Sección en construcción</p>
+    </div>
+  }
+
+  <!-- FAB -->
+  <button class="fab" title="Añadir gasto">
+    <svg viewBox="0 0 24 24" fill="white">
+      <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"/>
+    </svg>
+  </button>
+
+</div>
