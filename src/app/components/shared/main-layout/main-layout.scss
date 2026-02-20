@@ -10,9 +10,10 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: center;
-    /* Empuja el contenido por debajo del notch/cámara */
-    padding: env(safe-area-inset-top, 16px) 20px 0;
-    height: calc(60px + env(safe-area-inset-top, 16px));
+    justify-content: space-between;
+    /* fallback 0px: en móviles sin notch no añade espacio extra */
+    padding: env(safe-area-inset-top, 0px) 20px 0;
+    height: calc(56px + env(safe-area-inset-top, 0px));
 }
 
 .top-bar__logo {
@@ -23,11 +24,42 @@
     font-family: 'Inter', system-ui, sans-serif;
 }
 
+.top-bar__profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-400);
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    .material-icons-round {
+        font-size: 28px;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    &:hover {
+        color: var(--emerald-500);
+        background: rgba(16, 185, 129, 0.08);
+
+        .material-icons-round {
+            transform: scale(1.1);
+        }
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
 .content-area {
     display: block;
     min-height: 100vh;
     background-color: var(--gray-50);
-    padding-top: calc(60px + env(safe-area-inset-top, 16px));
+    padding-top: calc(56px + env(safe-area-inset-top, 0px));
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
 
