@@ -1,1 +1,97 @@
-<p>map works!</p>
+<div class="map-wrapper">
+
+    <!-- ==================== MAPA LEAFLET ==================== -->
+    <div id="leaflet-map"></div>
+
+    <!-- ==================== PANEL SUPERIOR ==================== -->
+    <div class="map-overlay-top">
+
+        <!-- Buscador -->
+        <div class="search-bar glass-panel">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Buscar zona, calle, barrio…" [ngModel]="busqueda()"
+                (ngModelChange)="busqueda.set($event); onBusquedaChange()" id="map-search-input" class="search-input" />
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-row glass-panel">
+
+            <!-- Precio -->
+            <div class="filter-group">
+                <div class="filter-label">
+                    <span>💶 Precio máx</span>
+                    <span class="filter-value">{{ precioLabel }}</span>
+                </div>
+                <input type="range" min="400" max="2500" step="50" [ngModel]="precioMax()"
+                    (ngModelChange)="precioMax.set($event); onPrecioChange()" class="price-slider" id="price-slider" />
+            </div>
+
+            <!-- Etiquetas -->
+            <div class="tags-scroll">
+                <button *ngFor="let tag of allEtiquetas" class="tag-chip"
+                    [class.tag-chip--active]="isEtiquetaActiva(tag)" (click)="toggleEtiqueta(tag)">
+                    {{ tag }}
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Contador de resultados -->
+        <div class="results-badge">
+            <span>{{ pisosFiltrados().length }} pisos encontrados</span>
+        </div>
+
+    </div>
+
+    <!-- ==================== NAV INFERIOR ==================== -->
+    <nav class="map-bottom-nav glass-panel">
+        <a routerLink="/home" class="map-nav-item" id="map-nav-home">
+            <span class="material-icons-round">home</span>
+            <span class="map-nav-label">Inicio</span>
+        </a>
+        <a routerLink="/map" class="map-nav-item map-nav-item--active" id="map-nav-map">
+            <span class="material-icons-round">map</span>
+            <span class="map-nav-label">Mapa</span>
+        </a>
+        <a routerLink="/expenses" class="map-nav-item" id="map-nav-expenses">
+            <span class="material-icons-round">receipt_long</span>
+            <span class="map-nav-label">Gastos</span>
+        </a>
+    </nav>
+
+    <!-- ==================== PREVIEW DE PISO ==================== -->
+    <div class="piso-preview glass-panel" *ngIf="pisoActivo() as piso" [class.piso-preview--visible]="pisoActivo()">
+        <button class="preview-close" (click)="cerrarPreview()" aria-label="Cerrar preview">✕</button>
+
+        <div class="preview-image-wrapper">
+            <img [src]="piso.foto" [alt]="piso.titulo" class="preview-img" />
+            <span class="preview-badge" [class.preview-badge--unavailable]="!piso.disponible">
+                {{ piso.disponible ? 'Disponible' : 'No disponible' }}
+            </span>
+        </div>
+
+        <div class="preview-body">
+            <div class="preview-precio">€{{ piso.precio }}<span>/mes</span></div>
+            <div class="preview-titulo">{{ piso.titulo }}</div>
+            <div class="preview-dir">📍 {{ piso.direccion }}</div>
+
+            <div class="preview-specs">
+                <div class="spec-item">
+                    <span class="spec-icon">🛏️</span>
+                    <span>{{ piso.habitaciones }} hab.</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-icon">📐</span>
+                    <span>{{ piso.metros }} m²</span>
+                </div>
+            </div>
+
+            <div class="preview-tags">
+                <span class="tag-pill" *ngFor="let tag of piso.etiquetas">{{ tag }}</span>
+            </div>
+
+            <button class="btn-ver glass-btn">Ver detalles →</button>
+        </div>
+    </div>
+
+</div>

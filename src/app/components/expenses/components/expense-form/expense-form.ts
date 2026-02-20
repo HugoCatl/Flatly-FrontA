@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BottomSheet } from '../../../shared-forms/bottom-sheet/bottom-sheet';
+import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
 
 interface NewBill {
   type: string;
@@ -18,11 +18,11 @@ interface Expense {
 }
 
 const BILL_TYPES = [
-  { value: 'RENT',        label: 'Alquiler',     icon: '🏢', iconClass: 'icon-alquiler' },
+  { value: 'RENT', label: 'Alquiler', icon: '🏢', iconClass: 'icon-alquiler' },
   { value: 'ELECTRICITY', label: 'Electricidad', icon: '💡', iconClass: 'icon-electric' },
-  { value: 'WATER',       label: 'Agua',         icon: '💧', iconClass: 'icon-agua'     },
-  { value: 'INTERNET',    label: 'Internet',     icon: '📶', iconClass: 'icon-internet' },
-  { value: 'OTHER',       label: 'Otros',        icon: '🛒', iconClass: 'icon-varios'   },
+  { value: 'WATER', label: 'Agua', icon: '💧', iconClass: 'icon-agua' },
+  { value: 'INTERNET', label: 'Internet', icon: '📶', iconClass: 'icon-internet' },
+  { value: 'OTHER', label: 'Otros', icon: '🛒', iconClass: 'icon-varios' },
 ];
 
 @Component({
