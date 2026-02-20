@@ -1,0 +1,115 @@
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-main-card {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  .avatar-container {
+    position: relative;
+    .profile-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: var(--radius-lg);
+      object-fit: cover;
+      border: 3px solid var(--white);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .status-dot {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 18px;
+      height: 18px;
+      background: var(--emerald-500);
+      border: 3px solid var(--white);
+      border-radius: 50%;
+    }
+  }
+
+  .profile-name {
+    font-size: 1.6rem;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--emerald-glow);
+    color: var(--emerald-600);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.profile-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .material-icons-round {
+      color: var(--emerald-500);
+      background: var(--gray-50);
+      padding: 10px;
+      border-radius: var(--radius-lg);
+      font-size: 20px;
+    }
+
+    .info-content {
+      label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+      p {
+        margin: 0;
+        color: var(--gray-800);
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+    }
+  }
+}
+
+.bio-text {
+  color: var(--gray-500);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  background: var(--gray-50);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
