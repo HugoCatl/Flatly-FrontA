@@ -7,14 +7,6 @@
 
 <div class="expenses-page">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="flat-avatar">🏙️</div>
-    <div class="header-info">
-      <h2 class="flat-name">Piso Madrid Centro</h2>
-      <span class="flat-members">Alex · Julia · Guillermo</span>
-    </div>
-  </div>
 
   <!-- Summary cards -->
   <div class="summary-row">
@@ -42,7 +34,15 @@
 
   <!-- Tab Gastos -->
   @if (activeTab === 'gastos') {
-    <div class="month-label">Febrero 2026</div>
+
+    <div class="month-row">
+      <span class="month-label">Febrero 2026</span>
+      <button class="add-expense-btn" (click)="openForm()">
+        <span class="material-icons-round">add</span>
+        Añadir gasto
+      </button>
+    </div>
+
     <div class="expense-list">
       @for (expense of expenses; track expense.name) {
         <div class="expense-card glass-card">
@@ -57,19 +57,13 @@
         </div>
       }
     </div>
+
   } @else {
     <div class="empty-tab glass-card">
       <span class="empty-icon">🚧</span>
       <p>Sección en construcción</p>
     </div>
   }
-
-  <!-- FAB -->
-  <button class="fab" title="Añadir gasto" (click)="openForm()">
-    <svg viewBox="0 0 24 24" fill="white">
-      <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"/>
-    </svg>
-  </button>
 
 </div>
 

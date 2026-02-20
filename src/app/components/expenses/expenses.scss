@@ -110,15 +110,48 @@
   }
 }
 
-/* ── Month label ── */
+/* ── Month row ── */
+.month-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-left: 4px;
+}
+
 .month-label {
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-bottom: 0.75rem;
-  padding-left: 4px;
+}
+
+.add-expense-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1.5px solid var(--emerald-500);
+  border-radius: 20px;
+  color: var(--emerald-500);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .material-icons-round { font-size: 16px; }
+
+  &:hover {
+    background: var(--emerald-500);
+    color: var(--white);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 /* ── Expense list ── */
@@ -211,41 +244,6 @@
     font-weight: 600;
     color: var(--gray-500);
     margin: 0;
-  }
-}
-
-/* ── FAB ── */
-.fab {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background: var(--emerald-500);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px var(--emerald-glow);
-  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-  z-index: 100;
-
-  &:hover {
-    background: var(--emerald-600);
-    transform: translateX(-50%) scale(1.1);
-    box-shadow: 0 8px 28px var(--emerald-glow);
-  }
-
-  &:active {
-    transform: translateX(-50%) scale(0.95);
-  }
-
-  svg {
-    width: 28px;
-    height: 28px;
   }
 }
 
