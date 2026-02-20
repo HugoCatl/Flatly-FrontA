@@ -1,0 +1,65 @@
+<app-bottom-sheet
+  [show]="show"
+  [title]="'Nuevo gasto'"
+  [confirmLabel]="'Añadir'"
+  [confirmDisabled]="!isFormValid"
+  (onConfirm)="submit()"
+  (onDismiss)="dismiss()">
+
+  <!-- Tipo de gasto -->
+  <div class="form-field">
+    <label class="field-label">Tipo de gasto</label>
+    <div class="type-grid">
+      @for (type of billTypes; track type.value) {
+        <button
+          class="type-btn"
+          [class.selected]="newBill.type === type.value"
+          (click)="newBill.type = type.value">
+          <span class="type-label">{{ type.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Importe -->
+  <div class="form-field">
+    <label class="field-label">Importe total</label>
+    <div class="amount-wrapper">
+      <span class="currency">€</span>
+      <input
+        type="number"
+        class="amount-input"
+        placeholder="0,00"
+        min="0"
+        step="0.01"
+        [(ngModel)]="newBill.amount"/>
+    </div>
+  </div>
+
+  <!-- Periodo -->
+  <div class="form-field">
+    <label class="field-label">Periodo</label>
+    <div class="period-row">
+      <select class="period-select" [(ngModel)]="newBill.period_month">
+        <option [value]="1">Enero</option>
+        <option [value]="2">Febrero</option>
+        <option [value]="3">Marzo</option>
+        <option [value]="4">Abril</option>
+        <option [value]="5">Mayo</option>
+        <option [value]="6">Junio</option>
+        <option [value]="7">Julio</option>
+        <option [value]="8">Agosto</option>
+        <option [value]="9">Septiembre</option>
+        <option [value]="10">Octubre</option>
+        <option [value]="11">Noviembre</option>
+        <option [value]="12">Diciembre</option>
+      </select>
+      <select class="period-select" [(ngModel)]="newBill.period_year">
+        <option [value]="2024">2024</option>
+        <option [value]="2025">2025</option>
+        <option [value]="2026">2026</option>
+      </select>
+    </div>
+  </div>
+
+</app-bottom-sheet>

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ExpenseForm } from './components/expense-form/expense-form';
 
 interface Expense {
   name: string;
@@ -11,11 +12,13 @@ interface Expense {
 
 @Component({
   selector: 'app-expenses',
-  imports: [CommonModule],
+  imports: [CommonModule, ExpenseForm],
   templateUrl: './expenses.html',
   styleUrl: './expenses.scss',
 })
 export class Expenses {
+
+  @ViewChild(ExpenseForm) expenseForm!: ExpenseForm;
 
   activeTab: 'gastos' | 'saldos' | 'estadisticas' = 'gastos';
 
@@ -45,5 +48,13 @@ export class Expenses {
 
   setTab(key: string): void {
     this.activeTab = key as 'gastos' | 'saldos' | 'estadisticas';
+  }
+
+  openForm(): void {
+    this.expenseForm.open();
+  }
+
+  onExpenseCreated(expense: Expense): void {
+    this.expenses.unshift(expense);
   }
 }
