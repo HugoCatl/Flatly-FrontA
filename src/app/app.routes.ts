@@ -6,6 +6,7 @@ import { Expenses } from './components/expenses/expenses';
 import { Map } from './components/map/map';
 import { HomeComponent } from './components/home/home';
 import { MainLayoutComponent } from './components/shared/main-layout/main-layout';
+import { Profile } from './components/profile/profile';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
             { path: 'home', component: HomeComponent },
             { path: 'chat', component: Chat },
             { path: 'expenses', component: Expenses },
+            { path: 'profile', component: Profile}
         ]
     },
 
