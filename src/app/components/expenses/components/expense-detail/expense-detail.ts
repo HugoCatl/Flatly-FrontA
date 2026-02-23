@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Expense } from '../expense-form/expense-form';
 
@@ -20,6 +20,11 @@ export class ExpenseDetail {
     'Enero','Febrero','Marzo','Abril','Mayo','Junio',
     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
   ];
+
+  @HostListener('document:keydown.escape')
+  onEscKey(): void {
+    this.close();
+  }
 
   close(): void {
     this.showDeleteConfirm = false;

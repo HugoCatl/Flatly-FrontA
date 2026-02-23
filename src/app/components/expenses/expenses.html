@@ -90,7 +90,6 @@
     <div class="expense-list">
       @if (filteredExpenses.length === 0) {
         <div class="empty-month glass-card">
-          <span class="empty-icon">📭</span>
           <p>No hay gastos en {{ months[selectedMonth] }} de {{ selectedYear }}</p>
         </div>
       } @else {
@@ -111,8 +110,7 @@
 
   } @else {
     <div class="empty-tab glass-card">
-      <span class="empty-icon">🚧</span>
-      <p>Sección en construcción</p>
+      <p>Próximamente...</p>
     </div>
   }
 
