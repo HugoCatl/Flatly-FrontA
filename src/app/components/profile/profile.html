@@ -1,34 +1,61 @@
-<div class="profile-container">
+<div class="profile-wrapper">
 
-  <div class="profile-header">
-    <img 
-      class="profile-avatar" 
-      src="assets/default-avatar.png" 
-      alt="Foto de perfil"
-    />
-    <h2 class="profile-name">Juan Pérez</h2>
-    <p class="profile-location">Valencia · 23 años</p>
+  <div class="profile-main-card glass-card">
+
+    <!-- Header -->
+    <div class="profile-header">
+
+      <div class="avatar-container">
+        <img 
+          class="profile-avatar" 
+          src="assets/default-avatar.png" 
+          alt="Foto de perfil"
+        />
+        <span class="status-dot"></span>
+      </div>
+
+      <div>
+        <h2 class="profile-name">Álex Esteve</h2>
+        <span class="role-badge">Estudiante</span>
+      </div>
+
+    </div>
+
+    <!-- Info -->
+    <div class="profile-info-grid">
+
+      <div class="info-item">
+        <span class="material-icons-round">location_on</span>
+        <div class="info-content">
+          <label>Ubicación</label>
+          <p>Valencia</p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="material-icons-round">cake</span>
+        <div class="info-content">
+          <label>Edad</label>
+          <p>20 años</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bio -->
+    <div>
+      <label class="info-content label">Sobre mí</label>
+      <p class="bio-text">
+        Soy estudiante de DAM, responsable y ordenado.
+        Busco compañeros tranquilos y buen ambiente en casa.
+      </p>
+    </div>
+
+    <!-- Botón -->
+    <button class="btn-primary">
+      <span class="material-icons-round">edit</span>
+      Editar perfil
+    </button>
+
   </div>
-
-  <div class="profile-section">
-    <h3>Sobre mí</h3>
-    <p>
-      Soy estudiante de DAM, responsable y ordenado. 
-      Busco compañeros tranquilos y buen ambiente en casa.
-    </p>
-  </div>
-
-  <div class="profile-section">
-    <h3>Preferencias</h3>
-    <ul>
-      <li>No fumador</li>
-      <li>Horario tranquilo</li>
-      <li>Se admiten mascotas</li>
-    </ul>
-  </div>
-
-  <div class="profile-actions">
-    <button class="edit-btn">Editar perfil</button>
-  </div>
-
 </div>
