@@ -88,17 +88,24 @@
     </div>
 
     <div class="expense-list">
-@for (expense of filteredExpenses; track expense.name) {
-          <div class="expense-card glass-card">
-          <div class="expense-icon" [ngClass]="expense.iconClass">
-            {{ expense.icon }}
-          </div>
-          <div class="expense-info">
-            <span class="expense-name">{{ expense.name }}</span>
-            <span class="expense-payer">Pagado por {{ expense.paidBy }}</span>
-          </div>
-          <span class="expense-amount">{{ expense.amount | number:'1.2-2' }} €</span>
+      @if (filteredExpenses.length === 0) {
+        <div class="empty-month glass-card">
+          <span class="empty-icon">📭</span>
+          <p>No hay gastos en {{ months[selectedMonth] }} de {{ selectedYear }}</p>
         </div>
+      } @else {
+        @for (expense of filteredExpenses; track expense.name) {
+          <div class="expense-card glass-card" (click)="openDetail(expense)">
+            <div class="expense-icon" [ngClass]="expense.iconClass">
+              {{ expense.icon }}
+            </div>
+            <div class="expense-info">
+              <span class="expense-name">{{ expense.name }}</span>
+              <span class="expense-payer">Pagado por {{ expense.paidBy }}</span>
+            </div>
+            <span class="expense-amount">{{ expense.amount | number:'1.2-2' }} €</span>
+          </div>
+        }
       }
     </div>
 
@@ -110,6 +117,15 @@
   }
 
 </div>
+
+<!-- Detalle del gasto -->
+@if (selectedExpense) {
+  <app-expense-detail
+    [expense]="selectedExpense"
+    (onClose)="closeDetail()"
+    (onDelete)="onExpenseDeleted($event)">
+  </app-expense-detail>
+}
 
 <!-- Formulario -->
 <app-expense-form

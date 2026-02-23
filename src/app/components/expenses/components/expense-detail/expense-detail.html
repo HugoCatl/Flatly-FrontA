@@ -1,0 +1,64 @@
+<div class="sheet-backdrop" (click)="close()"></div>
+
+<div class="bottom-sheet">
+  <div class="sheet-handle"></div>
+
+  <div class="sheet-header">
+    <button class="sheet-back" (click)="close()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+      </svg>
+    </button>
+    <h3>Detalle del gasto</h3>
+    <div style="width:36px"></div>
+  </div>
+
+  <div class="detail-hero">
+    <div class="detail-icon" [ngClass]="expense.iconClass">
+      {{ expense.icon }}
+    </div>
+    <span class="detail-name">{{ expense.name }}</span>
+    <span class="detail-amount">{{ expense.amount | number:'1.2-2' }} €</span>
+    <span class="detail-status" [ngClass]="'status-' + expense.status.toLowerCase()">
+      {{ expense.status === 'PAID' ? 'Pagado' :
+         expense.status === 'PENDING' ? 'Pendiente' : 'Vencido' }}
+    </span>
+  </div>
+
+  <div class="detail-fields">
+    <div class="detail-field">
+      <span class="detail-label">Pagado por</span>
+      <span class="detail-value">{{ expense.paidBy }}</span>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Periodo</span>
+      <span class="detail-value">
+        {{ months[expense.period_month - 1] }} {{ expense.period_year }}
+      </span>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Fecha límite</span>
+      <span class="detail-value">{{ expense.due_date || '—' }}</span>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Creado el</span>
+      <span class="detail-value">{{ expense.created_at | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+
+  @if (!showDeleteConfirm) {
+    <button class="btn-delete" (click)="confirmDelete()">
+      <span class="material-icons-round">delete_outline</span>
+      Eliminar gasto
+    </button>
+  } @else {
+    <div class="delete-confirm">
+      <p>¿Estás seguro de eliminar <strong>{{ expense.name }}</strong>?</p>
+      <div class="confirm-actions">
+        <button class="btn-confirm-yes" (click)="deleteExpense()">Sí, eliminar</button>
+        <button class="btn-confirm-no" (click)="cancelDelete()">No</button>
+      </div>
+    </div>
+  }
+
+</div>

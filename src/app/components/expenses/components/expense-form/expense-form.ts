@@ -8,6 +8,7 @@ interface NewBill {
   amount: number | null;
   period_month: number;
   period_year: number;
+  due_date?: string;
 }
 
 export interface Expense {
@@ -18,6 +19,9 @@ export interface Expense {
   iconClass: string;
   period_month: number;
   period_year: number;
+  due_date: string;
+  status: 'PENDING' | 'PAID' | 'OVERDUE';
+  created_at: string;
 }
 
 const BILL_TYPES = [
@@ -59,26 +63,30 @@ export class ExpenseForm {
   }
 
   submit(): void {
-    if (!this.isFormValid) return;
-    const type = this.billTypes.find(t => t.value === this.newBill.type)!;
-    this.onExpenseCreated.emit({
-      name: type.label,
-      paidBy: 'Alex (Yo)',
-      amount: this.newBill.amount!,
-      icon: type.icon,
-      iconClass: type.iconClass,
-      period_month: this.newBill.period_month,
-      period_year: this.newBill.period_year,
-    });
-    this.show = false;
-  }
+  if (!this.isFormValid) return;
+  const type = this.billTypes.find(t => t.value === this.newBill.type)!;
+  this.onExpenseCreated.emit({
+    name: type.label,
+    paidBy: 'Alex (Yo)',
+    amount: this.newBill.amount!,
+    icon: type.icon,
+    iconClass: type.iconClass,
+    period_month: this.newBill.period_month,
+    period_year: this.newBill.period_year,
+    due_date: this.newBill.due_date || '',
+    status: 'PENDING',
+    created_at: new Date().toISOString(),
+  });
+  this.show = false;
+}
 
   private emptyBill(): NewBill {
-    return {
-      type: '',
-      amount: null,
-      period_month: new Date().getMonth() + 1,
-      period_year: new Date().getFullYear(),
-    };
-  }
+  return {
+    type: '',
+    amount: null,
+    period_month: new Date().getMonth() + 1,
+    period_year: new Date().getFullYear(),
+    due_date: '',
+  };
+}
 }
