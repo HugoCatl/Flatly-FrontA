@@ -12,7 +12,7 @@ export class DataService {
   register(body: any) { return this.http.post(`${this.url}/users/auth/register`, body); }
   login(body: any) { return this.http.post(`${this.url}/users/auth/login`, body); }
   loginFirebase(idToken: string) { return this.http.post(`${this.url}/users/auth/firebase`, { idToken }); }
-  checkSession() { return this.http.get(`${this.url}/users/auth/session`); }
+  checkSession() { return this.http.get(`${this.url}/users/session`); }
   logout() { return this.http.post(`${this.url}/users/logout`, {}); }
 
   // --- 2. BLOQUE: MI PERFIL (ME)  ---
