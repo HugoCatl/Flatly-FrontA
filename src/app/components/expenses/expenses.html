@@ -7,7 +7,6 @@
 
 <div class="expenses-page">
 
-
   <!-- Summary cards -->
   <div class="summary-row">
     <div class="summary-card glass-card">
@@ -36,7 +35,52 @@
   @if (activeTab === 'gastos') {
 
     <div class="month-row">
-      <span class="month-label">Febrero 2026</span>
+      <div class="month-selectors">
+
+        <div class="year-dropdown-wrapper">
+          <button class="month-trigger" (click)="toggleYearDropdown($event)">
+            <span>{{ selectedYear }}</span>
+            <span class="material-icons-round">
+              {{ showYearDropdown ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+          @if (showYearDropdown) {
+            <div class="month-dropdown">
+              @for (year of years; track year) {
+                <button
+                  class="month-option"
+                  [class.active]="selectedYear === year"
+                  (click)="selectYear(year)">
+                  {{ year }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="month-dropdown-wrapper">
+          <button class="month-trigger" (click)="toggleDropdown($event)">
+            <span>{{ months[selectedMonth] }}</span>
+            <span class="material-icons-round">
+              {{ showMonthDropdown ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+          @if (showMonthDropdown) {
+            <div class="month-dropdown">
+              @for (month of months; track $index) {
+                <button
+                  class="month-option"
+                  [class.active]="selectedMonth === $index"
+                  (click)="selectMonth($index)">
+                  {{ month }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+
       <button class="add-expense-btn" (click)="openForm()">
         <span class="material-icons-round">add</span>
         Añadir gasto
@@ -44,8 +88,8 @@
     </div>
 
     <div class="expense-list">
-      @for (expense of expenses; track expense.name) {
-        <div class="expense-card glass-card">
+@for (expense of filteredExpenses; track expense.name) {
+          <div class="expense-card glass-card">
           <div class="expense-icon" [ngClass]="expense.iconClass">
             {{ expense.icon }}
           </div>

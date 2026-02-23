@@ -1,5 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
 
 interface NewBill {
@@ -9,25 +10,27 @@ interface NewBill {
   period_year: number;
 }
 
-interface Expense {
+export interface Expense {
   name: string;
   paidBy: string;
   amount: number;
   icon: string;
   iconClass: string;
+  period_month: number;
+  period_year: number;
 }
 
 const BILL_TYPES = [
-  { value: 'RENT', label: 'Alquiler', icon: '🏢', iconClass: 'icon-alquiler' },
+  { value: 'RENT',        label: 'Alquiler',     icon: '🏢', iconClass: 'icon-alquiler' },
   { value: 'ELECTRICITY', label: 'Electricidad', icon: '💡', iconClass: 'icon-electric' },
-  { value: 'WATER', label: 'Agua', icon: '💧', iconClass: 'icon-agua' },
-  { value: 'INTERNET', label: 'Internet', icon: '📶', iconClass: 'icon-internet' },
-  { value: 'OTHER', label: 'Otros', icon: '🛒', iconClass: 'icon-varios' },
+  { value: 'WATER',       label: 'Agua',         icon: '💧', iconClass: 'icon-agua'     },
+  { value: 'INTERNET',    label: 'Internet',     icon: '📶', iconClass: 'icon-internet' },
+  { value: 'OTHER',       label: 'Otros',        icon: '🛒', iconClass: 'icon-varios'   },
 ];
 
 @Component({
   selector: 'app-expense-form',
-  imports: [FormsModule, BottomSheet],
+  imports: [FormsModule, CommonModule, BottomSheet],
   templateUrl: './expense-form.html',
   styleUrl: './expense-form.scss',
 })
@@ -64,6 +67,8 @@ export class ExpenseForm {
       amount: this.newBill.amount!,
       icon: type.icon,
       iconClass: type.iconClass,
+      period_month: this.newBill.period_month,
+      period_year: this.newBill.period_year,
     });
     this.show = false;
   }

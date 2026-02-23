@@ -117,6 +117,14 @@
   justify-content: space-between;
   margin-bottom: 0.75rem;
   padding-left: 4px;
+  overflow: visible;
+}
+
+.month-selectors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: visible;
 }
 
 .month-label {
@@ -151,6 +159,76 @@
 
   &:active {
     transform: scale(0.97);
+  }
+}
+
+/* ── Selector de mes y año ── */
+.year-dropdown-wrapper,
+.month-dropdown-wrapper {
+  position: relative;
+}
+
+.month-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 6px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 20px;
+  color: var(--gray-800);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+
+  .material-icons-round { font-size: 18px; color: var(--gray-500); }
+
+  &:hover {
+    border-color: var(--emerald-400);
+    color: var(--emerald-500);
+
+    .material-icons-round { color: var(--emerald-500); }
+  }
+}
+
+.month-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 999;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  min-width: 160px;
+  animation: fadeIn 0.15s ease;
+}
+
+.month-option {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: block;
+
+  &:hover {
+    background: var(--gray-50);
+    color: var(--emerald-500);
+  }
+
+  &.active {
+    color: var(--emerald-500);
+    background: #ecfdf5;
   }
 }
 
@@ -274,5 +352,10 @@
 
 @keyframes fadeDown {
   from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
