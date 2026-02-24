@@ -49,7 +49,7 @@
     flex-direction: column;
     gap: 10px;
     /* Respeta el notch/cámara y barra de estado del móvil */
-    padding: calc(env(safe-area-inset-top, 16px) + 16px) 16px 0;
+    padding: calc(env(safe-area-inset-top, 6px) + 6px) 16px 0;
     pointer-events: none;
 
     >* {
@@ -144,19 +144,85 @@
     }
 }
 
-/* Tags de etiquetas */
-.tags-scroll {
+/* ---- Tags flotantes ---- */
+.tags-float-row {
     display: flex;
+    align-items: center;
     gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 2px;
-    scrollbar-width: none;
+}
 
-    &::-webkit-scrollbar {
-        display: none;
+.tags-active-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+}
+
+/* Botón añadir etiqueta */
+.tags-add-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1.5px solid var(--emerald-400);
+    background: rgba(52, 211, 153, 0.08);
+    color: var(--emerald-600);
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+
+    .add-icon {
+        font-size: 1.05rem;
+        line-height: 1;
+    }
+
+    .add-label {
+        font-size: 0.72rem;
+    }
+
+    &:hover {
+        background: rgba(52, 211, 153, 0.18);
+        border-color: var(--emerald-500);
+    }
+
+    &--open {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+
+        &:hover {
+            background: #dc2626;
+        }
     }
 }
 
+/* Panel de selección de etiquetas (colapsable, flotante) */
+.tags-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 14px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        padding 0.25s ease;
+
+    &--open {
+        max-height: 200px;
+        opacity: 1;
+        padding: 14px;
+    }
+}
+
+/* Chip genérico */
 .tag-chip {
     flex-shrink: 0;
     padding: 5px 12px;
@@ -170,6 +236,9 @@
     color: var(--gray-500);
     transition: all 0.2s ease;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 
     &:hover {
         border-color: var(--emerald-400);
@@ -188,6 +257,12 @@
             color: white;
         }
     }
+}
+
+.chip-remove {
+    font-size: 0.6rem;
+    opacity: 0.75;
+    line-height: 1;
 }
 
 /* Badge de resultados */

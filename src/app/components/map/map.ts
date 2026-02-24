@@ -120,6 +120,7 @@ export class Map implements AfterViewInit, OnDestroy {
   precioMax = signal(2500);
   etiquetasSeleccionadas = signal<string[]>([]);
   pisoActivo = signal<Piso | null>(null);
+  tagsExpanded = signal(false);
 
   allEtiquetas = ALL_ETIQUETAS;
 
