@@ -1,0 +1,26 @@
+{
+  "/users": {
+    "target": "http://26.173.14.24:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/students": {
+    "target": "http://26.173.14.24:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/owners": {
+    "target": "http://26.173.14.24:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/admin": {
+    "target": "http://26.173.14.24:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
