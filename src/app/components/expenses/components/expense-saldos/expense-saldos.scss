@@ -1,0 +1,227 @@
+.saldos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: slideUp 0.5s ease;
+}
+
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 4px;
+  margin-top: 0.25rem;
+}
+
+/* ── Banners resumen ── */
+.mi-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.resumen-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: 16px;
+}
+
+/* Estados suaves */
+.resumen-banner.verde {
+  background: #ecfdf5;
+}
+
+.resumen-banner.rojo {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+
+.resumen-banner.neutro {
+  background: var(--gray-50);
+}
+
+.banner-emoji {
+  font-size: 1.75rem;
+}
+
+.banner-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.banner-titulo {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+.banner-cantidad {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--gray-800);
+}
+
+.banner-subtitulo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+/* ── Tarjetas ── */
+.tarjetas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.tarjeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+
+  &.saldada {
+    opacity: 0.55;
+  }
+}
+
+.tarjeta-avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--emerald-400), var(--emerald-600));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+
+  &.gris {
+    background: var(--gray-200);
+    color: var(--gray-500);
+  }
+}
+
+.tarjeta-avatar.yo {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+}
+
+.tarjeta-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tarjeta-nombre {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.tarjeta-pagado {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 1px;
+}
+
+.tarjeta-frase {
+  font-size: 0.88rem;
+  color: var(--gray-600);
+  font-weight: 500;
+
+  strong {
+    color: var(--gray-800);
+    font-weight: 700;
+  }
+}
+
+.tarjeta-cantidad {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+
+  &.verde { color: #059669; }
+  &.rojo  { color: #dc2626; }
+  &.gris  { color: var(--gray-400); }
+}
+
+/* ── Botones ── */
+.btn-saldar {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  background: #d1fae5;
+  color: #059669;
+
+  &:hover {
+    background: #a7f3d0;
+  }
+
+  &.pagado {
+    background: #fee2e2;
+    color: #dc2626;
+
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+.saldada-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.balance-chip {
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: -0.02em;
+
+  &.positivo {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  &.negativo {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  &.neutro {
+    background: var(--gray-50);
+    color: var(--gray-400);
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(16px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

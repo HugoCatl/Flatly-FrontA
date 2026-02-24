@@ -1,1 +1,119 @@
-<p>expense-saldos works!</p>
+<div class="saldos-container">
+
+  <!-- Resumen tuyo -->
+  <div class="mi-resumen">
+    @if (totalMePagan > 0) {
+      <div class="resumen-banner verde glass-card">
+        <span class="banner-emoji">💰</span>
+        <div class="banner-texto">
+          <span class="banner-titulo">Te deben en total</span>
+          <span class="banner-cantidad">{{ totalMePagan | number:'1.2-2' }} €</span>
+        </div>
+      </div>
+    }
+    @if (totalYoDebo > 0) {
+      <div class="resumen-banner rojo glass-card">
+        <span class="banner-emoji">⚠️</span>
+        <div class="banner-texto">
+          <span class="banner-titulo">Debes en total</span>
+          <span class="banner-cantidad">{{ totalYoDebo | number:'1.2-2' }} €</span>
+        </div>
+      </div>
+    }
+    @if (totalMePagan === 0 && totalYoDebo === 0) {
+      <div class="resumen-banner neutro glass-card">
+        <span class="banner-emoji">🎉</span>
+        <div class="banner-texto">
+          <span class="banner-titulo">¡Estás al día!</span>
+          <span class="banner-subtitulo">No tienes deudas pendientes</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Balance de todos -->
+  <div class="section-title">Balance del grupo</div>
+  <div class="tarjetas">
+    @for (b of balances; track b.nombre) {
+      <div class="tarjeta glass-card">
+        <div class="tarjeta-avatar" [class.yo]="b.nombre === yo">
+          {{ b.nombre.charAt(0) }}
+        </div>
+        <div class="tarjeta-info">
+          <span class="tarjeta-nombre">
+            {{ b.nombre === yo ? 'Tú' : b.nombre }}
+          </span>
+          <span class="tarjeta-pagado">Ha pagado {{ b.pagado | number:'1.2-2' }} €</span>
+        </div>
+        <span class="balance-chip"
+          [class.positivo]="b.balance > 0"
+          [class.negativo]="b.balance < 0"
+          [class.neutro]="b.balance === 0">
+          {{ b.balance > 0 ? '+' : '' }}{{ b.balance | number:'1.2-2' }} €
+        </span>
+      </div>
+    }
+  </div>
+
+  <!-- Lo que te deben -->
+  @if (mePagan.length > 0) {
+    <div class="section-title">Te deben</div>
+    <div class="tarjetas">
+      @for (t of mePagan; track t.de) {
+        <div class="tarjeta glass-card">
+          <div class="tarjeta-avatar">{{ t.de.charAt(0) }}</div>
+          <div class="tarjeta-info">
+            <span class="tarjeta-frase">
+              <strong>{{ t.de }}</strong> te debe
+            </span>
+            <span class="tarjeta-cantidad verde">{{ t.cantidad | number:'1.2-2' }} €</span>
+          </div>
+          <button class="btn-saldar" (click)="marcarSaldada(t)">
+            Cobrado ✓
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Lo que debes -->
+  @if (yoDebo.length > 0) {
+    <div class="section-title">Debes pagar</div>
+    <div class="tarjetas">
+      @for (t of yoDebo; track t.a) {
+        <div class="tarjeta glass-card">
+          <div class="tarjeta-avatar">{{ t.a.charAt(0) }}</div>
+          <div class="tarjeta-info">
+            <span class="tarjeta-frase">
+              Le debes a <strong>{{ t.a }}</strong>
+            </span>
+            <span class="tarjeta-cantidad rojo">{{ t.cantidad | number:'1.2-2' }} €</span>
+          </div>
+          <button class="btn-saldar pagado" (click)="marcarSaldada(t)">
+            Pagado ✓
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Historial -->
+  @if (historial.length > 0) {
+    <div class="section-title">Historial</div>
+    <div class="tarjetas">
+      @for (t of historial; track t.de + t.a) {
+        <div class="tarjeta glass-card saldada">
+          <div class="tarjeta-avatar gris">{{ t.de.charAt(0) }}</div>
+          <div class="tarjeta-info">
+            <span class="tarjeta-frase">
+              <strong>{{ t.de }}</strong> pagó a <strong>{{ t.a }}</strong>
+            </span>
+            <span class="tarjeta-cantidad gris">{{ t.cantidad | number:'1.2-2' }} €</span>
+          </div>
+          <span class="saldada-badge">✓ Saldado</span>
+        </div>
+      }
+    </div>
+  }
+
+</div>

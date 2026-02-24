@@ -108,13 +108,15 @@
       }
     </div>
 
+  } @else if (activeTab === 'saldos') {
+    <app-expense-saldos [expenses]="expenses"></app-expense-saldos>
   } @else if (activeTab === 'estadisticas') {
-  <app-expense-stats [expenses]="expenses"></app-expense-stats>
-} @else {
-  <div class="empty-tab glass-card">
-    <p>Próximamente...</p>
-  </div>
-}
+    <app-expense-stats [expenses]="expenses"></app-expense-stats>
+  } @else {
+    <div class="empty-tab glass-card">
+      <p>Próximamente...</p>
+    </div>
+  }
 
 </div>
 
