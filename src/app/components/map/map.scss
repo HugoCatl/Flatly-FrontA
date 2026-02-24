@@ -123,11 +123,6 @@
     appearance: none;
     height: 4px;
     border-radius: 4px;
-    background: linear-gradient(to right,
-            var(--emerald-500) 0%,
-            var(--emerald-500) var(--value, 50%),
-            var(--gray-200) var(--value, 50%),
-            var(--gray-200) 100%);
     outline: none;
     cursor: pointer;
 

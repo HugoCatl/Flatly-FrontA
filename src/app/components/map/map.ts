@@ -225,4 +225,17 @@ export class Map implements AfterViewInit, OnDestroy {
   get precioLabel(): string {
     return this.precioMax() >= 2500 ? 'Sin límite' : `€${this.precioMax()}`;
   }
+
+  get sliderFillStyle(): { background: string } {
+    const min = 400;
+    const max = 2500;
+    const pct = ((this.precioMax() - min) / (max - min)) * 100;
+    return {
+      background: `linear-gradient(to right,
+        var(--emerald-500) 0%,
+        var(--emerald-500) ${pct}%,
+        var(--gray-200) ${pct}%,
+        var(--gray-200) 100%)`
+    };
+  }
 }
