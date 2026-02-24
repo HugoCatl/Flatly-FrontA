@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ExpenseForm, Expense } from './components/expense-form/expense-form';
 import { ExpenseDetail } from './components/expense-detail/expense-detail';
 import { ExpenseStats } from './components/expense-stats/expense-stats';
+import { ExpenseSaldos } from './components/expense-saldos/expense-saldos';
 
 @Component({
   selector: 'app-expenses',
-  imports: [CommonModule, ExpenseForm, ExpenseDetail, ExpenseStats],
+  imports: [CommonModule, ExpenseForm, ExpenseDetail, ExpenseStats, ExpenseSaldos],
   templateUrl: './expenses.html',
   styleUrl: './expenses.scss',
 })

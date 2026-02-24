@@ -88,28 +88,39 @@ export class ExpenseStats {
   monthlyChartData: ChartData = { labels: [], datasets: [] };
   personChartData: ChartData = { labels: [], datasets: [] };
 
-  monthlyChartOptions: ChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => `${((ctx.parsed as any).y ?? ctx.parsed ?? 0).toFixed(2)} €`
+  get monthlyChartOptions(): ChartOptions {
+    const isPie = this.config.chartType === 'pie';
+    
+    return {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false,
+          labels: { generateLabels: () => [] }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${((ctx.parsed as any).y ?? ctx.parsed ?? 0).toFixed(2)} €`
+          }
         }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { callback: value => `${value} €` },
-        grid: { color: 'rgba(0,0,0,0.05)' }
       },
-      x: { grid: { display: false } }
-    }
-  };
+      scales: isPie ? {
+        x: { display: false },
+        y: { display: false }
+      } : {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: value => `${value} €` },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: { grid: { display: false } }
+      }
+    };
+  }
 
   get personChartOptions(): ChartOptions {
     const isPie = this.config.chartType === 'pie';
+    
     return {
       responsive: true,
       plugins: {
@@ -120,7 +131,10 @@ export class ExpenseStats {
           }
         }
       },
-      scales: isPie ? {} : {
+      scales: isPie ? {
+        x: { display: false },
+        y: { display: false }
+      } : {
         y: {
           beginAtZero: true,
           ticks: { callback: value => `${value} €` },
