@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // 1. IMPORTANTE: Importar RouterOutlet
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -12,9 +13,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
   styleUrls: ['./main-layout.scss']
 })
 export class MainLayoutComponent { 
-  showLogoutModal = false;
+  readonly theme = inject(ThemeService);
+  private router = inject(Router);
 
-  constructor(private router: Router) {}
+  showLogoutModal = false;
 
   confirmLogout(): void {
     this.showLogoutModal = true;
