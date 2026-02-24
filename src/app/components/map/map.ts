@@ -223,6 +223,13 @@ export class Map implements AfterViewInit, OnDestroy {
     this.pisoActivo.set(null);
   }
 
+  clearFilters() {
+    this.etiquetasSeleccionadas.set([]);
+    this.precioMax.set(2500);
+    this.tagsExpanded.set(false);
+    this.applyFilters();
+  }
+
   get precioLabel(): string {
     return this.precioMax() >= 2500 ? 'Sin límite' : `€${this.precioMax()}`;
   }

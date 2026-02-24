@@ -33,6 +33,9 @@
                 <span class="add-icon">{{ tagsExpanded() ? '✕' : '+' }}</span>
                 <span class="add-label">{{ tagsExpanded() ? 'Cerrar' : 'Filtros' }}</span>
             </button>
+            <button class="tags-clear-btn" *ngIf="tagsExpanded()" (click)="clearFilters()" aria-label="Limpiar filtros">
+                <span class="material-icons-round">filter_list_off</span>
+            </button>
             <div class="tags-active-chips">
                 <span *ngFor="let tag of etiquetasSeleccionadas()" class="tag-chip tag-chip--active"
                     (click)="toggleEtiqueta(tag)">
@@ -49,10 +52,6 @@
             </button>
         </div>
 
-        <!-- Contador de resultados -->
-        <div class="results-badge">
-            <span>{{ pisosFiltrados().length }} pisos encontrados</span>
-        </div>
 
     </div>
 
