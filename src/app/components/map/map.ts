@@ -120,6 +120,7 @@ export class Map implements AfterViewInit, OnDestroy {
   precioMax = signal(2500);
   etiquetasSeleccionadas = signal<string[]>([]);
   pisoActivo = signal<Piso | null>(null);
+  tagsExpanded = signal(false);
 
   allEtiquetas = ALL_ETIQUETAS;
 
@@ -220,6 +221,13 @@ export class Map implements AfterViewInit, OnDestroy {
 
   cerrarPreview() {
     this.pisoActivo.set(null);
+  }
+
+  clearFilters() {
+    this.etiquetasSeleccionadas.set([]);
+    this.precioMax.set(2500);
+    this.tagsExpanded.set(false);
+    this.applyFilters();
   }
 
   get precioLabel(): string {

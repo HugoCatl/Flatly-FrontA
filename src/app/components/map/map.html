@@ -13,34 +13,45 @@
                 (ngModelChange)="busqueda.set($event); onBusquedaChange()" id="map-search-input" class="search-input" />
         </div>
 
-        <!-- Filtros -->
+        <!-- Filtros: solo precio -->
         <div class="filters-row glass-panel">
-
-            <!-- Precio -->
             <div class="filter-group">
                 <div class="filter-label">
-                    <span>💶 Precio máx</span>
+                    <span>Precio máx</span>
                     <span class="filter-value">{{ precioLabel }}</span>
                 </div>
                 <input type="range" min="400" max="2500" step="50" [ngModel]="precioMax()"
                     (ngModelChange)="precioMax.set($event); onPrecioChange()" class="price-slider" id="price-slider"
                     [style]="sliderFillStyle" />
             </div>
+        </div>
 
-            <!-- Etiquetas -->
-            <div class="tags-scroll">
-                <button *ngFor="let tag of allEtiquetas" class="tag-chip"
-                    [class.tag-chip--active]="isEtiquetaActiva(tag)" (click)="toggleEtiqueta(tag)">
-                    {{ tag }}
-                </button>
+        <!-- Botón flotante Filtros + chips activos -->
+        <div class="tags-float-row">
+            <button class="tags-add-btn" [class.tags-add-btn--open]="tagsExpanded()"
+                (click)="tagsExpanded.set(!tagsExpanded())" aria-label="Añadir etiqueta">
+                <span class="add-icon">{{ tagsExpanded() ? '✕' : '+' }}</span>
+                <span class="add-label">{{ tagsExpanded() ? 'Cerrar' : 'Filtros' }}</span>
+            </button>
+            <button class="tags-clear-btn" *ngIf="tagsExpanded()" (click)="clearFilters()" aria-label="Limpiar filtros">
+                <span class="material-icons-round">filter_list_off</span>
+            </button>
+            <div class="tags-active-chips">
+                <span *ngFor="let tag of etiquetasSeleccionadas()" class="tag-chip tag-chip--active"
+                    (click)="toggleEtiqueta(tag)">
+                    {{ tag }} <span class="chip-remove">✕</span>
+                </span>
             </div>
-
         </div>
 
-        <!-- Contador de resultados -->
-        <div class="results-badge">
-            <span>{{ pisosFiltrados().length }} pisos encontrados</span>
+        <!-- Panel expandible flotante con todas las etiquetas -->
+        <div class="tags-picker glass-panel" [class.tags-picker--open]="tagsExpanded()">
+            <button *ngFor="let tag of allEtiquetas" class="tag-chip" [class.tag-chip--active]="isEtiquetaActiva(tag)"
+                (click)="toggleEtiqueta(tag)">
+                {{ tag }}
+            </button>
         </div>
+
 
     </div>
 
