@@ -1,0 +1,120 @@
+<div class="stats-container">
+
+  <!-- Cabecera con botón config -->
+  <div class="stats-header">
+    <span class="stats-title">Estadísticas</span>
+    <button class="config-btn" (click)="openConfig()">
+      <span class="material-icons-round">tune</span>
+      Configurar
+    </button>
+  </div>
+
+  <!-- Gráfica por mes -->
+  <div class="stat-card glass-card">
+    <div class="stat-header">
+      <span class="stat-icon">📅</span>
+      <div>
+        <h3 class="stat-title">Gastos por mes</h3>
+        <p class="stat-subtitle">Total acumulado mensual</p>
+      </div>
+    </div>
+    <div class="chart-wrapper">
+      <canvas baseChart
+        [data]="monthlyChartData"
+        [options]="monthlyChartOptions"
+        [type]="config.chartType">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Gráfica por persona -->
+  <div class="stat-card glass-card">
+    <div class="stat-header">
+      <span class="stat-icon">👥</span>
+      <div>
+        <h3 class="stat-title">Gastos por persona</h3>
+        <p class="stat-subtitle">Total pagado por cada miembro</p>
+      </div>
+    </div>
+    <div class="chart-wrapper">
+      <canvas baseChart
+        [data]="personChartData"
+        [options]="personChartOptions"
+        [type]="config.chartType">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="stats-summary">
+    <div class="summary-stat glass-card">
+      <span class="summary-stat-label">Total registrado</span>
+      <span class="summary-stat-value">{{ totalAll | number:'1.2-2' }} €</span>
+    </div>
+    <div class="summary-stat glass-card">
+      <span class="summary-stat-label">Nº de gastos</span>
+      <span class="summary-stat-value">{{ expenseCount }}</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Config bottom sheet -->
+<app-bottom-sheet
+  [show]="showConfig"
+  [title]="'Configurar gráficas'"
+  [confirmLabel]="'Aplicar'"
+  [confirmDisabled]="false"
+  (onConfirm)="applyConfig()"
+  (onDismiss)="dismissConfig()">
+
+  <!-- Tipo de gráfica -->
+  <div class="config-field">
+    <label class="field-label">Tipo de gráfica</label>
+    <div class="chart-type-grid">
+      @for (type of chartTypes; track type.value) {
+        <button
+          class="chart-type-btn"
+          [class.selected]="config.chartType === type.value"
+          (click)="config.chartType = type.value">
+          <span>{{ type.icon }}</span>
+          <span>{{ type.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Rango de meses -->
+  <div class="config-field">
+    <label class="field-label">Desde</label>
+    <div class="period-row">
+      <select class="period-select" [(ngModel)]="config.fromMonth">
+        @for (month of months; track $index) {
+          <option [value]="$index">{{ month }}</option>
+        }
+      </select>
+      <select class="period-select" [(ngModel)]="config.fromYear">
+        @for (year of years; track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="config-field">
+    <label class="field-label">Hasta</label>
+    <div class="period-row">
+      <select class="period-select" [(ngModel)]="config.toMonth">
+        @for (month of months; track $index) {
+          <option [value]="$index">{{ month }}</option>
+        }
+      </select>
+      <select class="period-select" [(ngModel)]="config.toYear">
+        @for (year of years; track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+</app-bottom-sheet>

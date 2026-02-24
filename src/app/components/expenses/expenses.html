@@ -108,11 +108,14 @@
       }
     </div>
 
-  } @else {
-    <div class="empty-tab glass-card">
-      <p>Próximamente...</p>
-    </div>
-  }
+  } @else if (activeTab === 'estadisticas') {
+  <app-expense-stats [expenses]="expenses"></app-expense-stats>
+} @else {
+  <div class="empty-tab glass-card">
+    <span class="empty-icon">🚧</span>
+    <p>Sección en construcción</p>
+  </div>
+}
 
 </div>
 
