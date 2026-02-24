@@ -1,0 +1,121 @@
+========================================================
+  DOCUMENTACIÓN DE CAMBIOS - FLATLY FRONTEND (Angular 21)
+========================================================
+
+------------------------------------------------------------------------
+1. EL PROBLEMA
+------------------------------------------------------------------------
+
+Angular 21 NO incluye zone.js por defecto.
+
+zone.js es la librería que en versiones anteriores de Angular
+"escuchaba" automáticamente cualquier cambio (HTTP, setTimeout, eventos)
+y actualizaba la vista. Sin ella, cuando una petición HTTP terminaba y
+se modificaba una propiedad del componente, Angular no se enteraba
+y la vista nunca se actualizaba.
+
+Síntoma: los datos llegaban correctamente a la consola del navegador
+pero la pantalla no mostraba nada (se quedaba en "Cargando tus datos...").
+
+------------------------------------------------------------------------
+2. CAMBIOS APLICADOS
+------------------------------------------------------------------------
+
+ARCHIVO: src/app/app.config.ts
+  - Añadido: provideZonelessChangeDetection()
+  - Esto le dice a Angular que opere en modo zoneless correctamente.
+
+ARCHIVO: src/app/components/home/home.ts
+  - Las propiedades user, expenses, loading convertidas a signal().
+  - Se eliminó ChangeDetectorRef (ya no hace falta con signals).
+
+ARCHIVO: src/app/components/home/home.html
+  - Sustituido *ngIf / *ngFor / ng-template por @if / @for / @else.
+  - Las variables del template ahora se leen con () → loading(), user()...
+
+ARCHIVO: src/environments/environment.development.ts
+  - apiUrl apunta a 'http://localhost:4200' (usa el proxy, no la IP directa).
+
+ARCHIVO: proxy.conf.json (ya existía)
+  - Redirige /users, /students, /owners, /admin → http://26.173.14.24:8080
+
+COMANDO para arrancar:
+  ng serve --proxy-config proxy.conf.json
+
+------------------------------------------------------------------------
+3. CÓMO HACER FUTUROS COMPONENTES
+------------------------------------------------------------------------
+
+--- TypeScript (.ts) ---
+
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { DataService } from '../../services/data';
+
+@Component({
+  selector: 'app-mi-componente',
+  standalone: true,
+  imports: [...],
+  templateUrl: './mi-componente.html',
+  styleUrls: ['./mi-componente.scss']
+})
+export class MiComponente implements OnInit {
+  private dataService = inject(DataService);
+
+  // Declara las propiedades reactivas como signals
+  datos = signal<MiTipo[]>([]);
+  loading = signal(true);
+  error = signal<string | null>(null);
+
+  ngOnInit() {
+    this.dataService.getMisDatos().subscribe({
+      next: (res) => {
+        this.datos.set(res);       // .set() para asignar
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.error.set('Error al cargar los datos');
+        this.loading.set(false);
+      }
+    });
+  }
+}
+
+--- HTML (.html) ---
+
+@if (loading()) {
+  <div class="loading-screen">
+    <p>Cargando...</p>
+  </div>
+} @else if (error()) {
+  <div class="error-state">
+    <p>{{ error() }}</p>
+  </div>
+} @else {
+  @for (item of datos(); track item.id) {
+    <div>{{ item.nombre }}</div>
+  }
+
+  @if (datos().length === 0) {
+    <p>No hay datos.</p>
+  }
+}
+
+------------------------------------------------------------------------
+4. REGLAS CLAVE
+------------------------------------------------------------------------
+
+  signal()        →  declarar una propiedad reactiva
+  .set(valor)     →  asignar un nuevo valor
+  .update(fn)     →  modificar basándose en el valor anterior
+                     ej: this.lista.update(prev => [...prev, nuevoItem])
+  nombre()        →  leer el valor en el HTML (con paréntesis)
+  @if / @for      →  sintaxis moderna, en lugar de *ngIf / *ngFor
+  track item.id   →  obligatorio en @for, usar el id único del objeto
+
+  NO usar:
+    - *ngIf / *ngFor  (sintaxis antigua)
+    - ChangeDetectorRef + detectChanges()  (parche, no la solución)
+    - propiedades normales (string, boolean, array) para datos reactivos
+
+========================================================
