@@ -390,3 +390,171 @@ h3 {
     font-weight: 800;
     letter-spacing: -0.02em;
 }
+
+/* ========== DARK MODE ========== */
+html.dark {
+  --white: #1E293B;
+  --gray-50: #0F172A;
+  --gray-200: #334155;
+  --gray-400: #64748B;
+  --gray-500: #94A3B8;
+  --gray-800: #F1F5F9;
+  --emerald-glow: rgba(16, 185, 129, 0.15);
+
+  body {
+    color: var(--gray-800);
+  }
+
+  // Fondo
+  .bg-scene {
+    background: #0F172A;
+  }
+  .bg-scene .orb-1 { opacity: 0.08; }
+  .bg-scene .orb-2 { opacity: 0.06; }
+  .bg-scene .orb-3 { opacity: 0.05; }
+  .bg-scene .orb-4 { opacity: 0.04; }
+
+  // Glass card
+  .glass-card {
+    background: rgba(15, 23, 42, 0.75) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  // Glass panel (mapa)
+  .glass-panel {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  // Top bar
+  .top-bar {
+    background: rgba(15, 23, 42, 0.88) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  // Bottom nav
+  .bottom-nav {
+    background: rgba(15, 23, 42, 0.94) !important;
+    border-top-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  // Content area
+  .content-area {
+    background-color: #0F172A !important;
+  }
+
+  // Modal de logout
+  .modal {
+    background: #1E293B !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    &__btn--cancel {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: #94A3B8 !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.12) !important;
+      }
+    }
+  }
+
+  // Bottom sheet
+  .bottom-sheet {
+    background: #1E293B !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .sheet-back {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  // Inputs globales
+  .input-field input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--gray-200) !important;
+    color: var(--gray-800) !important;
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+  }
+
+  // Input del mapa
+  .search-input {
+    color: var(--gray-800) !important;
+    background: transparent !important;
+
+    &::placeholder {
+      color: var(--gray-400) !important;
+    }
+  }
+
+  // Botón Google
+  .btn-google {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--gray-200) !important;
+    color: var(--gray-800) !important;
+  }
+
+  // Botón disabled
+  .btn-primary:disabled {
+    background: #334155 !important;
+    color: #64748B !important;
+  }
+
+  // Tags del mapa
+  .tag-chip {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--gray-200) !important;
+    color: var(--gray-500) !important;
+
+    &:hover {
+      border-color: var(--emerald-400) !important;
+      color: var(--emerald-400) !important;
+      background: rgba(52, 211, 153, 0.08) !important;
+    }
+
+    &.tag-chip--active {
+      background: var(--emerald-500) !important;
+      color: white !important;
+      border-color: var(--emerald-500) !important;
+    }
+  }
+
+  // Badge resultados mapa
+  .results-badge {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    color: var(--emerald-400) !important;
+  }
+
+  // Preview piso
+  .preview-close {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: var(--gray-400) !important;
+
+    &:hover {
+      background: var(--gray-200) !important;
+    }
+  }
+
+  .preview-titulo {
+    color: var(--gray-800) !important;
+  }
+
+  // Nav items mapa
+  .map-nav-item {
+    color: var(--gray-400) !important;
+
+    &:hover, &.map-nav-item--active {
+      color: var(--emerald-500) !important;
+    }
+  }
+
+  ::selection {
+    background: rgba(16, 185, 129, 0.3);
+  }
+}
