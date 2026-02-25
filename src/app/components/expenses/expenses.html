@@ -11,11 +11,11 @@
   <div class="summary-row">
     <div class="summary-card glass-card">
       <span class="summary-label">Mis Gastos</span>
-      <span class="summary-amount mine">{{ myExpenses | number:'1.2-2' }} €</span>
+      <span class="summary-amount mine">{{ myExpenses() | number:'1.2-2' }} €</span>
     </div>
     <div class="summary-card glass-card">
       <span class="summary-label">Total Piso</span>
-      <span class="summary-amount total">{{ totalExpenses | number:'1.2-2' }} €</span>
+      <span class="summary-amount total">{{ totalExpenses() | number:'1.2-2' }} €</span>
     </div>
   </div>
 
@@ -24,7 +24,7 @@
     @for (tab of tabs; track tab.key) {
       <button
         class="tab"
-        [class.active]="activeTab === tab.key"
+        [class.active]="activeTab() === tab.key"
         (click)="setTab(tab.key)">
         {{ tab.label }}
       </button>
@@ -32,24 +32,24 @@
   </div>
 
   <!-- Tab Gastos -->
-  @if (activeTab === 'gastos') {
+  @if (activeTab() === 'gastos') {
 
     <div class="month-row">
       <div class="month-selectors">
 
         <div class="year-dropdown-wrapper">
           <button class="month-trigger" (click)="toggleYearDropdown($event)">
-            <span>{{ selectedYear }}</span>
+            <span>{{ selectedYear() }}</span>
             <span class="material-icons-round">
-              {{ showYearDropdown ? 'expand_less' : 'expand_more' }}
+              {{ showYearDropdown() ? 'expand_less' : 'expand_more' }}
             </span>
           </button>
-          @if (showYearDropdown) {
+          @if (showYearDropdown()) {
             <div class="month-dropdown">
               @for (year of years; track year) {
                 <button
                   class="month-option"
-                  [class.active]="selectedYear === year"
+                  [class.active]="selectedYear() === year"
                   (click)="selectYear(year)">
                   {{ year }}
                 </button>
@@ -60,17 +60,17 @@
 
         <div class="month-dropdown-wrapper">
           <button class="month-trigger" (click)="toggleDropdown($event)">
-            <span>{{ months[selectedMonth] }}</span>
+            <span>{{ months[selectedMonth()] }}</span>
             <span class="material-icons-round">
-              {{ showMonthDropdown ? 'expand_less' : 'expand_more' }}
+              {{ showMonthDropdown() ? 'expand_less' : 'expand_more' }}
             </span>
           </button>
-          @if (showMonthDropdown) {
+          @if (showMonthDropdown()) {
             <div class="month-dropdown">
               @for (month of months; track $index) {
                 <button
                   class="month-option"
-                  [class.active]="selectedMonth === $index"
+                  [class.active]="selectedMonth() === $index"
                   (click)="selectMonth($index)">
                   {{ month }}
                 </button>
@@ -88,12 +88,12 @@
     </div>
 
     <div class="expense-list">
-      @if (filteredExpenses.length === 0) {
+      @if (filteredExpenses().length === 0) {
         <div class="empty-month glass-card">
-          <p>No hay gastos en {{ months[selectedMonth] }} de {{ selectedYear }}</p>
+          <p>No hay gastos en {{ months[selectedMonth()] }} de {{ selectedYear() }}</p>
         </div>
       } @else {
-        @for (expense of filteredExpenses; track expense.name) {
+        @for (expense of filteredExpenses(); track expense.name) {
           <div class="expense-card glass-card" (click)="openDetail(expense)">
             <div class="expense-icon" [ngClass]="expense.iconClass">
               {{ expense.icon }}
@@ -108,10 +108,10 @@
       }
     </div>
 
-  } @else if (activeTab === 'saldos') {
-    <app-expense-saldos [expenses]="expenses"></app-expense-saldos>
-  } @else if (activeTab === 'estadisticas') {
-    <app-expense-stats [expenses]="expenses"></app-expense-stats>
+  } @else if (activeTab() === 'saldos') {
+    <app-expense-saldos [expenses]="expenses()"></app-expense-saldos>
+  } @else if (activeTab() === 'estadisticas') {
+    <app-expense-stats [expenses]="expenses()"></app-expense-stats>
   } @else {
     <div class="empty-tab glass-card">
       <p>Próximamente...</p>
@@ -121,9 +121,9 @@
 </div>
 
 <!-- Detalle del gasto -->
-@if (selectedExpense) {
+@if (selectedExpense()) {
   <app-expense-detail
-    [expense]="selectedExpense"
+    [expense]="selectedExpense()!"
     (onClose)="closeDetail()"
     (onDelete)="onExpenseDeleted($event)">
   </app-expense-detail>
