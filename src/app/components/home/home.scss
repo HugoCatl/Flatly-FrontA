@@ -1,0 +1,259 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%);
+}
+
+/* ── Loading ── */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-400);
+  }
+}
+
+/* ── Container ── */
+.home-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Hero ── */
+.hero-card {
+  background: linear-gradient(135deg, #10B981, #059669);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+
+.hero-content {
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.5rem;
+  }
+}
+
+.pill {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Section title ── */
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 4px;
+  margin-top: 0.5rem;
+}
+
+/* ── Cards base ── */
+.card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Summary card ── */
+.summary-card {
+  padding: 1.25rem;
+}
+
+.amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.currency {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gray-500);
+}
+
+.amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gray-800);
+  letter-spacing: -0.04em;
+}
+
+.badge-success {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: auto;
+}
+
+.progress-container {
+  height: 8px;
+  background: var(--gray-100);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #34D399);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-400);
+}
+
+/* ── Pending list ── */
+.pending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.payment-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+}
+
+.payment-icon {
+  font-size: 1.4rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #ecfdf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.payment-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.payment-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.payment-date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-400);
+}
+
+.payment-amount {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--gray-800);
+  letter-spacing: -0.02em;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+
+  p {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    margin: 0;
+  }
+}
+
+/* ── Actions grid ── */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.action-card {
+  padding: 1.25rem;
+  border-radius: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &.blue {
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  }
+
+  &.pink {
+    background: linear-gradient(135deg, #EC4899, #F43F5E);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.3);
+  }
+
+  .action-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 2px;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+  }
+}
