@@ -3,10 +3,35 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Usuario, Propiedad, Factura } from '../models/flatly';
 
+type Role = 'ADMIN' | 'USER' | 'PROPIETARIO';
+
+export interface User {
+  id?: number;
+  role: Role;
+  name: string;
+  email: string;
+  password_hash: string;
+  created_at: Date;
+  phone?: string;
+  avatarUrl: string;
+}
+
+interface Expense {
+  name: string;
+  paidBy: string;
+  amount: number;
+  icon: string;
+  iconClass: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DataService {
   private http = inject(HttpClient);
   private readonly url = environment.apiUrl;
+
+  user = signal<Usuario | null>(null);
+  expenses = signal<Factura[]>([]);
+  loading = signal(true);
 
   // --- 1. BLOQUE: AUTH & SESIÓN  ---
   register(body: any) { return this.http.post(`${this.url}/users/auth/register`, body); }
@@ -55,4 +80,38 @@ export class DataService {
     return this.http.put(`${this.url}/admin/users/${id}/role`, { newRole });
   }
   adminGetStats() { return this.http.get(`${this.url}/admin/stats`); }
+
+  //load
+
+loadHomeData() {
+    this.getMyProfile().subscribe({
+      next: (profile) => {
+        console.log('Perfil cargado con éxito:', profile);
+        this.user.set({
+          ...profile,
+          name: profile.name || localStorage.getItem('user_name') || ''
+        });
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error al cargar perfil:', err);
+        this.loading.set(false);
+
+        if (err.status === 401 || err.status === 403) {
+          alert('Tu sesión ha caducado o no tienes permiso.');
+        }
+      }
+    });
+
+    this.getPendingExpenses().subscribe({
+      next: (list) => {
+        console.log('Gastos cargados:', list);
+        this.expenses.set(list);
+      },
+      error: (err) => console.error('Error al cargar gastos:', err)
+    });
+  }
+
+  //expenses 
+
 }

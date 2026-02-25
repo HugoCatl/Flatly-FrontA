@@ -1,18 +1,7 @@
-import { Component } from '@angular/core';
+import { Component ,inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-type Role = 'ADMIN' | 'USER' | 'PROPIETARIO';
-
-export interface User {
-  id?: number;
-  role: Role;
-  name: string;
-  email: string;
-  password_hash: string;
-  created_at: Date;
-  phone?: string;
-  avatarUrl: string;
-}
+import { DataService } from '../../services/data';
+import { Usuario } from '../../models/flatly';
 
 @Component({
   selector: 'app-profile',
@@ -21,5 +10,10 @@ export interface User {
   styleUrl: './profile.scss',
 })
 export class Profile {
+  private dataService = inject(DataService);
+  
+  user =this.dataService.user();
+
+
 
 }

@@ -14,12 +14,13 @@ import { Usuario, Factura } from '../../models/flatly';
 export class HomeComponent implements OnInit {
   private dataService = inject(DataService);
 
-  user = signal<Usuario | null>(null);
-  expenses = signal<Factura[]>([]);
-  loading = signal(true);
+  user = this.dataService.user;
+  expenses = this.dataService.expenses;
+  loading = this.dataService.loading;
+
 
   ngOnInit() {
-    this.loadHomeData();
+    this.dataService.loadHomeData();
   }
 
   loadHomeData() {
@@ -31,11 +32,11 @@ export class HomeComponent implements OnInit {
           ...profile,
           name: profile.name || localStorage.getItem('user_name') || ''
         });
-        this.loading.set(false);
+        this.dataService.loading.set(false);
       },
       error: (err) => {
         console.error('Error al cargar perfil:', err);
-        this.loading.set(false);
+        this.dataService.loading.set(false);
 
         if (err.status === 401 || err.status === 403) {
           alert('Tu sesión ha caducado o no tienes permiso.');
