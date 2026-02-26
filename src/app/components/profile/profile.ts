@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -11,11 +12,13 @@ import { DataService } from '../../services/data';
 })
 export class Profile implements OnInit {
   private dataService = inject(DataService);
+  private router = inject(Router);
 
   user = this.dataService.user;
   loading = this.dataService.loading;
   editing = signal(false);
   saving = signal(false);
+  showLogoutModal = signal(false);
 
   editName = signal('');
   editPhone = signal('');
@@ -55,6 +58,27 @@ export class Profile implements OnInit {
       error: (err) => {
         console.error('Error al guardar perfil:', err);
         this.saving.set(false);
+      }
+    });
+  }
+
+  confirmLogout(): void {
+    this.showLogoutModal.set(true);
+  }
+
+  cancelLogout(): void {
+    this.showLogoutModal.set(false);
+  }
+
+  doLogout(): void {
+    this.dataService.logout().subscribe({
+      next: () => {
+        this.dataService.user.set(null);
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.dataService.user.set(null);
+        this.router.navigate(['/login']);
       }
     });
   }
