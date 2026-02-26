@@ -29,8 +29,8 @@ export class Register {
       this.data.register(this.form.value).subscribe({
         next: (res) => {
           console.log('Registro exitoso:', res);
-          // Tras registrarse, lo mandamos al login para que entre
-          this.router.navigate(['/login']);
+          // Tras registrarse, lo mandamos al onboarding
+          this.router.navigate(['/onboarding']);
         },
         error: (err) => {
           console.error('Error al registrar:', err);
