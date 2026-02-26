@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.loadHomeData();
+    this.dataService.downloadHouseholdBills(this.dataService.user()?.id || 0);
   }
   /*
   loadHomeData() {

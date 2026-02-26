@@ -32,6 +32,11 @@ export class DataService {
   user = signal<Usuario | null>(null);
   expenses = signal<Factura[]>([]);
   loading = signal(true);
+  hoseholdBills = signal<Factura[]>([]);
+
+  //funcion principal de descarga de datos basicos
+  DowloadData() {}
+
 
   // --- 1. BLOQUE: AUTH & SESIÓN  ---
   register(body: any) { return this.http.post(`${this.url}/users/auth/register`, body); }
@@ -61,6 +66,7 @@ export class DataService {
   getExpenseHistory(year: number, month: number) {
     return this.http.get<Factura[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`);
   }
+  getHouseholdBills(id: number) { return this.http.get<Factura[]>(`${this.url}/students/households/myBills`); }
 
   // --- 4. BLOQUE: OWNERS (PROPIETARIOS)  ---
   createProperty(body: any) { return this.http.post(`${this.url}/owners/properties`, body); }
@@ -113,5 +119,27 @@ loadHomeData() {
   }
 
   //expenses 
+  downloadHouseholdBills(id: number) {
+    this.getHouseholdBills(id).subscribe({
+      next: (Bills) => { 
+        this.hoseholdBills.set(Bills); 
+        console.log('Facturas del hogar cargadas:', Bills);
+      },
+      error: (err) => console.error('Error al cargar facturas del hogar:', err)
+    });
+
+    return (this.hoseholdBills());
+  }
+
+  getExpenseIcon(expenseName: string): { icon: string; iconClass: string } {
+    const lowerName = expenseName.toLowerCase();
+    if (lowerName.includes('agua')) return { icon: 'water_drop', iconClass: 'icon-agua' };
+    if (lowerName.includes('luz') || lowerName.includes('electricidad')) return { icon: 'flash_on', iconClass: 'icon-luz' };
+    if (lowerName.includes('internet') || lowerName.includes('wifi')) return { icon: 'wifi', iconClass: 'icon-internet' };
+    if (lowerName.includes('gas')) return { icon: 'local_gas_station', iconClass: 'icon-gas' };
+    if (lowerName.includes('alquiler') || lowerName.includes('renta')) return { icon: 'home', iconClass: 'icon-alquiler' };
+    if (lowerName.includes('comida') || lowerName.includes('supermercado')) return { icon: 'restaurant', iconClass: 'icon-comida' };
+    return { icon: 'receipt_long', iconClass: 'icon-otros' };
+  }
 
 }
