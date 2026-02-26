@@ -1,4 +1,4 @@
-<div class="bg-scene">
+<div class="bg-scene bg-scene--mirror">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
@@ -21,13 +21,13 @@
         [class.option--selected]="selected() === 'tengo'"
         (click)="select('tengo')"
       >
-        <span class="option__icon">🔑</span>
+        <span class="option__icon material-icons-round">key</span>
         <div class="option__text">
           <span class="option__label">Sí, tengo piso</span>
           <span class="option__desc">Ya vivo en un lugar y quiero gestionarlo</span>
         </div>
         @if (selected() === 'tengo') {
-          <span class="option__check">✓</span>
+          <span class="option__check material-icons-round">check</span>
         }
       </button>
 
@@ -36,13 +36,13 @@
         [class.option--selected]="selected() === 'buscando'"
         (click)="select('buscando')"
       >
-        <span class="option__icon">🔍</span>
+        <span class="option__icon material-icons-round">travel_explore</span>
         <div class="option__text">
           <span class="option__label">Estoy buscando</span>
           <span class="option__desc">Quiero encontrar piso o compañeros</span>
         </div>
         @if (selected() === 'buscando') {
-          <span class="option__check">✓</span>
+          <span class="option__check material-icons-round">check</span>
         }
       </button>
 
@@ -51,13 +51,13 @@
         [class.option--selected]="selected() === 'gastos'"
         (click)="select('gastos')"
       >
-        <span class="option__icon">💸</span>
+        <span class="option__icon material-icons-round">receipt_long</span>
         <div class="option__text">
           <span class="option__label">Solo gestionar gastos</span>
           <span class="option__desc">Quiero llevar el control de gastos compartidos</span>
         </div>
         @if (selected() === 'gastos') {
-          <span class="option__check">✓</span>
+          <span class="option__check material-icons-round">check</span>
         }
       </button>
 
@@ -66,13 +66,13 @@
         [class.option--selected]="selected() === 'propietario'"
         (click)="select('propietario')"
       >
-        <span class="option__icon">🏢</span>
+        <span class="option__icon material-icons-round">apartment</span>
         <div class="option__text">
           <span class="option__label">Soy propietario</span>
           <span class="option__desc">Tengo propiedades para alquilar</span>
         </div>
         @if (selected() === 'propietario') {
-          <span class="option__check">✓</span>
+          <span class="option__check material-icons-round">check</span>
         }
       </button>
 

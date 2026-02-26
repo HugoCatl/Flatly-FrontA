@@ -1,3 +1,7 @@
+.bg-scene--mirror {
+  transform: scaleX(-1);
+}
+
 .onboarding-page {
   position: relative;
   z-index: 1;
@@ -76,9 +80,16 @@
   }
 
   &__icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     line-height: 1;
     flex-shrink: 0;
+    color: var(--gray-400);
+    transition: color 0.18s ease;
+  }
+
+  &:hover &__icon,
+  &--selected &__icon {
+    color: var(--emerald-500);
   }
 
   &__text {
@@ -106,8 +117,7 @@
     border-radius: 50%;
     background: var(--emerald-500);
     color: var(--white);
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
