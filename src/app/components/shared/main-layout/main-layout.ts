@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 // 1. IMPORTANTE: Importar RouterOutlet
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
+import { DataService } from '../../../services/data';
 
 @Component({
   selector: 'app-main-layout',
@@ -12,9 +13,10 @@ import { ThemeService } from '../../../services/theme.service';
   templateUrl: './main-layout.html',
   styleUrls: ['./main-layout.scss']
 })
-export class MainLayoutComponent { 
+export class MainLayoutComponent {
   readonly theme = inject(ThemeService);
   private router = inject(Router);
+  private dataService = inject(DataService);
 
   showLogoutModal = false;
 
@@ -28,7 +30,16 @@ export class MainLayoutComponent {
 
   logout(): void {
     this.showLogoutModal = false;
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.dataService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        // Aunque falle el endpoint, limpiamos la sesión local
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }
