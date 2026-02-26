@@ -33,9 +33,7 @@ export class DataService {
   expenses = signal<Factura[]>([]);
   loading = signal(true);
   hoseholdBills = signal<Factura[]>([]);
-
-  //funcion principal de descarga de datos basicos
-  DowloadData() {}
+  sesion = signal(false);
 
 
   // --- 1. BLOQUE: AUTH & SESIÓN  ---
@@ -64,9 +62,9 @@ export class DataService {
 
   getPendingExpenses() { return this.http.get<Factura[]>(`${this.url}/students/expenses`,{ withCredentials: true }); }
   getExpenseHistory(year: number, month: number) {
-    return this.http.get<Factura[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`);
+    return this.http.get<Factura[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`, { withCredentials: true });
   }
-  getHouseholdBills(id: number) { return this.http.get<Factura[]>(`${this.url}/students/households/myBills`); }
+  getHouseholdBills() { return this.http.get<Factura[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
 
   // --- 4. BLOQUE: OWNERS (PROPIETARIOS)  ---
   createProperty(body: any) { return this.http.post(`${this.url}/owners/properties`, body); }
@@ -119,8 +117,8 @@ loadHomeData() {
   }
 
   //expenses 
-  downloadHouseholdBills(id: number) {
-    this.getHouseholdBills(id).subscribe({
+  downloadHouseholdBills() {
+    this.getHouseholdBills().subscribe({
       next: (Bills) => { 
         this.hoseholdBills.set(Bills); 
         console.log('Facturas del hogar cargadas:', Bills);

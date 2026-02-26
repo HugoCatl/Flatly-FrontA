@@ -13,7 +13,7 @@ import { DataService } from '../../services/data';
 })
 export class Login implements OnInit {
   private fb = inject(FormBuilder);
-  private data = inject(DataService);
+  private dataService = inject(DataService);
   private router = inject(Router);
 
   showPassword = false;
@@ -25,10 +25,13 @@ export class Login implements OnInit {
 
   ngOnInit() {
     // Verificar sesión con el backend (cookie)
-    this.data.checkSession().subscribe({
+    this.dataService.checkSession().subscribe({
       next: () => {
         console.log('Sesión activa, redirigiendo al Home...');
         this.router.navigate(['/home']);
+        this.dataService.loadHomeData();
+        if (this.dataService.sesion()) {this.dataService.downloadHouseholdBills();}
+        
       },
       error: () => {
         // No hay sesión válida, quedarse en login
@@ -40,7 +43,7 @@ export class Login implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      this.data.login(this.form.value).subscribe({
+      this.dataService.login(this.form.value).subscribe({
         next: (res: any) => {
           console.log('Login OK:', res);
 
