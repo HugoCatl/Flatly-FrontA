@@ -52,8 +52,8 @@ export class DataService {
   return this.http.get<Usuario>(`${this.url}/users/me`);}
   updateMyProfile(body: any) { return this.http.put(`${this.url}/users/me`, body); }
   deleteMyAccount() { return this.http.delete(`${this.url}/users/me`); }
-  becomeOwner() { return this.http.post(`${this.url}/users/me/becomeOwner`, {withCredentials: true}); }
-  returnStudent() { return this.http.post(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
+  becomeOwner() { return this.http.put(`${this.url}/users/me/becomeOwner`, {withCredentials: true}); }
+  returnStudent() { return this.http.put(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
 
 
   // Favoritos 

@@ -8,6 +8,7 @@ import { HomeComponent } from './components/home/home';
 import { MainLayoutComponent } from './components/shared/main-layout/main-layout';
 import { Profile } from './components/profile/profile';
 import { Onboarding } from './components/onboarding/onboarding';
+import { HomeOwners } from './components/home-owners/home-owners';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -31,6 +32,9 @@ export const routes: Routes = [
 
     // Mapa fullscreen (sin MainLayout para no tener padding)
     { path: 'map', component: Map },
+
+    // Home propietarios (sin MainLayout de estudiante)
+    { path: 'home-owners', component: HomeOwners },
 
     { path: '**', redirectTo: 'login' }
 ];

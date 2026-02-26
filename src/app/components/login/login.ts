@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DataService } from '../../services/data';
+import { Role } from '../../models/flatly';
 
 @Component({
   selector: 'app-login',
@@ -24,17 +25,18 @@ export class Login implements OnInit {
   });
 
   ngOnInit() {
-    // Verificar sesión con el backend (cookie)
     this.dataService.checkSession().subscribe({
-      next: () => {
-        console.log('Sesión activa, redirigiendo al Home...');
-        this.router.navigate(['/home']);
-        this.dataService.loadHomeData();
-        if (this.dataService.sesion()) {this.dataService.downloadHouseholdBills();}
-        
+      next: (res: any) => {
+        const role: Role = res?.role ?? res?.user?.role;
+        if (role === Role.OWNER) {
+          this.router.navigate(['/home-owners']);
+        } else {
+          this.router.navigate(['/home']);
+          this.dataService.loadHomeData();
+          if (this.dataService.sesion()) { this.dataService.downloadHouseholdBills(); }
+        }
       },
       error: () => {
-        // No hay sesión válida, quedarse en login
         localStorage.removeItem('user_session');
         localStorage.removeItem('user_name');
       }
@@ -47,18 +49,20 @@ export class Login implements OnInit {
         next: (res: any) => {
           console.log('Login OK:', res);
 
-          // Guardamos info del usuario solo para la UI (no para auth)
           if (res?.user) {
-            const session = {
+            localStorage.setItem('user_session', JSON.stringify({
               email: res.user.email,
               id: res.user.id,
               role: res.user.role
-            };
-            localStorage.setItem('user_session', JSON.stringify(session));
+            }));
             localStorage.setItem('user_name', res.user.name);
           }
 
-          this.router.navigate(['/home']);
+          if (res?.user?.role === Role.OWNER) {
+            this.router.navigate(['/home-owners']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         },
         error: (err) => {
           console.error('Error:', err);

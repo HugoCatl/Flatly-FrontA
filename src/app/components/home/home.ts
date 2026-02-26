@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DataService } from '../../services/data';
-import { Usuario, Factura } from '../../models/flatly';
+import { Usuario, Factura, Role } from '../../models/flatly';
 
 @Component({
   selector: 'app-home',
@@ -13,13 +13,21 @@ import { Usuario, Factura } from '../../models/flatly';
 })
 export class HomeComponent implements OnInit {
   private dataService = inject(DataService);
+  private router = inject(Router);
 
   user = this.dataService.user;
   expenses = this.dataService.expenses;
   loading = this.dataService.loading;
 
-
   ngOnInit() {
+    const session = localStorage.getItem('user_session');
+    if (session) {
+      const { role } = JSON.parse(session);
+      if (role === Role.OWNER) {
+        this.router.navigate(['/home-owners']);
+        return;
+      }
+    }
     this.dataService.loadHomeData();
     this.dataService.downloadHouseholdBills();
   }
