@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.dataService.loadHomeData();
   }
-
+  /*
   loadHomeData() {
     // 1. Pedimos tu perfil (GET /users/me)
     this.dataService.getMyProfile().subscribe({
@@ -53,4 +53,5 @@ export class HomeComponent implements OnInit {
       error: (err) => console.error('Error al cargar gastos:', err)
     });
   }
+  */
 }
