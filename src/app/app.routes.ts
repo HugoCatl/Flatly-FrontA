@@ -7,12 +7,14 @@ import { Map } from './components/map/map';
 import { HomeComponent } from './components/home/home';
 import { MainLayoutComponent } from './components/shared/main-layout/main-layout';
 import { Profile } from './components/profile/profile';
+import { Onboarding } from './components/onboarding/onboarding';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },
     { path: 'register', component: Register },
+    { path: 'onboarding', component: Onboarding },
 
     // Rutas con layout compartido (home, chat, expenses)
     {

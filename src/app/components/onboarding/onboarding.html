@@ -1,0 +1,118 @@
+<div class="bg-scene bg-scene--mirror">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<div class="onboarding-page">
+
+  <div class="brand">
+    <h1>flatly</h1>
+    <p>{{ subtitle() }}</p>
+  </div>
+
+  <!-- ── PASO 1: ¿Cómo usarás la app? ── -->
+  @if (step() === 1) {
+    <div class="onboarding-card glass-card">
+
+      <div class="onboarding-card__options">
+
+        <button class="option" [class.option--selected]="selected() === 'tengo'" (click)="select('tengo')">
+          <span class="option__icon material-icons-round">key</span>
+          <div class="option__text">
+            <span class="option__label">Sí, tengo piso</span>
+            <span class="option__desc">Ya vivo en un lugar y quiero gestionarlo</span>
+          </div>
+          @if (selected() === 'tengo') {
+            <span class="option__check material-icons-round">check</span>
+          }
+        </button>
+
+        <button class="option" [class.option--selected]="selected() === 'buscando'" (click)="select('buscando')">
+          <span class="option__icon material-icons-round">travel_explore</span>
+          <div class="option__text">
+            <span class="option__label">Estoy buscando</span>
+            <span class="option__desc">Quiero encontrar piso o compañeros</span>
+          </div>
+          @if (selected() === 'buscando') {
+            <span class="option__check material-icons-round">check</span>
+          }
+        </button>
+
+        <button class="option" [class.option--selected]="selected() === 'gastos'" (click)="select('gastos')">
+          <span class="option__icon material-icons-round">receipt_long</span>
+          <div class="option__text">
+            <span class="option__label">Solo gestionar gastos</span>
+            <span class="option__desc">Quiero llevar el control de gastos compartidos</span>
+          </div>
+          @if (selected() === 'gastos') {
+            <span class="option__check material-icons-round">check</span>
+          }
+        </button>
+
+        <button class="option" [class.option--selected]="selected() === 'propietario'" (click)="select('propietario')">
+          <span class="option__icon material-icons-round">apartment</span>
+          <div class="option__text">
+            <span class="option__label">Soy propietario</span>
+            <span class="option__desc">Tengo propiedades para alquilar</span>
+          </div>
+          @if (selected() === 'propietario') {
+            <span class="option__check material-icons-round">check</span>
+          }
+        </button>
+
+      </div>
+
+      <button class="btn-primary" [disabled]="!selected()" (click)="continue()">
+        Continuar
+      </button>
+
+    </div>
+  }
+
+  <!-- ── PASO 2: ¿Quieres dar de alta un piso? ── -->
+  @if (step() === 2) {
+    <div class="onboarding-card glass-card">
+
+      <p class="onboarding-card__question">¿Quieres dar de alta un piso?</p>
+
+      <div class="onboarding-card__options">
+
+        <button class="option" [class.option--selected]="altaPiso() === 'si'" (click)="selectAltaPiso('si')">
+          <span class="option__icon material-icons-round">check_circle</span>
+          <div class="option__text">
+            <span class="option__label">Sí</span>
+            <span class="option__desc">Registra tu propiedad ahora</span>
+          </div>
+          @if (altaPiso() === 'si') {
+            <span class="option__check material-icons-round">check</span>
+          }
+        </button>
+
+        <button class="option" [class.option--selected]="altaPiso() === 'no'" (click)="selectAltaPiso('no')">
+          <span class="option__icon material-icons-round">schedule</span>
+          <div class="option__text">
+            <span class="option__label">No, ahora no</span>
+            <span class="option__desc">Lo haré más adelante desde el perfil</span>
+          </div>
+          @if (altaPiso() === 'no') {
+            <span class="option__check material-icons-round">check</span>
+          }
+        </button>
+
+      </div>
+
+      <button class="btn-primary" [disabled]="!altaPiso()" (click)="continuePaso2()">
+        Continuar
+      </button>
+
+      <button class="btn-back" (click)="goBack()">
+        <span class="material-icons-round">arrow_back</span>
+        Volver
+      </button>
+
+    </div>
+  }
+
+</div>
