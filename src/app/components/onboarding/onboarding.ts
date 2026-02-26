@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService } from '../../services/data';
 
 type OnboardingOption = 'tengo' | 'buscando' | 'gastos' | 'propietario' | null;
 type AltaPisoOption = 'si' | 'no' | null;
@@ -12,6 +13,7 @@ type AltaPisoOption = 'si' | 'no' | null;
 })
 export class Onboarding {
   private router = inject(Router);
+  private dataService = inject(DataService);
 
   // ── Paso actual ──
   step = signal<1 | 2>(1);
@@ -58,8 +60,11 @@ export class Onboarding {
   continuePaso2(): void {
     const option = this.altaPiso();
     if (!option) return;
-    // SI → alta de piso (provisional /home), NO → home
-    this.router.navigate(['/home']);
+
+    this.dataService.becomeOwner().subscribe({
+      next: () => this.router.navigate(['/home-owners']),
+      error: () => this.router.navigate(['/home-owners']),
+    });
   }
 
   goBack(): void {
