@@ -1,7 +1,6 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%);
 }
 
 /* ── Loading ── */
@@ -20,6 +19,8 @@
 
 /* ── Container ── */
 .home-container {
+  position: relative;
+  z-index: 1;
   max-width: 480px;
   margin: 0 auto;
   padding: 1.5rem 1rem 6rem;
@@ -68,16 +69,6 @@
   margin-top: 0.5rem;
 }
 
-/* ── Cards base ── */
-.card {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-}
-
 /* ── Summary card ── */
 .summary-card {
   padding: 1.25rem;
@@ -111,11 +102,16 @@
   padding: 3px 10px;
   border-radius: 20px;
   margin-left: auto;
+
+  html.dark & {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--emerald-400);
+  }
 }
 
 .progress-container {
   height: 8px;
-  background: var(--gray-100);
+  background: var(--gray-200);
   border-radius: 99px;
   overflow: hidden;
   margin-bottom: 0.4rem;
@@ -155,7 +151,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #ecfdf5;
+  background: rgba(16, 185, 129, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,10 +187,6 @@
 .empty-state {
   padding: 2rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
 
   p {
     font-size: 0.92rem;
