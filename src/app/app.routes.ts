@@ -10,7 +10,7 @@ import { Profile } from './components/profile/profile';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'map', pathMatch: 'full' },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },
     { path: 'register', component: Register },
 
@@ -23,12 +23,12 @@ export const routes: Routes = [
             { path: 'home', component: HomeComponent },
             { path: 'chat', component: Chat },
             { path: 'expenses', component: Expenses },
-            { path: 'profile', component: Profile}
+            { path: 'profile', component: Profile }
         ]
     },
 
     // Mapa fullscreen (sin MainLayout para no tener padding)
     { path: 'map', component: Map },
 
-    { path: '**', redirectTo: 'map' }
+    { path: '**', redirectTo: 'login' }
 ];
