@@ -35,7 +35,7 @@
 </nav>
 
 <!-- Confirmación de cierre de sesión -->
-@if (showLogoutModal) {
+@if (showLogoutModal()) {
     <div class="modal-backdrop" (click)="cancelLogout()">
         <div class="modal" (click)="$event.stopPropagation()">
             <span class="material-icons-round modal__icon">logout</span>

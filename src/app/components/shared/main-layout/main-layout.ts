@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // 1. IMPORTANTE: Importar RouterOutlet
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
@@ -18,18 +18,18 @@ export class MainLayoutComponent {
   private router = inject(Router);
   private dataService = inject(DataService);
 
-  showLogoutModal = false;
+  showLogoutModal = signal(false);
 
   confirmLogout(): void {
-    this.showLogoutModal = true;
+    this.showLogoutModal.set(true);
   }
 
   cancelLogout(): void {
-    this.showLogoutModal = false;
+    this.showLogoutModal.set(false);
   }
 
   logout(): void {
-    this.showLogoutModal = false;
+    this.showLogoutModal.set(false);
     this.dataService.logout().subscribe({
       next: () => {
         localStorage.removeItem('token');
