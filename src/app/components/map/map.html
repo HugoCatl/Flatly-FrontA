@@ -18,11 +18,11 @@
             <div class="filter-group">
                 <div class="filter-label">
                     <span>Precio máx</span>
-                    <span class="filter-value">{{ precioLabel }}</span>
+                    <span class="filter-value">{{ precioLabel() }}</span>
                 </div>
                 <input type="range" min="400" max="2500" step="50" [ngModel]="precioMax()"
                     (ngModelChange)="precioMax.set($event); onPrecioChange()" class="price-slider" id="price-slider"
-                    [style]="sliderFillStyle" />
+                    [style]="sliderFillStyle()" />
             </div>
         </div>
 

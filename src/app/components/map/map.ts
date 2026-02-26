@@ -230,11 +230,11 @@ export class Map implements AfterViewInit, OnDestroy {
     this.applyFilters();
   }
 
-  get precioLabel(): string {
+  precioLabel = computed(() => {
     return this.precioMax() >= 2500 ? 'Sin límite' : `€${this.precioMax()}`;
-  }
+  });
 
-  get sliderFillStyle(): { background: string } {
+  sliderFillStyle = computed(() => {
     const min = 400;
     const max = 2500;
     const pct = ((this.precioMax() - min) / (max - min)) * 100;
@@ -245,5 +245,5 @@ export class Map implements AfterViewInit, OnDestroy {
         var(--gray-200) ${pct}%,
         var(--gray-200) 100%)`
     };
-  }
+  });
 }

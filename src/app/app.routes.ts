@@ -23,7 +23,7 @@ export const routes: Routes = [
             { path: 'home', component: HomeComponent },
             { path: 'chat', component: Chat },
             { path: 'expenses', component: Expenses },
-            { path: 'profile', component: Profile}
+            { path: 'profile', component: Profile }
         ]
     },
 
