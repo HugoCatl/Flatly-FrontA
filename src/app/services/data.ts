@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Usuario, Propiedad, Factura } from '../models/flatly';
+import { map } from 'rxjs/operators';
 
 type Role = 'ADMIN' | 'USER' | 'PROPIETARIO';
 
@@ -33,6 +34,8 @@ export class DataService {
   expenses = signal<Factura[]>([]);
   loading = signal(true);
   hoseholdBills = signal<Factura[]>([]);
+  properties = signal<Propiedad[]>([]);
+  availableTags = signal<string[]>([]);
   sesion = signal(false);
 
 
@@ -139,5 +142,37 @@ loadHomeData() {
     if (lowerName.includes('comida') || lowerName.includes('supermercado')) return { icon: 'restaurant', iconClass: 'icon-comida' };
     return { icon: 'receipt_long', iconClass: 'icon-otros' };
   }
+  // Propiedades
+// Método para obtener pisos para el mapa (Público)
+// En data.ts (ejemplo de cómo asegurar el nombre)
+getPublicProperties() {
+  return this.http.get<any[]>(`${this.url}/properties/public`).pipe(
+    map((list: any[]) => list.map(p => ({
+      ...p,
+      // Aseguras que el front use camelCase aunque la DB traiga snake_case
+      priceMonth: p.price_month, 
+      avatar_url: p.avatar_url,
+      isAvailable: p.is_available
+    })))
+  );
+}
+
+// Método para obtener las etiquetas de la tabla 'tags'
+getAllTags() {
+  return this.http.get<any[]>(`${this.url}/tags`);
+}
+
+loadMapData() {
+  // Carga paralela de pisos y etiquetas
+  this.getPublicProperties().subscribe({
+    next: (data) => this.properties.set(data),
+    error: (err) => console.error('Error al cargar propiedades del mapa', err)
+  });
+
+  this.getAllTags().subscribe({
+    next: (tags) => this.availableTags.set(tags.map(t => t.name)),
+    error: (err) => console.error('Error al cargar etiquetas de la DB', err)
+  });
+}
 
 }
