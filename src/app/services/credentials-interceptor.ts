@@ -1,27 +1,25 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-//import { DataService } from './data.ts';
-
-
 
 export const credentialsInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.startsWith(environment.apiUrl)) {
+  // Verificamos si la URL de la petición es para nuestra API
+  if (req.url.includes(environment.apiUrl)) {
     const authReq = req.clone({
-      withCredentials: true // Esto envía la cookie USER_SESSION
+      withCredentials: true // <--- Esto permite enviar las Cookies
     });
+
     return next(authReq).pipe(
       catchError((err) => {
-        // Si es 401, el servidor dice que la cookie no es válida o no llegó
         if (err.status === 401) {
-          console.error('Sesión inválida en el servidor');
+          console.error('Sesión expirada o inválida');
+          // Aquí podrías añadir un Router para redirigir al login
         }
         return throwError(() => err);
       })
     );
   }
+
   return next(req);
 };
