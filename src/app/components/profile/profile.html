@@ -15,7 +15,7 @@
 
       <!-- Header -->
       <div class="profile-header">
-        <div class="avatar-container">
+        <div class="avatar-container" (click)="openAvatarModal()">
           @if (profile()?.avatarUrl) {
             <img class="avatar-circle avatar-img" [src]="profile()?.avatarUrl" alt="Avatar" />
           } @else {
@@ -23,6 +23,9 @@
               {{ profile()?.name?.charAt(0) | uppercase }}
             </div>
           }
+          <div class="avatar-edit-overlay">
+            <span class="material-icons-round">edit</span>
+          </div>
           <span class="status-dot"></span>
         </div>
         <div class="profile-header-info">
@@ -106,25 +109,6 @@
             </div>
           </div>
 
-          <div class="edit-field">
-            <label>URL de foto de perfil</label>
-            <div class="edit-input-wrapper">
-              <span class="material-icons-round">image</span>
-              <input
-                type="url"
-                placeholder="https://..."
-                [value]="editAvatarUrl()"
-                (input)="editAvatarUrl.set($any($event.target).value)" />
-            </div>
-          </div>
-
-          @if (editAvatarUrl()) {
-            <div class="avatar-preview">
-              <img [src]="editAvatarUrl()" alt="Preview" />
-              <span>Preview</span>
-            </div>
-          }
-
         </div>
 
         <!-- Botones modo edición -->
@@ -145,6 +129,38 @@
   </div>
 }
 
+<!-- Modal avatar -->
+@if (showAvatarModal()) {
+  <div class="modal-overlay" (click)="cancelAvatarModal()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+      <h3>Foto de perfil</h3>
+      <p>Introduce la URL de tu nueva foto</p>
+
+      <div class="edit-input-wrapper" style="width: 100%">
+        <span class="material-icons-round">image</span>
+        <input
+          type="url"
+          placeholder="https://..."
+          [value]="tempAvatarUrl()"
+          (input)="tempAvatarUrl.set($any($event.target).value)" />
+      </div>
+
+      @if (tempAvatarUrl()) {
+        <img class="avatar-modal-preview" [src]="tempAvatarUrl()" alt="Preview" />
+      }
+
+      <div class="modal-actions">
+        <button class="modal-btn confirm" (click)="saveAvatar()">
+          Guardar
+        </button>
+        <button class="modal-btn cancel" (click)="cancelAvatarModal()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
 <!-- Modal logout -->
 @if (showLogoutModal()) {
   <div class="modal-overlay" (click)="cancelLogout()">
@@ -152,12 +168,8 @@
       <h3>¿Cerrar sesión?</h3>
       <p>¿Seguro que quieres salir de tu cuenta?</p>
       <div class="modal-actions">
-        <button class="modal-btn confirm" (click)="doLogout()">
-            Sí
-        </button>
-        <button class="modal-btn cancel" (click)="cancelLogout()">
-          No
-        </button>
+        <button class="modal-btn confirm" (click)="doLogout()">Sí</button>
+        <button class="modal-btn cancel" (click)="cancelLogout()">No</button>
       </div>
     </div>
   </div>
