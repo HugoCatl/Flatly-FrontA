@@ -1,4 +1,4 @@
-import { Injectable, inject, signal ,computed} from '@angular/core';
+import { Injectable, inject, signal ,computed, effect} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Usuario, Propiedad, Factura, Tag } from '../models/flatly';
@@ -30,27 +30,59 @@ export class DataService {
   private http = inject(HttpClient);
   private readonly url = environment.apiUrl;
 
-  user = signal<Usuario | null>(null);
+  // 2. Inicializar signals leyendo del localStorage
+  user = signal<Usuario | null>(JSON.parse(localStorage.getItem('app_user') || 'null'));
   profile = signal<Usuario | null>(null);
   expenses = signal<Factura[]>([]);
   loading = signal(true);
   hoseholdBills = signal<Factura[]>([]);
   properties = signal<Propiedad[]>([]);
   availableTags = signal<string[]>([]);
-  sesion = signal(false);
-  busqueda = signal('');
-  precioMax = signal(2500);
-  etiquetasSeleccionadas = signal<string[]>([]);
-
   
+  sesion = signal<boolean>(localStorage.getItem('app_session') === 'true');
+  busqueda = signal<string>(localStorage.getItem('app_busqueda') || '');
+  precioMax = signal<number>(Number(localStorage.getItem('app_precioMax')) || 2500);
+  etiquetasSeleccionadas = signal<string[]>(JSON.parse(localStorage.getItem('app_tags') || '[]'));
+
+  constructor() {
+    // 3. Crear efectos para guardar en localStorage cuando cambien
+    
+    effect(() => {
+      localStorage.setItem('app_user', JSON.stringify(this.user()));
+      localStorage.setItem('app_session', String(this.sesion()));
+    });
+
+    effect(() => {
+      localStorage.setItem('app_busqueda', this.busqueda());
+      localStorage.setItem('app_precioMax', String(this.precioMax()));
+      localStorage.setItem('app_tags', JSON.stringify(this.etiquetasSeleccionadas()));
+    });
+  }
 
 
   // --- 1. BLOQUE: AUTH & SESIÓN  ---
   register(body: any) { return this.http.post(`${this.url}/users/auth/register`, body); }
-  login(body: any) { return this.http.post(`${this.url}/users/auth/login`, body); }
+  login(body: any) { 
+    return this.http.post(`${this.url}/users/auth/login`, body).pipe(
+        map((res: any) => {
+            this.user.set(res.user);
+            this.sesion.set(true);
+            return res;
+        })
+    );
+  }
   loginFirebase(idToken: string) { return this.http.post(`${this.url}/users/auth/firebase`, { idToken }); }
   checkSession() { return this.http.get(`${this.url}/users/session`); }
-  logout() { return this.http.post(`${this.url}/users/logout`, {}); }
+  logout() { 
+    return this.http.post(`${this.url}/users/logout`, {}).pipe(
+        map((res) => {
+            this.user.set(null);
+            this.sesion.set(false);
+            localStorage.clear(); // O localStorage.removeItem(...)
+            return res;
+        })
+    );
+  }
 
   // --- 2. BLOQUE: MI PERFIL (ME)  ---
   getMyProfile() {
@@ -80,7 +112,7 @@ getProperties() {
       } as Propiedad));
     })
   );
-}
+} 
 // Método para obtener las etiquetas de la tabla 'tags'
 getAllTags() {
   return this.http.get<any[]>(`${this.url}/properties/tags`);

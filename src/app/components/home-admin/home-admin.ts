@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data';
 import { TopBarComponent } from '../shared/top-bar/top-bar';
+import { FormsModule } from '@angular/forms'; // Añadido para los inputs
 
 interface AdminUser {
   id: number;
@@ -23,19 +24,22 @@ interface AdminStats {
 
 @Component({
   selector: 'app-home-admin',
-  imports: [CommonModule, TopBarComponent],
+  standalone: true, // Asegúrate de que sea standalone si usas imports
+  imports: [CommonModule, TopBarComponent, FormsModule], // FormsModule es clave
   templateUrl: './home-admin.html',
   styleUrl: './home-admin.scss',
 })
 export class HomeAdmin implements OnInit {
   private dataService = inject(DataService);
 
-  activeTab = signal<'stats' | 'users' | 'tags'>('stats');
-  loading = signal(true);
+  // Usamos signals locales para manejar la lista de la tabla de admin
+  // para evitar conflictos con el signal del "usuario identificado" del servicio
+  adminUsersList = signal<AdminUser[]>([]);
+  tags = this.dataService.availableTags;
+  loading = this.dataService.loading;
 
   stats = signal<AdminStats | null>(null);
-  users = signal<AdminUser[]>([]);
-  tags = signal<string[]>([]);
+  activeTab = signal<'stats' | 'users' | 'tags'>('stats');
 
   showDeleteModal = signal(false);
   userToDelete = signal<AdminUser | null>(null);
@@ -53,6 +57,7 @@ export class HomeAdmin implements OnInit {
   roles = ['STUDENT', 'OWNER', 'ADMIN'];
 
   ngOnInit() {
+    this.loading.set(true);
     this.loadStats();
     this.loadUsers();
     this.loadTags();
@@ -77,14 +82,19 @@ export class HomeAdmin implements OnInit {
 
   loadUsers(): void {
     this.dataService.adminGetAllUsers().subscribe({
-      next: (data: any) => this.users.set(data),
+      next: (data: any) => this.adminUsersList.set(data), // Usamos la lista local
       error: (err) => console.error('Error al cargar usuarios:', err)
     });
   }
 
   loadTags(): void {
+    // Si el body es opcional, enviamos un objeto vacío
     this.dataService.adminGetTags({}).subscribe({
-      next: (data: any) => this.tags.set(data.map((t: any) => t.name)),
+      next: (data: any) => {
+        // Asegúrate de que el backend devuelve un array de objetos con 'name'
+        const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
+        this.tags.set(tagNames);
+      },
       error: (err) => console.error('Error al cargar tags:', err)
     });
   }
@@ -104,7 +114,7 @@ export class HomeAdmin implements OnInit {
     if (!user) return;
     this.dataService.adminDeleteUser(user.id).subscribe({
       next: () => {
-        this.users.update(list => list.filter(u => u.id !== user.id));
+        this.adminUsersList.update(list => list.filter(u => u.id !== user.id));
         this.showDeleteModal.set(false);
         this.userToDelete.set(null);
       },
@@ -125,10 +135,11 @@ export class HomeAdmin implements OnInit {
 
   doRoleChange(): void {
     const user = this.userToEditRole();
-    if (!user) return;
+    if (!user || !user.id) return;
+    
     this.dataService.adminUpdateRole(user.id, this.newRole()).subscribe({
       next: () => {
-        this.users.update(list =>
+        this.adminUsersList.update(list =>
           list.map(u => u.id === user.id ? { ...u, role: this.newRole() } : u)
         );
         this.showRoleModal.set(false);

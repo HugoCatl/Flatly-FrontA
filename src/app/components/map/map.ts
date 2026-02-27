@@ -27,9 +27,9 @@ export class Map implements AfterViewInit, OnDestroy, OnInit {
   busqueda = this.dataService.busqueda;
   precioMax = this.dataService.precioMax;
   etiquetasSeleccionadas = this.dataService.etiquetasSeleccionadas;
+  tags = this.dataService.availableTags;
   
   // Lista de etiquetas para el filtro
-  allEtiquetas = signal<string[]>(['Terraza', 'Luminoso', 'Amueblado', 'Céntrico', 'Gym']);
 
   constructor() {
     // 2. Ajustamos el effect para mayor seguridad

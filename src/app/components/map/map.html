@@ -51,7 +51,7 @@
         </div>
 
         <div class="tags-picker glass-panel" [class.tags-picker--open]="tagsExpanded()">
-            @for (tag of allEtiquetas(); track tag) {
+            @for (tag of tags(); track tag) {
                 <button class="tag-chip" 
                     [class.tag-chip--active]="etiquetasSeleccionadas().includes(tag)"
                     (click)="toggleEtiqueta(tag)" type="button">

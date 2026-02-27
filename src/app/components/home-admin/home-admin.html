@@ -74,7 +74,7 @@
     <!-- ── USUARIOS ── -->
     @if (activeTab() === 'users') {
       <div class="section-list">
-        @for (user of users(); track user.id) {
+        @for (user of adminUsersList(); track user.id) {
           <div class="user-card glass-card">
             <div class="user-avatar">{{ user.name.charAt(0) || user.email.charAt(0) }}</div>
             <div class="user-info">
