@@ -92,6 +92,10 @@ export class DataService {
     return this.http.put(`${this.url}/admin/users/${id}/role`, { newRole });
   }
   adminGetStats() { return this.http.get(`${this.url}/admin/stats`); }
+  //body tag:{"name":"string"}
+  adminGetTags(body: any) { return this.http.get(`${this.url}/admin/tags`, body); }
+  adminCreateTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
+  adminEditTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
 
   //load
 
