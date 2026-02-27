@@ -48,7 +48,8 @@ export class Login implements OnInit {
       this.dataService.login(this.form.value).subscribe({
         next: (res: any) => {
           console.log('Login OK:', res);
-
+          this.dataService.sesion.set(true);
+          this.dataService.profile.set(res.user);
           if (res?.user) {
             localStorage.setItem('user_session', JSON.stringify({
               email: res.user.email,

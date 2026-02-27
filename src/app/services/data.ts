@@ -31,6 +31,7 @@ export class DataService {
   private readonly url = environment.apiUrl;
 
   user = signal<Usuario | null>(null);
+  profile = signal<Usuario | null>(null);
   expenses = signal<Factura[]>([]);
   loading = signal(true);
   hoseholdBills = signal<Factura[]>([]);
