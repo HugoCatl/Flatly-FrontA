@@ -1,0 +1,171 @@
+<div class="bg-scene bg-scene--mirror">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<div class="create-page">
+
+  <div class="brand">
+    <h1>flatly</h1>
+    <p>Registra tu propiedad</p>
+  </div>
+
+  <form class="create-form glass-card" [formGroup]="form" (ngSubmit)="submit()">
+
+    <!-- ── Información básica ── -->
+    <div class="form-section">
+      <span class="form-section__title">Información básica</span>
+
+      <div class="field">
+        <div class="input-field">
+          <span class="material-icons-round">home</span>
+          <input type="text" formControlName="title" placeholder="Título del piso">
+        </div>
+      </div>
+
+      <div class="field">
+        <textarea class="textarea-field" formControlName="description"
+          placeholder="Descripción (opcional)" rows="3"></textarea>
+      </div>
+    </div>
+
+    <!-- ── Precio y espacio ── -->
+    <div class="form-section">
+      <span class="form-section__title">Precio y espacio</span>
+
+      <div class="field-row">
+        <div class="field">
+          <div class="input-field">
+            <span class="material-icons-round">euro</span>
+            <input type="number" formControlName="priceMonth" placeholder="€ / mes" min="1">
+          </div>
+        </div>
+        <div class="field">
+          <div class="input-field">
+            <span class="material-icons-round">straighten</span>
+            <input type="number" formControlName="squareMeters" placeholder="m²">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <div class="input-field">
+            <span class="material-icons-round">bed</span>
+            <input type="number" formControlName="rooms" placeholder="Habitaciones" min="1">
+          </div>
+        </div>
+        <div class="field">
+          <div class="input-field">
+            <span class="material-icons-round">shower</span>
+            <input type="number" formControlName="bathrooms" placeholder="Baños" min="1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Ubicación ── -->
+    <div class="form-section">
+      <span class="form-section__title">Ubicación</span>
+
+      <div class="field-row">
+        <div class="field">
+          <div class="input-field">
+            <span class="material-icons-round">location_city</span>
+            <input type="text" formControlName="city" placeholder="Ciudad">
+          </div>
+        </div>
+        <div class="field">
+          <div class="input-field">
+            <span class="material-icons-round">place</span>
+            <input type="text" formControlName="zone" placeholder="Zona">
+          </div>
+        </div>
+      </div>
+
+      <div class="map-picker">
+        <div id="property-map"></div>
+        @if (selectedLocation()) {
+          <p class="map-coords">
+            <span class="material-icons-round">pin_drop</span>
+            {{ selectedLocation()!.lat.toFixed(5) }}, {{ selectedLocation()!.lng.toFixed(5) }}
+          </p>
+        } @else {
+          <p class="map-hint">
+            <span class="material-icons-round">touch_app</span>
+            Toca el mapa para marcar la ubicación del piso
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- ── Características ── -->
+    <div class="form-section">
+      <span class="form-section__title">Características</span>
+
+      <div class="toggle-row" (click)="toggleFurnished()">
+        <div class="toggle-row__label">
+          <span class="material-icons-round">chair</span>
+          <span>Amueblado</span>
+        </div>
+        <div class="toggle" [class.toggle--on]="form.get('isFurnished')?.value">
+          <div class="toggle__thumb"></div>
+        </div>
+      </div>
+
+      <div class="toggle-row" (click)="toggleExpenses()">
+        <div class="toggle-row__label">
+          <span class="material-icons-round">receipt</span>
+          <span>Gastos incluidos</span>
+        </div>
+        <div class="toggle" [class.toggle--on]="form.get('expensesIncluded')?.value">
+          <div class="toggle__thumb"></div>
+        </div>
+      </div>
+
+      @if (tags().length > 0) {
+        <div class="tags-grid">
+          @for (tag of tags(); track tag.id) {
+            <button type="button" class="tag-chip"
+              [class.tag-chip--active]="selectedTagIds().includes(tag.id)"
+              (click)="toggleTag(tag.id)">
+              {{ tag.name }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ── Imágenes ── -->
+    <div class="form-section">
+      <span class="form-section__title">Imágenes</span>
+
+      <label class="image-upload">
+        <span class="material-icons-round">add_photo_alternate</span>
+        <span>Añadir fotos</span>
+        <input type="file" accept="image/*" multiple (change)="onImagesSelected($event)">
+      </label>
+
+      @if (imagePreviews().length > 0) {
+        <div class="image-previews">
+          @for (preview of imagePreviews(); track preview) {
+            <img [src]="preview" class="image-thumb" alt="preview">
+          }
+        </div>
+      }
+    </div>
+
+    <button class="btn-primary" type="submit" [disabled]="form.invalid || loading()">
+      {{ loading() ? 'Creando...' : 'Crear propiedad' }}
+    </button>
+
+    <button type="button" class="btn-back" (click)="goBack()">
+      <span class="material-icons-round">arrow_back</span>
+      Volver
+    </button>
+
+  </form>
+
+</div>

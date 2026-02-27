@@ -62,7 +62,13 @@ export class Onboarding {
     if (!option) return;
 
     this.dataService.becomeOwner().subscribe({
-      next: () => this.router.navigate(['/home-owners']),
+      next: () => {
+        if (option === 'si') {
+          this.router.navigate(['/create-property']);
+        } else {
+          this.router.navigate(['/home-owners']);
+        }
+      },
       error: () => this.router.navigate(['/home-owners']),
     });
   }

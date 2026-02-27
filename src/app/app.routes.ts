@@ -9,6 +9,7 @@ import { MainLayoutComponent } from './components/shared/main-layout/main-layout
 import { Profile } from './components/profile/profile';
 import { Onboarding } from './components/onboarding/onboarding';
 import { HomeOwners } from './components/home-owners/home-owners';
+import { CreateProperty } from './components/create-property/create-property';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -35,6 +36,7 @@ export const routes: Routes = [
 
     // Home propietarios (sin MainLayout de estudiante)
     { path: 'home-owners', component: HomeOwners },
+    { path: 'create-property', component: CreateProperty },
 
     { path: '**', redirectTo: 'login' }
 ];
