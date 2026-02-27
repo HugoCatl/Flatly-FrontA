@@ -1,7 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal ,computed} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Usuario, Propiedad, Factura } from '../models/flatly';
+import { Usuario, Propiedad, Factura, Tag } from '../models/flatly';
 import { map } from 'rxjs/operators';
 
 type Role = 'ADMIN' | 'USER' | 'PROPIETARIO';
@@ -38,6 +38,9 @@ export class DataService {
   properties = signal<Propiedad[]>([]);
   availableTags = signal<string[]>([]);
   sesion = signal(false);
+  busqueda = signal('');
+  precioMax = signal(2500);
+  etiquetasSeleccionadas = signal<string[]>([]);
 
 
   // --- 1. BLOQUE: AUTH & SESIÓN  ---
@@ -183,5 +186,24 @@ loadMapData() {
     error: (err) => console.error('Error al cargar etiquetas de la DB', err)
   });
 }
+
+propertiesFiltered = computed(() => {
+    const q = this.busqueda().toLowerCase();
+    const max = this.precioMax();
+    const tagsFiltro = this.etiquetasSeleccionadas();
+    
+    return this.properties().filter((p: Propiedad) => {
+      const matchQ = !q || p.title.toLowerCase().includes(q) || (p.address?.toLowerCase().includes(q) ?? false);
+      const matchPrecio = p.priceMonth <= max;
+      const matchTags = tagsFiltro.length === 0 || 
+                        tagsFiltro.every(nombre => p.tags?.some((t: Tag) => t.name === nombre));
+      
+      return matchQ && matchPrecio && matchTags;
+    });
+  });
+  
+  setProperties(newProperties: Propiedad[]) {
+    this.properties.set(newProperties);
+  }
 
 }

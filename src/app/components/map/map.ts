@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import * as L from 'leaflet';
-// Importación corregida a la ruta de tu servicio real
 import { DataService } from '../../services/data'; 
-import { Propiedad, Tag } from '../../models/flatly';
+import { Propiedad } from '../../models/flatly';
 
 @Component({
   selector: 'app-map',
@@ -19,37 +18,24 @@ export class Map implements AfterViewInit, OnDestroy {
   private leafletMap!: L.Map;
   private markers: L.Marker[] = [];
 
-  busqueda = signal('');
-  precioMax = signal(2500);
-  etiquetasSeleccionadas = signal<string[]>([]);
+  // Signals del componente (solo UI)
   pisoActivo = signal<Propiedad | null>(null);
   tagsExpanded = signal(false);
-
-  // Lista de etiquetas para el filtro (puedes sacarla de la DB luego)
+  
+  // Acceso directo a los filtros centralizados en el servicio
+  busqueda = this.dataService.busqueda;
+  precioMax = this.dataService.precioMax;
+  etiquetasSeleccionadas = this.dataService.etiquetasSeleccionadas;
+  
+  // Lista de etiquetas para el filtro
   allEtiquetas = signal<string[]>(['Terraza', 'Luminoso', 'Amueblado', 'Céntrico', 'Gym']);
 
-  pisosFiltrados = computed(() => {
-    const q = this.busqueda().toLowerCase();
-    const max = this.precioMax();
-    const tagsFiltro = this.etiquetasSeleccionadas();
-    
-    // Obtenemos las propiedades del servicio (asegúrate que el service tenga el signal properties)
-    // Si tu service usa otro nombre como 'hoseholdBills', cámbialo aquí
-    const todosLosPisos: Propiedad[] = (this.dataService as any).properties?.() || []; 
-
-    return todosLosPisos.filter((p: Propiedad) => {
-      const matchQ = !q || p.title.toLowerCase().includes(q) || (p.address?.toLowerCase().includes(q) ?? false);
-      const matchPrecio = p.priceMonth <= max;
-      const matchTags = tagsFiltro.length === 0 || 
-                        tagsFiltro.every(nombre => p.tags?.some((t: Tag) => t.name === nombre));
-      
-      return matchQ && matchPrecio && matchTags;
-    });
-  });
-
   constructor() {
+    // Se ejecuta cada vez que el filtro centralizado cambia
     effect(() => {
-      this.renderMarkers(this.pisosFiltrados());
+      if (this.leafletMap) {
+        this.renderMarkers(this.dataService.propertiesFiltered());
+      }
     });
   }
 
@@ -75,6 +61,7 @@ export class Map implements AfterViewInit, OnDestroy {
   }
 
   private renderMarkers(pisos: Propiedad[]) {
+    // Limpiar marcadores antiguos
     this.markers.forEach(m => m.remove());
     this.markers = [];
 
@@ -111,6 +98,7 @@ export class Map implements AfterViewInit, OnDestroy {
     this.etiquetasSeleccionadas.set([]);
   }
 
+  // Computed de UI para labels y estilos
   precioLabel = computed(() => this.precioMax() >= 2500 ? 'Sin límite' : `€${this.precioMax()}`);
 
   sliderFillStyle = computed(() => {
