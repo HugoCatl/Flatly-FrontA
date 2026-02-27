@@ -19,11 +19,13 @@ export class Profile implements OnInit {
   editing = signal(false);
   saving = signal(false);
   showLogoutModal = signal(false);
+  showAvatarModal = signal(false);
   profile = this.dataService.profile;
 
   editName = signal('');
   editPhone = signal('');
   editAvatarUrl = signal('');
+  tempAvatarUrl = signal('');
 
   ngOnInit() {
     if (!this.user()) {
@@ -53,6 +55,7 @@ export class Profile implements OnInit {
     this.dataService.updateMyProfile(body).subscribe({
       next: () => {
         this.dataService.user.update(u => u ? { ...u, ...body } : u);
+        this.dataService.profile.update(u => u ? { ...u, ...body } : u);
         this.editing.set(false);
         this.saving.set(false);
       },
@@ -60,6 +63,36 @@ export class Profile implements OnInit {
         console.error('Error al guardar perfil:', err);
         this.saving.set(false);
       }
+    });
+  }
+
+  // ── Avatar modal ──
+  openAvatarModal(): void {
+    this.tempAvatarUrl.set(this.profile()?.avatarUrl || '');
+    this.showAvatarModal.set(true);
+  }
+
+  cancelAvatarModal(): void {
+    this.showAvatarModal.set(false);
+    this.tempAvatarUrl.set('');
+  }
+
+  saveAvatar(): void {
+    const url = this.tempAvatarUrl();
+    const body = {
+      name: this.profile()?.name || '',
+      phone: (this.profile() as any)?.phone || '',
+      avatarUrl: url,
+    };
+
+    this.dataService.updateMyProfile(body).subscribe({
+      next: () => {
+        this.dataService.user.update(u => u ? { ...u, avatarUrl: url } : u);
+        this.dataService.profile.update(u => u ? { ...u, avatarUrl: url } : u);
+        localStorage.setItem('user_avatar', url);
+        this.showAvatarModal.set(false);
+      },
+      error: (err) => console.error('Error al guardar avatar:', err)
     });
   }
 
