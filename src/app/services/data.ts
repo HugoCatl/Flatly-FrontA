@@ -62,11 +62,30 @@ export class DataService {
   returnStudent() { return this.http.put(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
 
 /**
- * Obtiene todas las propiedades filtradas por el backend
+ * Obtiene todas las propiedades y mapea los campos de la DB (snake_case)
+ * a los campos de la interfaz Propiedad (camelCase).
  */
 getProperties() {
-  return this.http.get<Propiedad[]>(`${this.url}/properties`);
+  return this.http.get<any[]>(`${this.url}/properties`).pipe(
+    map((list) => {
+      console.log('DATOS BRUTOS DEL BACKEND:', list[0]); // <--- Mira esto en la consola
+      return list.map(p => ({
+        ...p,
+        // Si en la consola ves "price_month", pon p.price_month
+        // Si en la consola ves "price", pon p.price
+        priceMonth: p.price_month || p.priceMonth || p.price || 0,
+        ownerId: p.owner_id || p.ownerId || 0,
+        isAvailable: p.is_available ?? p.isAvailable ?? true,
+        // ... repite con los demás
+      } as Propiedad));
+    })
+  );
 }
+// Método para obtener las etiquetas de la tabla 'tags'
+getAllTags() {
+  return this.http.get<any[]>(`${this.url}/properties/tags`);
+}
+
   // Favoritos 
   getFavorites() { return this.http.get(`${this.url}/users/me/favorites`); }
   addFavorite(propertyId: number) { return this.http.post(`${this.url}/users/me/favorites`, { propertyId }); }
@@ -162,59 +181,46 @@ loadHomeData() {
     return { icon: 'receipt_long', iconClass: 'icon-otros' };
   }
   // Propiedades
-// Método para obtener pisos para el mapa (Público)
-// En data.ts (ejemplo de cómo asegurar el nombre)
-getPublicProperties() {
-  return this.http.get<any[]>(`${this.url}/properties/public`).pipe(
-    map((list: any[]) => list.map(p => ({
-      ...p,
-      // Aseguras que el front use camelCase aunque la DB traiga snake_case
-      priceMonth: p.price_month, 
-      avatar_url: p.avatar_url,
-      isAvailable: p.is_available
-    })))
-  );
-}
 
-// Método para obtener las etiquetas de la tabla 'tags'
-getAllTags() {
-  return this.http.get<any[]>(`${this.url}/tags`);
-}
 
-// --- DENTRO DE DATASERVICE ---
-
-// 2. loadMapData actualizado para usar la función simple
+// loadMapData actualizado para usar la función simple
 loadMapData() {
-  console.log('Iniciando carga de datos del mapa...');
-  
-  // Llamada a la función simple
   this.getProperties().subscribe({
-    next: (data) => {
-      console.log('Propiedades recibidas:', data);
-      this.properties.set(data); // <--- Actualiza el signal
-    },
-    error: (err) => console.error('Error al cargar propiedades del mapa', err)
+    next: (data) => this.properties.set(data),
+    error: (err) => console.error('Error Propiedades:', err)
   });
 
-  // Mantener carga de etiquetas si es necesario
   this.getAllTags().subscribe({
     next: (tags) => this.availableTags.set(tags.map(t => t.name)),
-    error: (err) => console.error('Error al cargar etiquetas', err)
+    error: (err) => console.error('Error Tags:', err)
   });
 }
 propertiesFiltered = computed(() => {
-    const q = this.busqueda().toLowerCase();
-    const max = this.precioMax();
-    const tagsFiltro = this.etiquetasSeleccionadas();
-    
-    return this.properties().filter((p: Propiedad) => {
-      const matchQ = !q || p.title.toLowerCase().includes(q) || (p.address?.toLowerCase().includes(q) ?? false);
-      const matchPrecio = p.priceMonth <= max;
-      const matchTags = tagsFiltro.length === 0 || 
-                        tagsFiltro.every(nombre => p.tags?.some((t: Tag) => t.name === nombre));
-      
-      return matchQ && matchPrecio && matchTags;
-    });
-  });
+  // Aseguramos valores limpios
+  const q = (this.busqueda() || '').toLowerCase().trim();
+  const max = Number(this.precioMax());
+  const tagsFiltro = this.etiquetasSeleccionadas();
+  const listaOriginal = this.properties() || [];
 
+  return listaOriginal.filter((p: Propiedad) => {
+    // 1. Filtro por Texto (Título o Dirección)
+    const titulo = (p.title || '').toLowerCase();
+    const direccion = (p.address || '').toLowerCase();
+    const matchQ = !q || titulo.includes(q) || direccion.includes(q);
+
+    // 2. Filtro por Precio (Forzamos a número)
+    // Usamos el campo mapeado 'priceMonth' que hicimos antes
+    const precio = Number(p.priceMonth || 0);
+    const matchPrecio = precio <= max;
+
+    // 3. Filtro por Etiquetas (Seguro contra nulos)
+    const matchTags = tagsFiltro.length === 0 || 
+                      (p.tags && tagsFiltro.every(nombre => 
+                        p.tags?.some((t: Tag) => t.name === nombre)
+                      ));
+
+    // Solo si cumple las 3 condiciones
+    return matchQ && matchPrecio && matchTags;
+  });
+});
 }
