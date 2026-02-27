@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from '../../services/data';
+import { switchMap } from 'rxjs/operators';
 import * as L from 'leaflet';
 
 @Component({
@@ -131,14 +132,18 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
       longitude:        loc ? parseFloat(loc.lng.toFixed(6)) : null,
     };
     this.loading.set(true);
-    this.dataService.createProperty(body).subscribe({
+    this.dataService.createProperty(body).pipe(
+      switchMap((property: any) =>
+        this.dataService.createHousehold(v.title!, property.id)
+      )
+    ).subscribe({
       next: () => this.router.navigate(['/home-owners']),
       error: (err) => {
         this.loading.set(false);
         console.error('Status:', err.status);
         console.error('Error body:', err.error);
         console.error('Body enviado:', body);
-        alert('Error al crear la propiedad.');
+        alert('Error al crear la propiedad o el household.');
       }
     });
   }
