@@ -1,0 +1,166 @@
+<div class="bg-scene">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+@if (loading()) {
+  <div class="loading-screen">
+    <p>Cargando panel...</p>
+  </div>
+} @else {
+  <div class="admin-wrapper">
+
+    <!-- Header -->
+    <div class="admin-header glass-card">
+      <span class="material-icons-round admin-header__icon">admin_panel_settings</span>
+      <div>
+        <h2>Panel de Administración</h2>
+        <p>Gestiona usuarios, roles y etiquetas</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-wrapper glass-card">
+      @for (tab of tabs; track tab.key) {
+        <button class="tab" [class.active]="activeTab() === tab.key" (click)="setTab(tab.key)">
+          <span class="material-icons-round">{{ tab.icon }}</span>
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+
+    <!-- ── ESTADÍSTICAS ── -->
+    @if (activeTab() === 'stats') {
+      @if (stats()) {
+        <div class="stats-grid">
+          <div class="stat-card glass-card">
+            <span class="stat-icon">👥</span>
+            <span class="stat-value">{{ stats()?.totalUsuarios }}</span>
+            <span class="stat-label">Total usuarios</span>
+          </div>
+          <div class="stat-card glass-card">
+            <span class="stat-icon">🎓</span>
+            <span class="stat-value">{{ stats()?.totalEstudiantes }}</span>
+            <span class="stat-label">Estudiantes</span>
+          </div>
+          <div class="stat-card glass-card">
+            <span class="stat-icon">🏠</span>
+            <span class="stat-value">{{ stats()?.totalPropietarios }}</span>
+            <span class="stat-label">Propietarios</span>
+          </div>
+          <div class="stat-card glass-card">
+            <span class="stat-icon">🔑</span>
+            <span class="stat-value">{{ stats()?.totalAdmins }}</span>
+            <span class="stat-label">Admins</span>
+          </div>
+          <div class="stat-card glass-card">
+            <span class="stat-icon">🏢</span>
+            <span class="stat-value">{{ stats()?.totalPropiedades }}</span>
+            <span class="stat-label">Propiedades</span>
+          </div>
+          <div class="stat-card glass-card">
+            <span class="stat-icon">✅</span>
+            <span class="stat-value">{{ stats()?.propiedadesDisponibles }}</span>
+            <span class="stat-label">Disponibles</span>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- ── USUARIOS ── -->
+    @if (activeTab() === 'users') {
+      <div class="section-list">
+        @for (user of users(); track user.id) {
+          <div class="user-card glass-card">
+            <div class="user-avatar">{{ user.name?.charAt(0) || user.email.charAt(0) }}</div>
+            <div class="user-info">
+              <span class="user-name">{{ user.name || 'Sin nombre' }}</span>
+              <span class="user-email">{{ user.email }}</span>
+            </div>
+            <span class="role-badge"
+              [class.owner]="user.role === 'OWNER'"
+              [class.admin]="user.role === 'ADMIN'">
+              {{ user.role }}
+            </span>
+            <div class="user-actions">
+              <button class="btn-icon-sm green" (click)="confirmRoleChange(user)" title="Cambiar rol">
+                <span class="material-icons-round">manage_accounts</span>
+              </button>
+              <button class="btn-icon-sm red" (click)="confirmDelete(user)" title="Eliminar">
+                <span class="material-icons-round">delete</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── TAGS ── -->
+    @if (activeTab() === 'tags') {
+      <div class="tags-section glass-card">
+        <div class="tags-add">
+          <div class="edit-input-wrapper">
+            <span class="material-icons-round">label</span>
+            <input
+              type="text"
+              placeholder="Nombre del tag..."
+              [value]="newTagName()"
+              (input)="newTagName.set($any($event.target).value)"
+              (keydown.enter)="createTag()" />
+          </div>
+          <button class="btn-primary btn-add" (click)="createTag()">
+            <span class="material-icons-round">add</span>
+            Añadir
+          </button>
+        </div>
+        <div class="tags-list">
+          @for (tag of tags(); track tag) {
+            <span class="tag-chip">{{ tag }}</span>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+}
+
+<!-- Modal eliminar usuario -->
+@if (showDeleteModal()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+      <span class="modal-icon">🗑️</span>
+      <h3>¿Eliminar usuario?</h3>
+      <p>Se eliminará permanentemente a <strong>{{ userToDelete()?.email }}</strong>.</p>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" (click)="doDelete()">Sí, eliminar</button>
+        <button class="modal-btn cancel" (click)="cancelDelete()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal cambiar rol -->
+@if (showRoleModal()) {
+  <div class="modal-overlay" (click)="cancelRoleChange()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+      <span class="modal-icon">👤</span>
+      <h3>Cambiar rol</h3>
+      <p>{{ userToEditRole()?.email }}</p>
+      <div class="role-options">
+        @for (role of roles; track role) {
+          <button class="role-option"
+            [class.active]="newRole() === role"
+            (click)="newRole.set(role)">
+            {{ role }}
+          </button>
+        }
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" (click)="doRoleChange()">Guardar</button>
+        <button class="modal-btn cancel" (click)="cancelRoleChange()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
