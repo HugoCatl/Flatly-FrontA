@@ -1,1 +1,130 @@
-<p>home-owners (WIP)</p>
+<div class="bg-scene">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<app-top-bar logoLink="/home-owners" />
+
+@if (loading()) {
+  <div class="loading-screen">
+    <p>Cargando tus propiedades...</p>
+  </div>
+} @else {
+  <div class="owners-container">
+
+    <!-- Hero -->
+    <div class="hero-card">
+      <div class="hero-content">
+        <h2>Hola, {{ dataService.user()?.name ?? 'Propietario' }} 👋</h2>
+        <div class="pill">Panel de propietario</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="section-title">Resumen</div>
+    <div class="stats-grid">
+      <div class="glass-card stat-card">
+        <span class="stat-card__icon material-icons-round">apartment</span>
+        <span class="stat-card__value">{{ properties().length }}</span>
+        <span class="stat-card__label">Propiedades</span>
+      </div>
+      <div class="glass-card stat-card">
+        <span class="stat-card__icon material-icons-round">group</span>
+        <span class="stat-card__value">{{ totalTenants() }}</span>
+        <span class="stat-card__label">Inquilinos</span>
+      </div>
+      <div class="glass-card stat-card">
+        <span class="stat-card__icon material-icons-round stat-card__icon--green">check_circle</span>
+        <span class="stat-card__value">{{ properties().length - occupiedCount() }}</span>
+        <span class="stat-card__label">Disponibles</span>
+      </div>
+      <div class="glass-card stat-card">
+        <span class="stat-card__icon material-icons-round stat-card__icon--purple">key</span>
+        <span class="stat-card__value">{{ occupiedCount() }}</span>
+        <span class="stat-card__label">Ocupados</span>
+      </div>
+    </div>
+
+    <!-- Acción -->
+    <div class="section-title">Acciones rápidas</div>
+    <div class="action-card" (click)="goToCreateProperty()">
+      <div class="action-icon">🏠</div>
+      <div class="action-text">
+        <h3>Añadir propiedad</h3>
+        <p>Registra un nuevo piso para alquilar</p>
+      </div>
+      <span class="material-icons-round action-arrow">chevron_right</span>
+    </div>
+
+    <!-- Propiedades -->
+    <div class="section-title">Mis propiedades</div>
+
+    @if (properties().length === 0) {
+      <div class="glass-card empty-state">
+        <span class="material-icons-round empty-state__icon">apartment</span>
+        <p>Aún no tienes propiedades registradas.</p>
+        <button class="btn-primary" (click)="goToCreateProperty()">Añadir la primera</button>
+      </div>
+    }
+
+    @for (prop of properties(); track prop.id) {
+      <div class="glass-card property-card">
+
+        <div class="property-card__top">
+          <div class="property-icon">
+            <span class="material-icons-round">apartment</span>
+          </div>
+          <div class="property-card__info">
+            <span class="property-card__title">{{ prop.title }}</span>
+            <span class="property-card__location">
+              <span class="material-icons-round">location_on</span>{{ prop.city }}, {{ prop.zone }}
+            </span>
+          </div>
+          <div class="property-card__right">
+            <span class="property-card__price">{{ prop.priceMonth }}€</span>
+            <span class="property-card__price-label">/mes</span>
+          </div>
+        </div>
+
+        <div class="property-card__meta">
+          <span class="chip"><span class="material-icons-round">bed</span>{{ prop.rooms }} hab.</span>
+          <span class="chip"><span class="material-icons-round">bathroom</span>{{ prop.bathrooms }} baños</span>
+          @if (prop.squareMeters) {
+            <span class="chip"><span class="material-icons-round">square_foot</span>{{ prop.squareMeters }}m²</span>
+          }
+          @if (prop.isFurnished) {
+            <span class="chip chip--green"><span class="material-icons-round">chair</span>Amueblado</span>
+          }
+          @if (prop.isAvailable) {
+            <span class="chip chip--available">Disponible</span>
+          } @else {
+            <span class="chip chip--occupied">Ocupado</span>
+          }
+        </div>
+
+        <div class="property-card__tenants">
+          <span class="tenants-label">
+            <span class="material-icons-round">group</span>
+            {{ getTenants(prop).length === 0 ? 'Sin inquilinos' : getTenants(prop).length + ' inquilino' + (getTenants(prop).length > 1 ? 's' : '') }}
+          </span>
+          @if (getTenants(prop).length > 0) {
+            <div class="tenants-avatars">
+              @for (tenant of getTenants(prop).slice(0, 4); track tenant.userId ?? tenant.id) {
+                <span class="tenant-avatar" [title]="tenant.name ?? tenant.email ?? 'Inquilino'">
+                  {{ (tenant.name ?? tenant.email ?? 'I').charAt(0).toUpperCase() }}
+                </span>
+              }
+              @if (getTenants(prop).length > 4) {
+                <span class="tenant-avatar tenant-avatar--more">+{{ getTenants(prop).length - 4 }}</span>
+              }
+            </div>
+          }
+        </div>
+
+      </div>
+    }
+
+  </div>
+}
