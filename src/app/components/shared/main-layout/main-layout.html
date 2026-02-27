@@ -1,19 +1,4 @@
-<header class="top-bar">
-    <span class="top-bar__logo" routerLink="/home" style="cursor: pointer;">Flatly</span>
-    <div class="top-bar__actions">
-        <button class="btn-icon" (click)="theme.toggle()">
-            <span class="material-icons-round">
-                {{ theme.isDark() ? 'light_mode' : 'dark_mode' }}
-            </span>
-        </button>
-        <button class="top-bar__profile" aria-label="Ver perfil" routerLink="/profile">
-            <span class="material-icons-round">account_circle</span>
-        </button>
-        <button class="top-bar__logout" aria-label="Cerrar sesión" (click)="confirmLogout()">
-            <span class="material-icons-round">logout</span>
-        </button>
-    </div>
-</header>
+<app-top-bar [logoLink]="'/home'" />
 
 <main class="content-area">
     <router-outlet></router-outlet>
@@ -34,17 +19,3 @@
     </a>
 </nav>
 
-<!-- Confirmación de cierre de sesión -->
-@if (showLogoutModal()) {
-    <div class="modal-backdrop" (click)="cancelLogout()">
-        <div class="modal" (click)="$event.stopPropagation()">
-            <span class="material-icons-round modal__icon">logout</span>
-            <h2 class="modal__title">¿Cerrar sesión?</h2>
-            <p class="modal__message">Tendrás que volver a iniciar sesión para acceder a tu cuenta.</p>
-            <div class="modal__actions">
-                <button class="modal__btn modal__btn--cancel" (click)="cancelLogout()">Cancelar</button>
-                <button class="modal__btn modal__btn--confirm" (click)="logout()">Cerrar sesión</button>
-            </div>
-        </div>
-    </div>
-}

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data';
+import { TopBarComponent } from '../shared/top-bar/top-bar';
 
 interface AdminUser {
   id: number;
@@ -22,7 +23,7 @@ interface AdminStats {
 
 @Component({
   selector: 'app-home-admin',
-  imports: [CommonModule],
+  imports: [CommonModule, TopBarComponent],
   templateUrl: './home-admin.html',
   styleUrl: './home-admin.scss',
 })
