@@ -39,5 +39,8 @@ export const routes: Routes = [
     { path: 'home-owners', component: HomeOwners },
     { path: 'create-property', component: CreateProperty },
 
+    // Home admin
+    { path: 'home-admin', component: HomeAdmin },
+
     { path: '**', redirectTo: 'login' }
 ];

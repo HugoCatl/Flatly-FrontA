@@ -82,7 +82,7 @@ export class HomeAdmin implements OnInit {
   }
 
   loadTags(): void {
-    this.dataService.getAllTags().subscribe({
+    this.dataService.adminGetTags({}).subscribe({
       next: (data: any) => this.tags.set(data.map((t: any) => t.name)),
       error: (err) => console.error('Error al cargar tags:', err)
     });

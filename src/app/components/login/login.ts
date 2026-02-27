@@ -28,7 +28,9 @@ export class Login implements OnInit {
     this.dataService.checkSession().subscribe({
       next: (res: any) => {
         const role: Role = res?.role ?? res?.user?.role;
-        if (role === Role.OWNER) {
+        if (role === Role.ADMIN) {
+          this.router.navigate(['/home-admin']);
+        } else if (role === Role.OWNER) {
           this.router.navigate(['/home-owners']);
         } else {
           this.router.navigate(['/home']);
@@ -59,7 +61,9 @@ export class Login implements OnInit {
             localStorage.setItem('user_name', res.user.name);
           }
 
-          if (res?.user?.role === Role.OWNER) {
+          if (res?.user?.role === Role.ADMIN) {
+            this.router.navigate(['/home-admin']);
+          } else if (res?.user?.role === Role.OWNER) {
             this.router.navigate(['/home-owners']);
           } else {
             this.router.navigate(['/home']);
