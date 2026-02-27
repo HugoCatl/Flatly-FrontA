@@ -19,6 +19,7 @@ export class Profile implements OnInit {
   editing = signal(false);
   saving = signal(false);
   showLogoutModal = signal(false);
+  profile = this.dataService.profile;
 
   editName = signal('');
   editPhone = signal('');

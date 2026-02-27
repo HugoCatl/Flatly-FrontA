@@ -16,21 +16,21 @@
       <!-- Header -->
       <div class="profile-header">
         <div class="avatar-container">
-          @if (user()?.avatarUrl) {
-            <img class="avatar-circle avatar-img" [src]="user()?.avatarUrl" alt="Avatar" />
+          @if (profile()?.avatarUrl) {
+            <img class="avatar-circle avatar-img" [src]="profile()?.avatarUrl" alt="Avatar" />
           } @else {
             <div class="avatar-circle">
-              {{ user()?.name?.charAt(0) | uppercase }}
+              {{ profile()?.name?.charAt(0) | uppercase }}
             </div>
           }
           <span class="status-dot"></span>
         </div>
         <div class="profile-header-info">
-          <h2 class="profile-name">{{ user()?.name }}</h2>
+          <h2 class="profile-name">{{ profile()?.name }}</h2>
           <span class="role-badge"
-            [class.owner]="user()?.role === 'OWNER'"
-            [class.admin]="user()?.role === 'ADMIN'">
-            {{ user()?.role }}
+            [class.owner]="profile()?.role === 'OWNER'"
+            [class.admin]="profile()?.role === 'ADMIN'">
+            {{ profile()?.role }}
           </span>
         </div>
       </div>
@@ -43,7 +43,7 @@
             <span class="material-icons-round">email</span>
             <div class="info-content">
               <label>Email</label>
-              <p>{{ user()?.email }}</p>
+              <p>{{ profile()?.email }}</p>
             </div>
           </div>
 
@@ -51,7 +51,7 @@
             <span class="material-icons-round">phone</span>
             <div class="info-content">
               <label>Teléfono</label>
-              <p>{{ user()?.phone || 'No especificado' }}</p>
+              <p>{{ profile()?.phone || 'No especificado' }}</p>
             </div>
           </div>
 
@@ -59,7 +59,7 @@
             <span class="material-icons-round">calendar_today</span>
             <div class="info-content">
               <label>Miembro desde</label>
-              <p>{{ user()?.created_at | date:'MMMM yyyy' }}</p>
+              <p>{{ profile()?.created_at | date:'MMMM yyyy' }}</p>
             </div>
           </div>
 
