@@ -1,4 +1,4 @@
-import { Component, OnDestroy, AfterViewInit, signal, computed, inject, effect } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, signal, computed, inject, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,10 +13,11 @@ import { Propiedad } from '../../models/flatly';
   templateUrl: './map.html',
   styleUrl: './map.scss',
 })
-export class Map implements AfterViewInit, OnDestroy {
+export class Map implements AfterViewInit, OnDestroy, OnInit {
   private readonly dataService = inject(DataService);
   private leafletMap!: L.Map;
   private markers: L.Marker[] = [];
+  private isMapInitialized = false;
 
   // Signals del componente (solo UI)
   pisoActivo = signal<Propiedad | null>(null);
@@ -31,17 +32,31 @@ export class Map implements AfterViewInit, OnDestroy {
   allEtiquetas = signal<string[]>(['Terraza', 'Luminoso', 'Amueblado', 'Céntrico', 'Gym']);
 
   constructor() {
-    // Se ejecuta cada vez que el filtro centralizado cambia
-    effect(() => {
-      if (this.leafletMap) {
-        this.renderMarkers(this.dataService.propertiesFiltered());
-      }
-    });
+    // 2. Ajustamos el effect para mayor seguridad
+   effect(() => {
+  const pisos = this.dataService.propertiesFiltered();
+  console.log('Pisos filtrados:', pisos); // <--- AÑADE ESTO
+  if (this.isMapInitialized) {
+    this.renderMarkers(pisos);
+  }
+});
   }
 
-  ngAfterViewInit() {
-    this.initMap();
-  }
+  ngOnInit(): void {
+  // Carga inicial de datos al montar el componente
+  this.dataService.loadMapData();
+}
+
+ngAfterViewInit() {
+  this.initMap();
+  this.isMapInitialized = true;
+  
+  // Escuchar movimiento del mapa para actualizar datos si fuera necesario
+  this.leafletMap.on('moveend', () => {
+    // Si necesitas recargar al mover, llamarías a loadMapData aquí o a una versión con filtros
+    // this.dataService.loadMapData(); 
+  });
+}
 
   ngOnDestroy() {
     if (this.leafletMap) this.leafletMap.remove();

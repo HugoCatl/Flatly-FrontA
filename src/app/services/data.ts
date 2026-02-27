@@ -42,6 +42,8 @@ export class DataService {
   precioMax = signal(2500);
   etiquetasSeleccionadas = signal<string[]>([]);
 
+  
+
 
   // --- 1. BLOQUE: AUTH & SESIÓN  ---
   register(body: any) { return this.http.post(`${this.url}/users/auth/register`, body); }
@@ -59,7 +61,12 @@ export class DataService {
   becomeOwner() { return this.http.put(`${this.url}/users/me/becomeOwner`, {withCredentials: true}); }
   returnStudent() { return this.http.put(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
 
-
+/**
+ * Obtiene todas las propiedades filtradas por el backend
+ */
+getProperties() {
+  return this.http.get<Propiedad[]>(`${this.url}/properties`);
+}
   // Favoritos 
   getFavorites() { return this.http.get(`${this.url}/users/me/favorites`); }
   addFavorite(propertyId: number) { return this.http.post(`${this.url}/users/me/favorites`, { propertyId }); }
@@ -174,19 +181,27 @@ getAllTags() {
   return this.http.get<any[]>(`${this.url}/tags`);
 }
 
+// --- DENTRO DE DATASERVICE ---
+
+// 2. loadMapData actualizado para usar la función simple
 loadMapData() {
-  // Carga paralela de pisos y etiquetas
-  this.getPublicProperties().subscribe({
-    next: (data) => this.properties.set(data),
+  console.log('Iniciando carga de datos del mapa...');
+  
+  // Llamada a la función simple
+  this.getProperties().subscribe({
+    next: (data) => {
+      console.log('Propiedades recibidas:', data);
+      this.properties.set(data); // <--- Actualiza el signal
+    },
     error: (err) => console.error('Error al cargar propiedades del mapa', err)
   });
 
+  // Mantener carga de etiquetas si es necesario
   this.getAllTags().subscribe({
     next: (tags) => this.availableTags.set(tags.map(t => t.name)),
-    error: (err) => console.error('Error al cargar etiquetas de la DB', err)
+    error: (err) => console.error('Error al cargar etiquetas', err)
   });
 }
-
 propertiesFiltered = computed(() => {
     const q = this.busqueda().toLowerCase();
     const max = this.precioMax();
@@ -201,9 +216,5 @@ propertiesFiltered = computed(() => {
       return matchQ && matchPrecio && matchTags;
     });
   });
-  
-  setProperties(newProperties: Propiedad[]) {
-    this.properties.set(newProperties);
-  }
 
 }
