@@ -10,6 +10,7 @@ import { Profile } from './components/profile/profile';
 import { Onboarding } from './components/onboarding/onboarding';
 import { HomeOwners } from './components/home-owners/home-owners';
 import { CreateProperty } from './components/create-property/create-property';
+import { HomeAdmin } from './components/home-admin/home-admin';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
