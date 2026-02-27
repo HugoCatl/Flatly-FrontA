@@ -1,0 +1,38 @@
+<header class="top-bar">
+    <span class="top-bar__logo" [routerLink]="logoLink" style="cursor: pointer;">Flatly</span>
+    <div class="top-bar__actions">
+        <button class="btn-icon" (click)="theme.toggle()">
+            <span class="material-icons-round">
+                {{ theme.isDark() ? 'light_mode' : 'dark_mode' }}
+            </span>
+        </button>
+        @if (showProfile) {
+            <button class="top-bar__profile" aria-label="Ver perfil" routerLink="/profile">
+                @if (dataService.profile()?.avatarUrl) {
+                    <img class="profile-avatar" [src]="dataService.profile()!.avatarUrl" alt="avatar" />
+                } @else if (dataService.profile()?.name) {
+                    <span class="profile-initial">{{ dataService.profile()!.name.charAt(0).toUpperCase() }}</span>
+                } @else {
+                    <span class="material-icons-round">account_circle</span>
+                }
+            </button>
+        }
+        <button class="top-bar__logout" aria-label="Cerrar sesión" (click)="confirmLogout()">
+            <span class="material-icons-round">logout</span>
+        </button>
+    </div>
+</header>
+
+@if (showLogoutModal()) {
+    <div class="modal-backdrop" (click)="cancelLogout()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <span class="material-icons-round modal__icon">logout</span>
+            <h2 class="modal__title">¿Cerrar sesión?</h2>
+            <p class="modal__message">Tendrás que volver a iniciar sesión para acceder a tu cuenta.</p>
+            <div class="modal__actions">
+                <button class="modal__btn modal__btn--cancel" (click)="cancelLogout()">Cancelar</button>
+                <button class="modal__btn modal__btn--confirm" (click)="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+}
