@@ -40,18 +40,7 @@
           }
         </button>
 
-        <button class="option" [class.option--selected]="selected() === 'gastos'" (click)="select('gastos')">
-          <span class="option__icon material-icons-round">receipt_long</span>
-          <div class="option__text">
-            <span class="option__label">Solo gestionar gastos</span>
-            <span class="option__desc">Quiero llevar el control de gastos compartidos</span>
-          </div>
-          @if (selected() === 'gastos') {
-            <span class="option__check material-icons-round">check</span>
-          }
-        </button>
-
-        <button class="option" [class.option--selected]="selected() === 'propietario'" (click)="select('propietario')">
+<button class="option" [class.option--selected]="selected() === 'propietario'" (click)="select('propietario')">
           <span class="option__icon material-icons-round">apartment</span>
           <div class="option__text">
             <span class="option__label">Soy propietario</span>
