@@ -1,19 +1,31 @@
-:host {
-  display: block;
-  min-height: 100vh;
+/* --- Variables básicas para pruebas --- */
+:root {
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-400: #34d399;
+  --gray-800: #1f2937;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-200: #e5e7eb;
+  --gray-50: #f9fafb;
+  --white: #ffffff;
 }
 
-.loading-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+/* --- Base --- */
+body {
+  background-color: #f3f4f6;
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
-  p {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--gray-400);
-  }
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
 }
 
 .admin-wrapper {
@@ -21,42 +33,46 @@
   z-index: 1;
   max-width: 600px;
   margin: 0 auto;
-  padding: calc(56px + env(safe-area-inset-top, 0px) + 1.5rem) 1rem 6rem;
+  
+  // --- CAMBIO AQUÍ: Ajusta este valor según la altura de tu app-top-bar ---
+  padding-top: 80px; 
+  // O si prefieres usar el cálculo original, asegúrate de que '56px' sea la altura real:
+  // padding-top: calc(56px + env(safe-area-inset-top, 0px) + 1rem);
+  
+  // Padding inferior y lateral
+  padding-bottom: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-
-/* ── Header ── */
+/* --- Header --- */
 .admin-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem 1.5rem !important;
-
-  &__icon {
-    font-size: 2rem;
-    color: var(--emerald-500);
-    flex-shrink: 0;
-  }
-
-  h2 {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--gray-800);
-    margin: 0 0 2px;
-    letter-spacing: -0.02em;
-  }
-
-  p {
-    font-size: 0.78rem;
-    color: var(--gray-400);
-    margin: 0;
-    font-weight: 500;
-  }
 }
 
-/* ── Tabs ── */
+.admin-header__icon {
+  font-size: 2rem;
+  color: var(--emerald-500);
+}
+
+.admin-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--gray-800);
+}
+
+.admin-header p {
+  font-size: 0.78rem;
+  margin: 0;
+  color: var(--gray-400);
+}
+
+/* --- Tabs --- */
 .tabs-wrapper {
   display: flex;
   padding: 0.4rem !important;
@@ -77,29 +93,14 @@
   font-weight: 700;
   color: var(--gray-400);
   cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
-
-  .material-icons-round {
-    font-size: 1rem;
-  }
-
-  &.active {
-    background: var(--emerald-500);
-    color: white;
-  }
-
-  &:hover:not(.active) {
-    background: rgba(0, 0, 0, 0.04);
-    color: var(--gray-800);
-
-    html.dark & {
-      background: rgba(255, 255, 255, 0.06);
-    }
-  }
 }
 
-/* ── Stats grid ── */
+.tab.active {
+  background: var(--emerald-500);
+  color: white;
+}
+
+/* --- Stats grid --- */
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -111,30 +112,22 @@
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  padding: 1.25rem 0.75rem !important;
   text-align: center;
-}
-
-.stat-icon {
-  font-size: 1.5rem;
 }
 
 .stat-value {
   font-size: 1.6rem;
   font-weight: 800;
   color: var(--gray-800);
-  letter-spacing: -0.04em;
 }
 
 .stat-label {
   font-size: 0.7rem;
-  font-weight: 600;
   color: var(--gray-400);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-/* ── Usuarios ── */
+/* --- Usuarios --- */
 .section-list {
   display: flex;
   flex-direction: column;
@@ -145,48 +138,35 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.9rem 1.25rem !important;
 }
 
 .user-avatar {
   width: 40px;
   height: 40px;
-  min-width: 40px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--emerald-400), var(--emerald-600));
   color: white;
-  font-size: 1rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-transform: uppercase;
+  font-weight: 800;
 }
 
 .user-info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
 }
 
 .user-name {
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--gray-800);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .user-email {
   font-size: 0.75rem;
-  font-weight: 500;
   color: var(--gray-400);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .role-badge {
@@ -196,19 +176,11 @@
   border-radius: 20px;
   background: rgba(16, 185, 129, 0.12);
   color: var(--emerald-600);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
+}
 
-  &.owner {
-    background: rgba(99, 102, 241, 0.12);
-    color: #6366F1;
-  }
-
-  &.admin {
-    background: rgba(239, 68, 68, 0.12);
-    color: #EF4444;
-  }
+.role-badge.admin {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
 }
 
 .user-actions {
@@ -222,219 +194,33 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-
-  .material-icons-round {
-    font-size: 1rem;
-  }
-
-  &.green {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--emerald-500);
-
-    &:hover { background: rgba(16, 185, 129, 0.2); }
-  }
-
-  &.red {
-    background: rgba(239, 68, 68, 0.1);
-    color: #EF4444;
-
-    &:hover { background: rgba(239, 68, 68, 0.2); }
-  }
 }
 
-/* ── Tags ── */
-.tags-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.25rem !important;
-}
+.btn-icon-sm.green { background: rgba(16, 185, 129, 0.1); color: var(--emerald-500); }
 
-.tags-add {
-  display: flex;
-  gap: 0.65rem;
-  align-items: center;
-}
+.btn-icon-sm.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-.edit-input-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: var(--gray-50);
-  border: 1.5px solid var(--gray-200);
-  border-radius: 12px;
-  padding: 0 12px;
-  transition: border-color 0.2s;
-
-  &:focus-within {
-    border-color: var(--emerald-500);
-    background: var(--white);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
-  }
-
-  .material-icons-round {
-    font-size: 1rem;
-    color: var(--gray-400);
-    flex-shrink: 0;
-  }
-
-  input {
-    flex: 1;
-    padding: 10px;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--gray-800);
-    font-family: inherit;
-
-    &::placeholder { color: var(--gray-400); }
-  }
-}
-
-.btn-add {
-  width: auto !important;
-  padding: 10px 16px !important;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  white-space: nowrap;
-
-  .material-icons-round { font-size: 1rem; }
-}
-
-.tags-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag-chip {
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 20px;
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--emerald-600);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-
-  html.dark & {
-    background: rgba(16, 185, 129, 0.08);
-    border-color: rgba(16, 185, 129, 0.15);
-  }
-}
-
-/* ── Modales ── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  animation: fadeIn 0.2s ease;
-}
-
-.modal-box {
-  width: 100%;
-  max-width: 320px;
-  padding: 2rem 1.5rem !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  text-align: center;
-
-  .modal-icon { font-size: 2.5rem; }
-
-  h3 {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--gray-800);
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.88rem;
-    color: var(--gray-500);
-    margin: 0;
-  }
-}
-
-.role-options {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.role-option {
-  flex: 1;
-  padding: 8px;
-  border: 1.5px solid var(--gray-200);
-  border-radius: 10px;
-  background: transparent;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--gray-500);
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
-
-  &.active {
-    background: var(--emerald-500);
-    border-color: var(--emerald-500);
-    color: white;
-  }
-
-  &:hover:not(.active) {
-    border-color: var(--emerald-400);
-    color: var(--emerald-500);
-  }
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.75rem;
-  width: 100%;
-  margin-top: 0.5rem;
-}
-
-.modal-btn {
-  flex: 1;
-  padding: 12px;
+.raw-input {
   border: none;
-  border-radius: var(--radius-lg);
-  font-size: 0.92rem;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &.confirm {
-    background: rgba(16, 185, 129, 0.12);
-    color: var(--emerald-600);
-    border: 1.5px solid rgba(16, 185, 129, 0.2);
-
-    &:hover { background: rgba(16, 185, 129, 0.2); }
-  }
-
-  &.cancel {
-    background: #EF4444;
-    color: white;
-
-    &:hover { background: #DC2626; }
+  background: transparent;
+  outline: none;
+  font-size: 0.9rem;
+  color: var(--gray-800);
+  width: 100%;
+  padding: 0.5rem;
+  
+  &::placeholder {
+    color: var(--gray-400);
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+// Asegúrate de que el contenedor no tenga borde si quieres look 100% plano
+.edit-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white; // Fondo blanco para el input
+  border-radius: 10px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--gray-200);
 }

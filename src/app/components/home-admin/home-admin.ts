@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal,effect } from '@angular/core';
+import { Component, inject, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data';
 import { TopBarComponent } from '../shared/top-bar/top-bar';
-import { FormsModule } from '@angular/forms'; // Añadido para los inputs
+import { FormsModule } from '@angular/forms';
 
+// Interfaces necesarias para el tipado fuerte
 interface AdminUser {
   id: number;
   name: string;
@@ -12,47 +13,40 @@ interface AdminUser {
   created_at: string;
 }
 
-interface AdminStats {
-  totalUsuarios: number;
-  totalEstudiantes: number;
-  totalPropietarios: number;
-  totalAdmins: number;
-  totalPropiedades: number;
-  propiedadesDisponibles: number;
-  timestamp: string;
-}
 
 @Component({
   selector: 'app-home-admin',
-  standalone: true, // Asegúrate de que sea standalone si usas imports
-  imports: [CommonModule, TopBarComponent, FormsModule], // FormsModule es clave
+  standalone: true,
+  imports: [CommonModule, TopBarComponent, FormsModule],
   templateUrl: './home-admin.html',
   styleUrl: './home-admin.scss',
 })
 export class HomeAdmin implements OnInit {
   private dataService = inject(DataService);
 
-  // Usamos signals locales para manejar la lista de la tabla de admin
-  // para evitar conflictos con el signal del "usuario identificado" del servicio
-  adminUsersList = signal<AdminUser[]>([]);
+  // --- ESTRUCTURA CENTRALIZADA ---
+  
+  // Tags centralizados en el servicio
   tags = this.dataService.availableTags;
   loading = this.dataService.loading;
+  proces = this.dataService.proces;
+  stats = this.dataService.stats;
+  adminUsersList = this.dataService.adminUsersList; 
 
-  stats = signal<AdminStats | null>(null);
-  activeTab = signal<'stats' | 'users' | 'tags'>('stats');
+  // Signals locales para la UI de gestión de usuarios
 
-  showDeleteModal = signal(false);
   userToDelete = signal<AdminUser | null>(null);
-  showRoleModal = signal(false);
   userToEditRole = signal<AdminUser | null>(null);
+  
+  activeTab = signal<'stats' | 'users' | 'tags'>('stats');
+  
+  // Signals para los modales
+  showDeleteModal = signal(false);
+  showRoleModal = signal(false); 
   newRole = signal('');
+  
+  // Signal para el input de nuevos tags
   newTagName = signal('');
-
-  constructor() {
-    effect(() => {
-      console.log('Tags actualizados en Admin:', this.tags());
-    });
-  }
 
   tabs = [
     { key: 'stats', label: 'Estadísticas', icon: 'bar_chart' },
@@ -62,52 +56,30 @@ export class HomeAdmin implements OnInit {
 
   roles = ['STUDENT', 'OWNER', 'ADMIN'];
 
-ngOnInit() {
+  constructor() {
+    // Debug opcional para ver cambios en tiempo real
+    effect(() => {
+      console.log('Tags actualizados:', this.tags());
+    });
+  }
+
+  ngOnInit() {
     this.loading.set(true);
-    this.loadStats();
-    this.loadUsers();
-    this.loadTags();
+    this.loadDates();
+
+  }
+  loadDates(){
+    this.dataService.loadStats();
+    this.dataService.loadUsers();
+    this.dataService.loadTagsPublic();
   }
 
   setTab(key: string): void {
     this.activeTab.set(key as 'stats' | 'users' | 'tags');
   }
 
-  loadStats(): void {
-    this.dataService.adminGetStats().subscribe({
-      next: (data: any) => {
-        this.stats.set(data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error al cargar stats:', err);
-        this.loading.set(false);
-      }
-    });
-  }
 
-  loadUsers(): void {
-    this.dataService.adminGetAllUsers().subscribe({
-      next: (data: any) => this.adminUsersList.set(data), // Usamos la lista local
-      error: (err) => console.error('Error al cargar usuarios:', err)
-    });
-  }
-
-  loadTags(): void {
-
-    this.dataService.adminGetTags({}).subscribe({
-      next: (data: any) => {
-        const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
-        
-        this.tags.set(tagNames);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error al cargar tags:', err);
-        this.loading.set(false);
-      }
-    });
-  }
+  // --- MÉTODOS DE GESTIÓN (CRUD) ---
 
   confirmDelete(user: AdminUser): void {
     this.userToDelete.set(user);
@@ -159,16 +131,15 @@ ngOnInit() {
     });
   }
 
+  // ✅ Centralización: Usamos el método resiliente del servicio
   createTag(): void {
     const name = this.newTagName().trim();
     if (!name) return;
     
     this.dataService.adminCreateTag(name).subscribe({
       next: () => {
-        this.tags.update(list => [...list, name]);
-        this.newTagName.set('');
-      },
-      error: (err) => console.error('Error al crear tag:', err)
+        this.newTagName.set(''); // Limpiar input
+      }
     });
   }
 }

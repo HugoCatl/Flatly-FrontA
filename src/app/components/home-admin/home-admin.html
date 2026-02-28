@@ -14,7 +14,6 @@
 } @else {
   <div class="admin-wrapper">
 
-    <!-- Header -->
     <div class="admin-header glass-card">
       <span class="material-icons-round admin-header__icon">admin_panel_settings</span>
       <div>
@@ -23,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs-wrapper glass-card">
       @for (tab of tabs; track tab.key) {
         <button class="tab" [class.active]="activeTab() === tab.key" (click)="setTab(tab.key)">
@@ -33,45 +31,26 @@
       }
     </div>
 
-    <!-- ── ESTADÍSTICAS ── -->
     @if (activeTab() === 'stats') {
-      @if (stats()) {
         <div class="stats-grid">
           <div class="stat-card glass-card">
             <span class="stat-icon">👥</span>
-            <span class="stat-value">{{ stats()?.totalUsuarios }}</span>
+            <span class="stat-value">{{ stats()?.totalUsuarios || 0 }}</span>
             <span class="stat-label">Total usuarios</span>
           </div>
           <div class="stat-card glass-card">
             <span class="stat-icon">🎓</span>
-            <span class="stat-value">{{ stats()?.totalEstudiantes }}</span>
+            <span class="stat-value">{{ stats()?.totalEstudiantes || 0 }}</span>
             <span class="stat-label">Estudiantes</span>
           </div>
           <div class="stat-card glass-card">
             <span class="stat-icon">🏠</span>
-            <span class="stat-value">{{ stats()?.totalPropietarios }}</span>
+            <span class="stat-value">{{ stats()?.totalPropietarios || 0 }}</span>
             <span class="stat-label">Propietarios</span>
           </div>
-          <div class="stat-card glass-card">
-            <span class="stat-icon">🔑</span>
-            <span class="stat-value">{{ stats()?.totalAdmins }}</span>
-            <span class="stat-label">Admins</span>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-icon">🏢</span>
-            <span class="stat-value">{{ stats()?.totalPropiedades }}</span>
-            <span class="stat-label">Propiedades</span>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-icon">✅</span>
-            <span class="stat-value">{{ stats()?.propiedadesDisponibles }}</span>
-            <span class="stat-label">Disponibles</span>
-          </div>
         </div>
-      }
     }
 
-    <!-- ── USUARIOS ── -->
     @if (activeTab() === 'users') {
       <div class="section-list">
         @for (user of adminUsersList(); track user.id) {
@@ -99,7 +78,6 @@
       </div>
     }
 
-    <!-- ── TAGS ── -->
     @if (activeTab() === 'tags') {
       <div class="tags-section glass-card">
         <div class="tags-add">
@@ -108,8 +86,8 @@
             <input
               type="text"
               placeholder="Nombre del tag..."
-              [value]="newTagName()"
-              (input)="newTagName.set($any($event.target).value)"
+              [ngModel]="newTagName()"
+              (ngModelChange)="newTagName.set($event)"
               (keydown.enter)="createTag()" />
           </div>
           <button class="btn-primary btn-add" (click)="createTag()">
@@ -125,44 +103,5 @@
       </div>
     }
 
-  </div>
-}
-
-<!-- Modal eliminar usuario -->
-@if (showDeleteModal()) {
-  <div class="modal-overlay" (click)="cancelDelete()">
-    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
-      <span class="modal-icon">🗑️</span>
-      <h3>¿Eliminar usuario?</h3>
-      <p>Se eliminará permanentemente a <strong>{{ userToDelete()?.email }}</strong>.</p>
-      <div class="modal-actions">
-        <button class="modal-btn confirm" (click)="doDelete()">Sí, eliminar</button>
-        <button class="modal-btn cancel" (click)="cancelDelete()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-}
-
-<!-- Modal cambiar rol -->
-@if (showRoleModal()) {
-  <div class="modal-overlay" (click)="cancelRoleChange()">
-    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
-      <span class="modal-icon">👤</span>
-      <h3>Cambiar rol</h3>
-      <p>{{ userToEditRole()?.email }}</p>
-      <div class="role-options">
-        @for (role of roles; track role) {
-          <button class="role-option"
-            [class.active]="newRole() === role"
-            (click)="newRole.set(role)">
-            {{ role }}
-          </button>
-        }
-      </div>
-      <div class="modal-actions">
-        <button class="modal-btn confirm" (click)="doRoleChange()">Guardar</button>
-        <button class="modal-btn cancel" (click)="cancelRoleChange()">Cancelar</button>
-      </div>
-    </div>
   </div>
 }

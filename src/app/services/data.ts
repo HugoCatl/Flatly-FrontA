@@ -2,6 +2,8 @@ import { Injectable, inject, signal ,computed, effect} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Usuario, Propiedad, Factura, Tag } from '../models/flatly';
+import { catchError, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 type Role = 'ADMIN' | 'USER' | 'PROPIETARIO';
@@ -25,6 +27,24 @@ interface Expense {
   iconClass: string;
 }
 
+interface AdminUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  created_at: string;
+}
+
+interface AdminStats {
+  totalUsuarios: number;
+  totalEstudiantes: number;
+  totalPropietarios: number;
+  totalAdmins: number;
+  totalPropiedades: number;
+  propiedadesDisponibles: number;
+  timestamp: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DataService {
   private http = inject(HttpClient);
@@ -32,18 +52,30 @@ export class DataService {
 
   // 2. Inicializar signals leyendo del localStorage
   user = signal<Usuario | null>(JSON.parse(localStorage.getItem('app_user') || 'null'));
+
+  adminUsersList = signal<AdminUser[]>([]);
+
+  proces= signal(false); 
+  
+
+  showDeleteModal = signal(false);
+  showRoleModal = signal(false);
+
   profile = signal<Usuario | null>(null);
   expenses = signal<Factura[]>([]);
-  loading = signal(true);
+  
   hoseholdBills = signal<Factura[]>([]);
   properties = signal<Propiedad[]>([]);
 
   availableTags = signal<string[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));
-  
+  loading = signal(false);
+
   sesion = signal<boolean>(localStorage.getItem('app_session') === 'true');
   busqueda = signal<string>(localStorage.getItem('app_busqueda') || '');
   precioMax = signal<number>(Number(localStorage.getItem('app_precioMax')) || 2500);
   etiquetasSeleccionadas = signal<string[]>([]);
+
+  stats = signal<AdminStats | null>(null);
 
   constructor() {
     // 3. Crear efectos para guardar en localStorage cuando cambien
@@ -56,26 +88,12 @@ export class DataService {
     effect(() => {
       localStorage.setItem('app_busqueda', this.busqueda());
       localStorage.setItem('app_precioMax', String(this.precioMax()));
-      if (this.availableTags().length > 0) {
-        localStorage.setItem('app_tags_list', JSON.stringify(this.availableTags()));
-      }
+    });
+
+    effect(() => {
+      localStorage.setItem('app_tags_list', JSON.stringify(this.availableTags()));
     });
     this.ensureTagsLoaded();
-  }
-
-  private ensureTagsLoaded() {
-    // Si no hay tags en localStorage, los pedimos al backend
-    if (this.availableTags().length === 0) {
-      console.log('Cargando tags desde el backend...');
-      this.getAllTags().subscribe({
-        next: (tags) => {
-          const tagNames = tags.map(t => t.name);
-          this.availableTags.set(tagNames);
-          // Al hacer .set(), el effect de arriba guardará automáticamente en localStorage
-        },
-        error: (err) => console.error('Error cargando tags:', err)
-      });
-    }
   }
 
 
@@ -173,11 +191,37 @@ getAllTags() {
   }
   adminGetStats() { return this.http.get(`${this.url}/admin/stats`); }
   //body tag:{"name":"string"}
-  adminGetTags(body: any) { return this.http.get(`${this.url}/admin/tags`, body); }
-  adminCreateTag(tagName: string) { 
-    return this.http.post(`${this.url}/admin/tags`, { name: tagName }); 
+  // Asumiendo que este método existe
+  adminGetTags(params: any) {
+    return this.http.get(`${this.url}/admin/tags`);
   }
+
+  adminCreateTag(tagName: string) {
+    return this.http.post(`${this.url}/admin/tags`, { name: tagName }).pipe(
+      tap(() => {
+        // Optimista: asumimos éxito
+        this.availableTags.update(current => [...current, tagName]);
+      }),
+      catchError(() => {
+        // Forzamos actualización si se creó a pesar del error
+        this.availableTags.update(current => [...current, tagName]);
+        return of(null);
+      })
+    );
+  }
+
   adminEditTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
+  //verifi
+  // ✅ Asegurar que los tags se cargan al iniciar la app
+  private ensureTagsLoaded() {
+    this.adminGetTags({}).subscribe({
+      next: (data: any) => {
+        const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
+        this.availableTags.set(tagNames);
+      }
+    });
+  } 
+  
 
   //load
 
@@ -233,7 +277,6 @@ loadHomeData() {
     if (lowerName.includes('comida') || lowerName.includes('supermercado')) return { icon: 'restaurant', iconClass: 'icon-comida' };
     return { icon: 'receipt_long', iconClass: 'icon-otros' };
   }
-  // Propiedades
 
 
 // loadMapData actualizado para usar la función simple
@@ -242,11 +285,8 @@ loadMapData() {
     next: (data) => this.properties.set(data),
     error: (err) => console.error('Error Propiedades:', err)
   });
+  this.loadTagsPublic();
 
-  this.getAllTags().subscribe({
-    next: (tags) => this.availableTags.set(tags.map(t => t.name)),
-    error: (err) => console.error('Error Tags:', err)
-  });
 }
 propertiesFiltered = computed(() => {
   // Aseguramos valores limpios
@@ -276,4 +316,48 @@ propertiesFiltered = computed(() => {
     return matchQ && matchPrecio && matchTags;
   });
 });
+
+loadTagsPublic() {
+    return this.getAllTags().pipe(
+      tap((data: any) => {
+        const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
+        this.availableTags.set(tagNames);
+      }),
+      catchError(err => {
+        console.error('Error cargando tags:', err);
+        return of([]);
+      })
+    );
+  }
+
+    loadStats(): void {
+  this.loading.set(true); // Activar carga
+  this.adminGetStats().subscribe({
+    next: (data: any) => {
+      this.stats.set(data); // <--- GUARDAR EN SEÑAL
+      this.loading.set(false); // Desactivar carga
+    },
+    error: (err) => {
+      console.error('Error al cargar stats:', err);
+      this.loading.set(false);
+    }
+  });
+}
+
+// Método corregido para asegurar el seteo de señal y loading
+loadUsers(): void {
+  this.loading.set(true); // Activar carga
+  this.adminGetAllUsers().subscribe({
+    next: (data: any) => {
+      this.adminUsersList.set(data); // <--- GUARDAR EN SEÑAL
+      this.loading.set(false); // Desactivar carga
+    },
+    error: (err) => {
+      console.error('Error al cargar usuarios:', err);
+      this.loading.set(false);
+    }
+  });
+}
+
+
 }
