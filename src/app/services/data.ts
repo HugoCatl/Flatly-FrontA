@@ -61,14 +61,14 @@ export class DataService {
   showDeleteModal = signal(false);
   showRoleModal = signal(false);
 
-  profile = signal<Usuario | null>(null);
+  profile = signal<Usuario | null>(JSON.parse(localStorage.getItem('app_user') || 'null')); 
+  loading = signal(false);
   expenses = signal<Factura[]>([]);
   
   hoseholdBills = signal<Factura[]>([]);
   properties = signal<Propiedad[]>([]);
 
-  availableTags = signal<string[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));
-  loading = signal(false);
+  availableTags = signal<string[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));  
 
   sesion = signal<boolean>(localStorage.getItem('app_session') === 'true');
   busqueda = signal<string>(localStorage.getItem('app_busqueda') || '');
@@ -125,7 +125,30 @@ export class DataService {
   getMyProfile() {
   // Forzamos el envío de credenciales manualmente para probar
   return this.http.get<Usuario>(`${this.url}/users/me`);}
-  updateMyProfile(body: any) { return this.http.put(`${this.url}/users/me`, body); }
+  updateMyProfile(body: any) {
+  // body contiene: { name, phone, avatarUrl }
+  return this.http.put(`${this.url}/users/me`, body).pipe(
+    tap(() => {
+      // 1. Obtener los datos actuales que tenemos en la signal (o localStorage)
+      const currentUser = this.user();
+      
+      if (currentUser) {
+        // 2. Fusionar: Datos actuales + Nuevos datos del formulario
+        const updatedUser = {
+          ...currentUser,
+          ...body
+        };
+
+        console.log('Fusionando y actualizando datos:', updatedUser);
+
+        // 3. Actualizar la señal con el objeto completo.
+        // Esto dispara el effect() y guarda en localStorage automáticamente.
+        this.user.set(updatedUser);
+        this.profile.set(updatedUser);
+      }
+    })
+  );
+}
   deleteMyAccount() { return this.http.delete(`${this.url}/users/me`); }
   becomeOwner() { return this.http.put(`${this.url}/users/me/becomeOwner`, {withCredentials: true}); }
   returnStudent() { return this.http.put(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
