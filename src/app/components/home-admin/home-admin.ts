@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal,effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data';
 import { TopBarComponent } from '../shared/top-bar/top-bar';
@@ -48,6 +48,12 @@ export class HomeAdmin implements OnInit {
   newRole = signal('');
   newTagName = signal('');
 
+  constructor() {
+    effect(() => {
+      console.log('Tags actualizados en Admin:', this.tags());
+    });
+  }
+
   tabs = [
     { key: 'stats', label: 'Estadísticas', icon: 'bar_chart' },
     { key: 'users', label: 'Usuarios',     icon: 'people'    },
@@ -56,7 +62,7 @@ export class HomeAdmin implements OnInit {
 
   roles = ['STUDENT', 'OWNER', 'ADMIN'];
 
-  ngOnInit() {
+ngOnInit() {
     this.loading.set(true);
     this.loadStats();
     this.loadUsers();
@@ -88,14 +94,18 @@ export class HomeAdmin implements OnInit {
   }
 
   loadTags(): void {
-    // Si el body es opcional, enviamos un objeto vacío
+
     this.dataService.adminGetTags({}).subscribe({
       next: (data: any) => {
-        // Asegúrate de que el backend devuelve un array de objetos con 'name'
         const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
+        
         this.tags.set(tagNames);
+        this.loading.set(false);
       },
-      error: (err) => console.error('Error al cargar tags:', err)
+      error: (err) => {
+        console.error('Error al cargar tags:', err);
+        this.loading.set(false);
+      }
     });
   }
 
@@ -152,6 +162,7 @@ export class HomeAdmin implements OnInit {
   createTag(): void {
     const name = this.newTagName().trim();
     if (!name) return;
+    
     this.dataService.adminCreateTag(name).subscribe({
       next: () => {
         this.tags.update(list => [...list, name]);

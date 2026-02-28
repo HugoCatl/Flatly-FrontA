@@ -16,7 +16,7 @@ export class HomeOwners implements OnInit {
 
   properties  = signal<any[]>([]);
   tenantsMap  = signal<Record<number, any[]>>({});
-  loading     = signal(true);
+  loading     = this.dataService.loading;
 
   totalTenants = computed(() =>
     Object.values(this.tenantsMap()).reduce((acc, t) => acc + t.length, 0)

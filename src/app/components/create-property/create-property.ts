@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, inject, signal, effect,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,11 +8,12 @@ import * as L from 'leaflet';
 
 @Component({
   selector: 'app-create-property',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './create-property.html',
   styleUrl: './create-property.scss',
 })
-export class CreateProperty implements AfterViewInit, OnDestroy {
+export class CreateProperty implements AfterViewInit, OnDestroy, OnInit {
   private fb = inject(FormBuilder);
   private dataService = inject(DataService);
   private router = inject(Router);
@@ -20,13 +21,13 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
   private leafletMap!: L.Map;
   private marker: L.Marker | null = null;
 
-  tags = signal<{ id: number; name: string }[]>([]);
-  selectedTagIds = signal<number[]>([]);
+  tags = signal<string[]>([]);
+  selectedTagNames = signal<string[]>([]); 
   selectedLocation = signal<{ lat: number; lng: number } | null>(null);
   imagePreviews = signal<string[]>([]);
   loading = signal(false);
 
-  form = this.fb.group({
+form = this.fb.group({
     title:            ['', Validators.required],
     description:      [''],
     priceMonth:       [null as number | null, [Validators.required, Validators.min(1)]],
@@ -37,14 +38,22 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
     squareMeters:     [null as number | null],
     isFurnished:      [false],
     expensesIncluded: [false],
-  });
+  }); 
+
+  constructor() {
+    effect(() => {
+      // Este efecto es para actualizaciones futuras
+      this.tags.set(this.dataService.availableTags());
+    });
+  }
+
+  ngOnInit() {
+    // 3. Carga inicial forzada desde el servicio/localStorage
+    this.tags.set(this.dataService.availableTags());
+  }
 
   ngAfterViewInit() {
     this.initMap();
-    this.dataService.getAllTags().subscribe({
-      next: (list: any[]) => this.tags.set(list.map(t => ({ id: t.id, name: t.name }))),
-      error: () => {}
-    });
   }
 
   ngOnDestroy() {
@@ -81,12 +90,15 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
     });
   }
 
-  toggleTag(id: number): void {
-    const current = this.selectedTagIds();
-    this.selectedTagIds.set(
-      current.includes(id) ? current.filter(t => t !== id) : [...current, id]
-    );
-  }
+// En create-property.ts
+toggleTag(tagName: string): void {
+  const current = this.selectedTagNames();
+  this.selectedTagNames.set(
+    current.includes(tagName) 
+      ? current.filter(t => t !== tagName) 
+      : [...current, tagName]
+  );
+}
 
   toggleFurnished(): void {
     this.form.get('isFurnished')!.setValue(!this.form.get('isFurnished')!.value);
@@ -116,6 +128,9 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
     if (this.form.invalid) return;
     const loc = this.selectedLocation();
     const v = this.form.value;
+    
+    // NOTA: Ajustar el body para enviar los nombres de los tags en lugar de IDs,
+    // o asegurar que el backend reciba strings.
     const body = {
       title:            v.title,
       description:      v.description || null,
@@ -130,7 +145,9 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
       address:          null,
       latitude:         loc ? parseFloat(loc.lat.toFixed(6)) : null,
       longitude:        loc ? parseFloat(loc.lng.toFixed(6)) : null,
+      tagNames: this.dataService.etiquetasSeleccionadas()
     };
+
     this.loading.set(true);
     this.dataService.createProperty(body).pipe(
       switchMap((property: any) =>
@@ -140,10 +157,8 @@ export class CreateProperty implements AfterViewInit, OnDestroy {
       next: () => this.router.navigate(['/home-owners']),
       error: (err) => {
         this.loading.set(false);
-        console.error('Status:', err.status);
-        console.error('Error body:', err.error);
-        console.error('Body enviado:', body);
-        alert('Error al crear la propiedad o el household.');
+        console.error('Error al crear:', err);
+        alert('Error al crear la propiedad.');
       }
     });
   }

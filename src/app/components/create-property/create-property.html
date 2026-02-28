@@ -102,41 +102,43 @@
     </div>
 
     <!-- ── Características ── -->
-    <div class="form-section">
-      <span class="form-section__title">Características</span>
+      <div class="form-section">
+  <span class="form-section__title">Características</span>
 
-      <div class="toggle-row" (click)="toggleFurnished()">
-        <div class="toggle-row__label">
-          <span class="material-icons-round">chair</span>
-          <span>Amueblado</span>
-        </div>
-        <div class="toggle" [class.toggle--on]="form.get('isFurnished')?.value">
-          <div class="toggle__thumb"></div>
-        </div>
-      </div>
+  <div class="toggle-row" (click)="toggleFurnished()">
+    <div class="toggle-row__label">
+      <span class="material-icons-round">chair</span>
+      <span>Amueblado</span>
+    </div>
+    <div class="toggle" [class.toggle--on]="form.get('isFurnished')?.value">
+      <div class="toggle__thumb"></div>
+    </div>
+  </div>
 
-      <div class="toggle-row" (click)="toggleExpenses()">
-        <div class="toggle-row__label">
-          <span class="material-icons-round">receipt</span>
-          <span>Gastos incluidos</span>
-        </div>
-        <div class="toggle" [class.toggle--on]="form.get('expensesIncluded')?.value">
-          <div class="toggle__thumb"></div>
-        </div>
-      </div>
+  <div class="toggle-row" (click)="toggleExpenses()">
+    <div class="toggle-row__label">
+      <span class="material-icons-round">receipt</span>
+      <span>Gastos incluidos</span>
+    </div>
+    <div class="toggle" [class.toggle--on]="form.get('expensesIncluded')?.value">
+      <div class="toggle__thumb"></div>
+    </div>
+  </div>
 
-      @if (tags().length > 0) {
-        <div class="tags-grid">
-          @for (tag of tags(); track tag.id) {
-            <button type="button" class="tag-chip"
-              [class.tag-chip--active]="selectedTagIds().includes(tag.id)"
-              (click)="toggleTag(tag.id)">
-              {{ tag.name }}
-            </button>
-          }
-        </div>
+  @if (tags().length > 0) {
+    <div class="tags-grid">
+      @for (tagName of tags(); track tagName) {
+        <button type="button" class="tag-chip"
+          [class.tag-chip--active]="selectedTagNames().includes(tagName)"
+          (click)="toggleTag(tagName)">
+          {{ tagName }}
+        </button>
       }
     </div>
+  } @else {
+    <p>Cargando etiquetas...</p>
+  }
+</div>
 
     <!-- ── Imágenes ── -->
     <div class="form-section">

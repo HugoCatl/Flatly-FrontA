@@ -37,12 +37,13 @@ export class DataService {
   loading = signal(true);
   hoseholdBills = signal<Factura[]>([]);
   properties = signal<Propiedad[]>([]);
-  availableTags = signal<string[]>([]);
+
+  availableTags = signal<string[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));
   
   sesion = signal<boolean>(localStorage.getItem('app_session') === 'true');
   busqueda = signal<string>(localStorage.getItem('app_busqueda') || '');
   precioMax = signal<number>(Number(localStorage.getItem('app_precioMax')) || 2500);
-  etiquetasSeleccionadas = signal<string[]>(JSON.parse(localStorage.getItem('app_tags') || '[]'));
+  etiquetasSeleccionadas = signal<string[]>([]);
 
   constructor() {
     // 3. Crear efectos para guardar en localStorage cuando cambien
@@ -55,8 +56,26 @@ export class DataService {
     effect(() => {
       localStorage.setItem('app_busqueda', this.busqueda());
       localStorage.setItem('app_precioMax', String(this.precioMax()));
-      localStorage.setItem('app_tags', JSON.stringify(this.etiquetasSeleccionadas()));
+      if (this.availableTags().length > 0) {
+        localStorage.setItem('app_tags_list', JSON.stringify(this.availableTags()));
+      }
     });
+    this.ensureTagsLoaded();
+  }
+
+  private ensureTagsLoaded() {
+    // Si no hay tags en localStorage, los pedimos al backend
+    if (this.availableTags().length === 0) {
+      console.log('Cargando tags desde el backend...');
+      this.getAllTags().subscribe({
+        next: (tags) => {
+          const tagNames = tags.map(t => t.name);
+          this.availableTags.set(tagNames);
+          // Al hacer .set(), el effect de arriba guardará automáticamente en localStorage
+        },
+        error: (err) => console.error('Error cargando tags:', err)
+      });
+    }
   }
 
 
@@ -155,7 +174,9 @@ getAllTags() {
   adminGetStats() { return this.http.get(`${this.url}/admin/stats`); }
   //body tag:{"name":"string"}
   adminGetTags(body: any) { return this.http.get(`${this.url}/admin/tags`, body); }
-  adminCreateTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
+  adminCreateTag(tagName: string) { 
+    return this.http.post(`${this.url}/admin/tags`, { name: tagName }); 
+  }
   adminEditTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
 
   //load
