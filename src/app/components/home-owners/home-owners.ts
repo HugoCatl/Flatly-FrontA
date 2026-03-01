@@ -1,12 +1,12 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { DataService } from '../../services/data';
 import { TopBarComponent } from '../shared/top-bar/top-bar';
 
 @Component({
   selector: 'app-home-owners',
-  imports: [CommonModule, TopBarComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, TopBarComponent],
   templateUrl: './home-owners.html',
   styleUrl: './home-owners.scss',
 })

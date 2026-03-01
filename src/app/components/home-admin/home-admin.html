@@ -22,15 +22,6 @@
       </div>
     </div>
 
-    <div class="tabs-wrapper glass-card">
-      @for (tab of tabs; track tab.key) {
-        <button class="tab" [class.active]="activeTab() === tab.key" (click)="setTab(tab.key)">
-          <span class="material-icons-round">{{ tab.icon }}</span>
-          {{ tab.label }}
-        </button>
-      }
-    </div>
-
     <!-- ── ESTADÍSTICAS ── -->
     @if (activeTab() === 'stats' && stats()) {
       <div class="stats-grid">
@@ -159,6 +150,15 @@
     }
 
   </div>
+
+  <nav class="admin-tab-bar">
+    @for (tab of tabs; track tab.key) {
+      <button class="admin-tab" [class.active]="activeTab() === tab.key" (click)="setTab(tab.key)">
+        <span class="material-icons-round admin-tab__icon">{{ tab.icon }}</span>
+        <span class="admin-tab__label">{{ tab.label }}</span>
+      </button>
+    }
+  </nav>
 }
 
 <!-- Modal eliminar usuario -->

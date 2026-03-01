@@ -56,44 +56,6 @@
   }
 }
 
-/* ── Tabs ── */
-.tabs-wrapper {
-  display: flex;
-  padding: 0.4rem !important;
-  gap: 0.25rem;
-}
-
-.tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem;
-  border: none;
-  background: transparent;
-  border-radius: 12px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--gray-400);
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
-
-  .material-icons-round { font-size: 1rem; }
-
-  &.active {
-    background: var(--emerald-500);
-    color: white;
-  }
-
-  &:hover:not(.active) {
-    background: rgba(0, 0, 0, 0.04);
-    color: var(--gray-800);
-    html.dark & { background: rgba(255, 255, 255, 0.06); }
-  }
-}
-
 /* ── Stats grid ── */
 .stats-grid {
   display: grid;
