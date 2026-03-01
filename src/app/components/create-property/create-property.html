@@ -125,11 +125,13 @@
     </div>
   </div>
 
+  <span class="form-section__title">Etiquetas</span>
+
   @if (tags().length > 0) {
     <div class="tags-grid">
       @for (tag of tags(); track tag.name) {
         <button type="button" class="tag-chip"
-          [class.tag-chip--active]="selectedTagNames().includes(tags.name)"
+          [class.tag-chip--active]="selectedTagNames().includes(tag.name)"
           (click)="toggleTag(tag.name)">
           {{ tag.name }}
         </button>
