@@ -51,11 +51,11 @@
         </div>
 
         <div class="tags-picker glass-panel" [class.tags-picker--open]="tagsExpanded()">
-            @for (tag of tags(); track tag) {
+            @for (tag of tags(); track tag.name) {
                 <button class="tag-chip" 
-                    [class.tag-chip--active]="etiquetasSeleccionadas().includes(tag)"
-                    (click)="toggleEtiqueta(tag)" type="button">
-                    {{ tag }}
+                    [class.tag-chip--active]="etiquetasSeleccionadas().includes(tag.name)"
+                    (click)="toggleEtiqueta(tag.name)" type="button">
+                    {{ tag.name }}
                 </button>
             }
         </div>

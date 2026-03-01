@@ -22,7 +22,7 @@ export class DataService {
 
   proces= signal(false); 
 
-  
+  tags = signal<string[]>([]);
   
 
   showDeleteModal = signal(false);
@@ -38,7 +38,7 @@ export class DataService {
   hoseholdBills = signal<Bills[]>([]);
   properties = signal<Propiedad[]>([]);
 
-  availableTags = signal<string[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));  
+  availableTags = signal<Tag[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));  
 
   sesion = signal<boolean>(localStorage.getItem('app_session') === 'true');
   busqueda = signal<string>(localStorage.getItem('app_busqueda') || '');
@@ -63,7 +63,7 @@ export class DataService {
     effect(() => {
       localStorage.setItem('app_tags_list', JSON.stringify(this.availableTags()));
     });
-    this.ensureTagsLoaded();
+    this.loadTagsPublic();
   }
 
 
@@ -145,7 +145,7 @@ getProperties() {
 } 
 // Método para obtener las etiquetas de la tabla 'tags'
 getAllTags() {
-  return this.http.get<any[]>(`${this.url}/properties/tags`);
+  return this.http.get<Tag[]>(`${this.url}/properties/tags`);
 }
 
   // Favoritos 
@@ -189,30 +189,22 @@ getAllTags() {
     return this.http.get(`${this.url}/admin/tags`);
   }
 
-  adminCreateTag(tagName: string) {
-    return this.http.post(`${this.url}/admin/tags`, { name: tagName }).pipe(
+  adminCreateTag(tag: Tag) {
+    return this.http.post(`${this.url}/admin/tags`, tag.name).pipe(
       tap(() => {
         // Optimista: asumimos éxito
-        this.availableTags.update(current => [...current, tagName]);
+        this.loadTagsPublic(); // Recarga la lista de tags después de crear uno nuevo
       }),
       catchError(() => {
         // Forzamos actualización si se creó a pesar del error
-        this.availableTags.update(current => [...current, tagName]);
+        this.loadTagsPublic();
         return of(null);
       })
     );
   }
 
-  adminEditTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
-  //verifi
-  private ensureTagsLoaded() {
-    this.adminGetTags({}).subscribe({
-      next: (data: any) => {
-        const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
-        this.availableTags.set(tagNames);
-      }
-    });
-  } 
+  adminEditTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }  
+  
   //funcion para pasar facturas a expenses y mostrar el icono correspondiente
   billsToExpenses(){
     this.hoseholdBills();
@@ -328,16 +320,13 @@ propertiesFiltered = computed(() => {
 });
 
 loadTagsPublic() {
-    return this.getAllTags().pipe(
-      tap((data: any) => {
-        const tagNames = Array.isArray(data) ? data.map((t: any) => t.name) : [];
-        this.availableTags.set(tagNames);
-      }),
-      catchError(err => {
-        console.error('Error cargando tags:', err);
-        return of([]);
-      })
-    );
+  this.getAllTags().subscribe({
+    next: (data) => {
+      this.availableTags.set(data);
+      console.log('Tags cargados:', data);
+    },
+    error: (err) => console.error('Error al cargar tags:', err)
+  });
   }
 
     loadStats(): void {
@@ -376,10 +365,7 @@ loadUsers(): void {
     { key: 'estadisticas', label: 'Estadísticas' },
   ];
 
-  months = [
-    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
-  ];
+  months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
   years = [2024, 2025, 2026];
 

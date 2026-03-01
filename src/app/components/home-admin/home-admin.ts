@@ -132,14 +132,14 @@ export class HomeAdmin implements OnInit {
   }
 
   // ✅ Centralización: Usamos el método resiliente del servicio
-  createTag(): void {
+  createTag(){
     const name = this.newTagName().trim();
-    if (!name) return;
-    
-    this.dataService.adminCreateTag(name).subscribe({
+    if (!name) return; 
+    this.dataService.adminCreateTag({ name } as any).subscribe({
       next: () => {
-        this.newTagName.set(''); // Limpiar input
-      }
+        this.newTagName.set('');
+      },
+      error: (err) => console.error('Error al crear tag:', err)
     });
   }
 }

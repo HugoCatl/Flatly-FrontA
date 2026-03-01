@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { DataService } from '../../services/data';
 import { switchMap } from 'rxjs/operators';
 import * as L from 'leaflet';
+import { Tag } from '../../models/flatly';
 
 @Component({
   selector: 'app-create-property',
@@ -21,7 +22,7 @@ export class CreateProperty implements AfterViewInit, OnDestroy, OnInit {
   private leafletMap!: L.Map;
   private marker: L.Marker | null = null;
 
-  tags = signal<string[]>([]);
+  tags = signal<Tag[]>([]);
   selectedTagNames = signal<string[]>([]); 
   selectedLocation = signal<{ lat: number; lng: number } | null>(null);
   imagePreviews = signal<string[]>([]);

@@ -127,11 +127,11 @@
 
   @if (tags().length > 0) {
     <div class="tags-grid">
-      @for (tagName of tags(); track tagName) {
+      @for (tag of tags(); track tag.name) {
         <button type="button" class="tag-chip"
-          [class.tag-chip--active]="selectedTagNames().includes(tagName)"
-          (click)="toggleTag(tagName)">
-          {{ tagName }}
+          [class.tag-chip--active]="selectedTagNames().includes(tags.name)"
+          (click)="toggleTag(tag.name)">
+          {{ tag.name }}
         </button>
       }
     </div>
