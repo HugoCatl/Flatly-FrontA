@@ -38,8 +38,8 @@ export interface Usuario {
 }
 
 export interface Propiedad {
-  id: number;
-  ownerId: number;
+  id?: number;
+  ownerId?: number;
   title: string;
   description?: string;
   priceMonth: number;
@@ -47,7 +47,7 @@ export interface Propiedad {
   zone: string;
   rooms: number;
   expensesIncluded: boolean;
-  propertiesCreatedAt: string;
+  propertiesCreatedAt?: string;
   latitude?: number;
   longitude?: number;
   address?: string;
@@ -114,8 +114,8 @@ export interface Tag {
 }
 
 export interface PropertyImage {
-  id: number;
-  propertyId: number;
+  id?: number;
+  propertyId?: number;
   url: string;
   orderIndex: number;
   isMain: boolean;

@@ -102,60 +102,74 @@
     </div>
 
     <!-- ── Características ── -->
-      <div class="form-section">
-  <span class="form-section__title">Características</span>
+    <div class="form-section">
+      <span class="form-section__title">Características</span>
 
-  <div class="toggle-row" (click)="toggleFurnished()">
-    <div class="toggle-row__label">
-      <span class="material-icons-round">chair</span>
-      <span>Amueblado</span>
-    </div>
-    <div class="toggle" [class.toggle--on]="form.get('isFurnished')?.value">
-      <div class="toggle__thumb"></div>
-    </div>
-  </div>
+      <div class="toggle-row" (click)="toggleFurnished()">
+        <div class="toggle-row__label">
+          <span class="material-icons-round">chair</span>
+          <span>Amueblado</span>
+        </div>
+        <div class="toggle" [class.toggle--on]="form.get('isFurnished')?.value">
+          <div class="toggle__thumb"></div>
+        </div>
+      </div>
 
-  <div class="toggle-row" (click)="toggleExpenses()">
-    <div class="toggle-row__label">
-      <span class="material-icons-round">receipt</span>
-      <span>Gastos incluidos</span>
-    </div>
-    <div class="toggle" [class.toggle--on]="form.get('expensesIncluded')?.value">
-      <div class="toggle__thumb"></div>
-    </div>
-  </div>
+      <div class="toggle-row" (click)="toggleExpenses()">
+        <div class="toggle-row__label">
+          <span class="material-icons-round">receipt</span>
+          <span>Gastos incluidos</span>
+        </div>
+        <div class="toggle" [class.toggle--on]="form.get('expensesIncluded')?.value">
+          <div class="toggle__thumb"></div>
+        </div>
+      </div>
 
-  <span class="form-section__title">Etiquetas</span>
+      <span class="form-section__title">Etiquetas</span>
 
-  @if (tags().length > 0) {
-    <div class="tags-grid">
-      @for (tag of tags(); track tag.name) {
-        <button type="button" class="tag-chip"
-          [class.tag-chip--active]="selectedTag().includes(tag)"
-          (click)="toggleTag(tag)">
-          {{ tag.name }}
-        </button>
+      @if (tags().length > 0) {
+        <div class="tags-grid">
+          @for (tag of tags(); track tag.name) {
+            <button type="button" class="tag-chip"
+              [class.tag-chip--active]="selectedTag().includes(tag)"
+              (click)="toggleTag(tag)">
+              {{ tag.name }}
+            </button>
+          }
+        </div>
+      } @else {
+        <p>Cargando etiquetas...</p>
       }
     </div>
-  } @else {
-    <p>Cargando etiquetas...</p>
-  }
-</div>
 
     <!-- ── Imágenes ── -->
     <div class="form-section">
       <span class="form-section__title">Imágenes</span>
 
-      <label class="image-upload">
-        <span class="material-icons-round">add_photo_alternate</span>
-        <span>Añadir fotos</span>
-        <input type="file" accept="image/*" multiple (change)="onImagesSelected($event)">
-      </label>
+      <div class="image-url-input">
+        <div class="input-field">
+          <span class="material-icons-round">image</span>
+          <input
+            type="url"
+            placeholder="https://... URL de la imagen"
+            [value]="currentImageUrl()"
+            (input)="currentImageUrl.set($any($event.target).value)"
+            (keydown.enter)="$event.preventDefault(); addImageUrl()" />
+        </div>
+        <button type="button" class="btn-add-image" (click)="addImageUrl()">
+          <span class="material-icons-round">add</span>
+        </button>
+      </div>
 
-      @if (imagePreviews().length > 0) {
+      @if (imageUrls().length > 0) {
         <div class="image-previews">
-          @for (preview of imagePreviews(); track preview) {
-            <img [src]="preview" class="image-thumb" alt="preview">
+          @for (url of imageUrls(); track url; let i = $index) {
+            <div class="image-thumb-wrapper">
+              <img [src]="url" class="image-thumb" alt="preview">
+              <button type="button" class="image-remove" (click)="removeImageUrl(i)">
+                <span class="material-icons-round">close</span>
+              </button>
+            </div>
           }
         </div>
       }

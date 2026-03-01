@@ -308,3 +308,62 @@ html.dark {
 
   .form-section + .form-section { border-top-color: var(--gray-200); }
 }
+
+.image-url-input {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .input-field {
+    flex: 1;
+  }
+}
+
+.btn-add-image {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border: none;
+  border-radius: 12px;
+  background: var(--emerald-500);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--emerald-600);
+  }
+
+  .material-icons-round {
+    font-size: 1.2rem;
+  }
+}
+
+.image-thumb-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.image-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: #EF4444;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  .material-icons-round {
+    font-size: 0.75rem;
+  }
+}

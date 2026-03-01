@@ -1,9 +1,8 @@
-import { Component, AfterViewInit, OnDestroy, inject, signal, effect,OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, inject, signal, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from '../../services/data';
-import { switchMap } from 'rxjs/operators';
 import * as L from 'leaflet';
 import { Tag } from '../../models/flatly';
 
@@ -22,15 +21,7 @@ export class CreateProperty implements AfterViewInit, OnDestroy, OnInit {
   private leafletMap!: L.Map;
   private marker: L.Marker | null = null;
 
-
-
-  tags = signal<Tag[]>([]);
-  selectedTag = signal<Tag[]>([]); 
-  selectedLocation = signal<{ lat: number; lng: number } | null>(null);
-  imagePreviews = signal<string[]>([]);
-  loading = signal(false);
-
-form = this.fb.group({
+  form = this.fb.group({
     title:            ['', Validators.required],
     description:      [''],
     priceMonth:       [null as number | null, [Validators.required, Validators.min(1)]],
@@ -41,17 +32,22 @@ form = this.fb.group({
     squareMeters:     [null as number | null],
     isFurnished:      [false],
     expensesIncluded: [false],
-  }); 
+  });
+
+  tags = signal<Tag[]>([]);
+  selectedTag = signal<Tag[]>([]);
+  selectedLocation = signal<{ lat: number; lng: number } | null>(null);
+  imageUrls = signal<string[]>([]);
+  currentImageUrl = signal('');
+  loading = signal(false);
 
   constructor() {
     effect(() => {
-      // Este efecto es para actualizaciones futuras
       this.tags.set(this.dataService.availableTags());
     });
   }
 
   ngOnInit() {
-    // 3. Carga inicial forzada desde el servicio/localStorage
     this.tags.set(this.dataService.availableTags());
   }
 
@@ -93,15 +89,14 @@ form = this.fb.group({
     });
   }
 
-// En create-property.ts
-toggleTag(tag: Tag): void {
-  const current = this.selectedTag();
-  this.selectedTag.set(
-    current.includes(tag) 
-      ? current.filter(t => t !== tag) 
-      : [...current, tag]
-  );
-}
+  toggleTag(tag: Tag): void {
+    const current = this.selectedTag();
+    this.selectedTag.set(
+      current.includes(tag)
+        ? current.filter(t => t !== tag)
+        : [...current, tag]
+    );
+  }
 
   toggleFurnished(): void {
     this.form.get('isFurnished')!.setValue(!this.form.get('isFurnished')!.value);
@@ -111,30 +106,23 @@ toggleTag(tag: Tag): void {
     this.form.get('expensesIncluded')!.setValue(!this.form.get('expensesIncluded')!.value);
   }
 
-  onImagesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-    const previews: string[] = [];
-    Array.from(input.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        previews.push(e.target?.result as string);
-        if (previews.length === input.files!.length) {
-          this.imagePreviews.set([...previews]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+  addImageUrl(): void {
+    const url = this.currentImageUrl().trim();
+    if (!url) return;
+    this.imageUrls.update(list => [...list, url]);
+    this.currentImageUrl.set('');
+  }
+
+  removeImageUrl(index: number): void {
+    this.imageUrls.update(list => list.filter((_, i) => i !== index));
   }
 
   submit(): void {
     if (this.form.invalid) return;
     const loc = this.selectedLocation();
     const v = this.form.value;
-    
-    // NOTA: Ajustar el body para enviar los nombres de los tags en lugar de IDs,
-    // o asegurar que el backend reciba strings.
-    const body = {
+
+    const body: any = {
       title:            v.title,
       description:      v.description || null,
       priceMonth:       v.priceMonth,
@@ -146,21 +134,32 @@ toggleTag(tag: Tag): void {
       expensesIncluded: v.expensesIncluded,
       isFurnished:      v.isFurnished,
       address:          null,
-      latitude:         loc ? parseFloat(loc.lat.toFixed(6)) : null,
-      longitude:        loc ? parseFloat(loc.lng.toFixed(6)) : null,
-      tagNames: this.selectedTag().map(t => t.name)
+      latitude:         loc ? Number.parseFloat(loc.lat.toFixed(6)) : null,
+      longitude:        loc ? Number.parseFloat(loc.lng.toFixed(6)) : null,
+      isAvailable:      true,
+      tagIds:           this.selectedTag().map(t => t.id),
+      imageUrls:        this.imageUrls()
     };
 
     this.loading.set(true);
-    this.dataService.createProperty(body).pipe(
-      switchMap((property: any) =>
-        this.dataService.createHousehold(v.title!, property.id)
-      )
-    ).subscribe({
-      next: () => this.router.navigate(['/home-owners']),
-      error: (err) => {
+
+    this.dataService.createProperty(body).subscribe({
+      next: (property: any) => {
+        this.dataService.createHousehold(v.title!, property.id).subscribe({
+          next: () => {
+            this.loading.set(false);
+            this.router.navigate(['/home-owners']);
+          },
+          error: (err: any) => {
+            this.loading.set(false);
+            console.error('Error al crear household:', err);
+            alert('Error al crear el hogar.');
+          }
+        });
+      },
+      error: (err: any) => {
         this.loading.set(false);
-        console.error('Error al crear:', err);
+        console.error('Error al crear propiedad:', err);
         alert('Error al crear la propiedad.');
       }
     });

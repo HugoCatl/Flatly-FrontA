@@ -1,7 +1,8 @@
+import { Observable } from 'rxjs';
 import { Injectable, inject, signal ,computed, effect} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense} from '../models/flatly';
+import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense, PropertyImage} from '../models/flatly';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,9 +11,9 @@ import { map } from 'rxjs/operators';
 
 
 
+
 @Injectable({ providedIn: 'root' })
 export class DataService {
-  private http = inject(HttpClient);
   private readonly url = environment.apiUrl;
 
   // 2. Inicializar signals leyendo del localStorage
@@ -49,7 +50,7 @@ export class DataService {
 
   stats = signal<AdminStats | null>(null);
 
-  constructor() {
+  constructor(private readonly http: HttpClient) {
     // 3. Crear efectos para guardar en localStorage cuando cambien
     
     effect(() => {
@@ -180,16 +181,31 @@ getAllTags() {
   getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
 
   // --- 4. BLOQUE: OWNERS (PROPIETARIOS)  ---
-  createProperty(body: any) { return this.http.post(`${this.url}/owners/properties`, body); }
+  createProperty(body: Propiedad) { return this.http.post(`${this.url}/owners/properties`, body); }
+// En data.service.ts
+addTagsToProperty(propertyId: number, tags: Tag[]) {
+  if (tags.length === 0) return of(null) as any;
+  return this.http.post(`${this.url}/properties/${propertyId}/tags`, { 
+    tags: tags.map(t => ({ id: t.id, name: t.name }))
+  });
+}
+
+  addImagesToProperty(propertyId: number, images: PropertyImage[]) {
+    return this.http.post(`${this.url}/properties/${propertyId}/images`, { images });
+  }
+    
   getMyProperties() { return this.http.get<Propiedad[]>(`${this.url}/owners/properties`); }
   deleteProperty(id: number) { return this.http.delete(`${this.url}/owners/properties/${id}`); }
   
 
-  createHousehold(name: string, propertyId: number) {
-    return this.http.post(`${this.url}/owners/households`, { name, propertyId });
-  }
-  getHouseholdTenants(id: number) { return this.http.get(`${this.url}/owners/households/${id}/tenar`); }
-  deleteHousehold(id: number) { return this.http.delete(`${this.url}/owners/households/${id}`); }
+createHousehold(title: string, propertyId: number): Observable<any> {
+  return this.http.post(`${this.url}/owners/households`, { 
+    name: title, 
+    propertyId: Number(propertyId)
+  });
+}
+  getHouseholdTenants(id: number): Observable<any> { return this.http.get(`${this.url}/owners/households/${id}/tenants`); }
+  deleteHousehold(id: number): Observable<any> { return this.http.delete(`${this.url}/owners/households/${id}`); }
 
   // --- 5. BLOQUE: ADMIN  ---
   adminGetAllUsers() { return this.http.get(`${this.url}/admin/users`); }
