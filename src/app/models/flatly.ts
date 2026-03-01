@@ -139,6 +139,14 @@ export interface TagDePropiedad {
   tagId: number;
 }
 
+export interface StatsConfig {
+  chartType: 'bar' | 'line' | 'pie';
+  fromMonth: number;
+  fromYear: number;
+  toMonth: number;
+  toYear: number;
+}
+
 // ========================
 // REQUEST MODELS
 // ========================

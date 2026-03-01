@@ -1,21 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
-import { Expense} from '../../../../models/flatly';
+import { Expense, StatsConfig} from '../../../../models/flatly';
 import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
+import { DataService } from '../../../../services/data';
 
 Chart.register(...registerables);
 
-interface StatsConfig {
-  chartType: 'bar' | 'line' | 'pie';
-  fromMonth: number;
-  fromYear: number;
-  toMonth: number;
-  toYear: number;
-}
+
 
 // Colores distintivos que combinan con el tema esmeralda
 const PERSON_COLORS = [
@@ -33,6 +28,7 @@ const PERSON_COLORS = [
   styleUrl: './expense-stats.scss',
 })
 export class ExpenseStats {
+  private dataService = inject(DataService);
 
   @Input() set expenses(value: Expense[]) {
     this._expenses = value;
@@ -42,17 +38,14 @@ export class ExpenseStats {
   _expenses: Expense[] = [];
   showConfig = false;
 
-  months = [
-    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
-  ];
+  months = this.dataService.months;
 
   monthsShort = [
     'Ene','Feb','Mar','Abr','May','Jun',
     'Jul','Ago','Sep','Oct','Nov','Dic'
   ];
 
-  years = [2024, 2025, 2026];
+  years = this.dataService.years;
 
   chartTypes: { value: 'bar' | 'line' | 'pie'; label: string; icon: string }[] = [
     { value: 'bar',  label: 'Barras', icon: '📊' },
