@@ -1,8 +1,9 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
 import { BillStatus, BillType, Expense,NewBill } from '../../../../models/flatly';
+import { DataService } from '../../../../services/data';
 
 
 
@@ -23,9 +24,11 @@ const BILL_TYPES = [
   styleUrl: './expense-form.scss',
 })
 export class ExpenseForm {
-
+  dataService = inject(DataService);
   @Output() onExpenseCreated = new EventEmitter<Expense>();
   @Output() onDismiss = new EventEmitter<void>();
+
+  user = this.dataService.user();
 
   show: boolean = false;
   billTypes = BILL_TYPES;
@@ -51,7 +54,7 @@ export class ExpenseForm {
   const type = this.billTypes.find(t => t.value === this.newBill.type)!;
   this.onExpenseCreated.emit({
     name: type.label,
-    paidBy: 'Alex (Yo)',
+    paidBy: this.dataService.user()?.name || 'Desconocido',
     amount: this.newBill.amount!,
     type: type.value as BillType,
     icon: type.icon,
@@ -60,7 +63,7 @@ export class ExpenseForm {
     period_year: this.newBill.period_year,
     due_date: this.newBill.due_date || '',
     status: BillStatus.PENDING,
-    created_at: new Date().toISOString(),
+    created_at:null!,
   });
   this.show = false;
 }
