@@ -146,6 +146,18 @@ getProperties() {
     })
   );
 } 
+// Obtener una propiedad por ID
+getPropertyById(id: number) {
+  return this.http.get<any>(`${this.url}/properties/${id}`).pipe(
+    map((p: any) => ({
+      ...p,
+      priceMonth:  p.price_month  || p.priceMonth  || p.price || 0,
+      ownerId:     p.owner_id     || p.ownerId     || 0,
+      isAvailable: p.is_available ?? p.isAvailable ?? true,
+    } as Propiedad))
+  );
+}
+
 // Método para obtener las etiquetas de la tabla 'tags'
 getAllTags() {
   return this.http.get<Tag[]>(`${this.url}/properties/tags`);

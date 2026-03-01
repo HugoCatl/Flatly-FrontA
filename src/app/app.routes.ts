@@ -11,6 +11,7 @@ import { Onboarding } from './components/onboarding/onboarding';
 import { HomeOwners } from './components/home-owners/home-owners';
 import { CreateProperty } from './components/create-property/create-property';
 import { HomeAdmin } from './components/home-admin/home-admin';
+import { MapDetails } from './components/map/map-details/map-details';
 // import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -34,6 +35,7 @@ export const routes: Routes = [
 
     // Mapa fullscreen (sin MainLayout para no tener padding)
     { path: 'map', component: Map },
+    { path: 'piso/:id', component: MapDetails },
 
     // Home propietarios (sin MainLayout de estudiante)
     { path: 'home-owners', component: HomeOwners },
