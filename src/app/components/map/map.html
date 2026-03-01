@@ -4,13 +4,17 @@
     <div class="map-overlay-top">
         
         <div class="search-bar glass-panel">
-
             <span class="material-icons-round search-icon" (click)="flyToSearch()" style="cursor:pointer">search</span>
             <input type="text" placeholder="Buscar ciudad o zona..."
                 [ngModel]="busqueda()"
                 (ngModelChange)="busqueda.set($event)"
                 (keyup.enter)="flyToSearch()"
                 class="search-input" />
+            @if (busqueda()) {
+                <button class="search-clear" (click)="busqueda.set('')" type="button">
+                    <span class="material-icons-round">close</span>
+                </button>
+            }
         </div>
 
         <div class="filters-row glass-panel">

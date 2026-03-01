@@ -66,6 +66,8 @@ ngAfterViewInit() {
     this.leafletMap = L.map('leaflet-map', {
       center: [40.2, -3.5],
       zoom: 6,
+      minZoom: 5,
+      maxZoom: 19,
       zoomControl: false,
     });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {

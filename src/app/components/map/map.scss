@@ -87,6 +87,23 @@
     }
 }
 
+.search-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    padding: 2px;
+    cursor: pointer;
+    color: var(--gray-400);
+    flex-shrink: 0;
+    transition: color 0.15s ease;
+
+    &:hover { color: var(--gray-700); }
+
+    .material-icons-round { font-size: 18px; }
+}
+
 /* ---- Filtros ---- */
 .filters-row {
     display: flex;
