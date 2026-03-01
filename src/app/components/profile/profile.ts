@@ -50,7 +50,7 @@ export class Profile implements OnInit {
     }
   }
 
-  // --- Lógica de Edición ---
+  // --- Lógica de Edición --- 
   startEditing(): void {
     const currentUser = this.user();
     // Solución error 2349: .set() en signals, asignación directa en variables normales
