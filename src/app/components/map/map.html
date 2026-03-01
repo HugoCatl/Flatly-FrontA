@@ -4,10 +4,11 @@
     <div class="map-overlay-top">
         
         <div class="search-bar glass-panel">
-            <span class="material-icons-round search-icon">search</span>
-            <input type="text" placeholder="Buscar zona, calle..." 
+            <span class="material-icons-round search-icon" (click)="flyToSearch()" style="cursor:pointer">search</span>
+            <input type="text" placeholder="Buscar ciudad o zona..."
                 [ngModel]="busqueda()"
-                (ngModelChange)="busqueda.set($event)" 
+                (ngModelChange)="busqueda.set($event)"
+                (keyup.enter)="flyToSearch()"
                 class="search-input" />
         </div>
 
@@ -17,7 +18,7 @@
                     <span>Precio máx</span>
                     <span class="filter-value">{{ precioLabel() }}</span>
                 </div>
-                <input type="range" min="400" max="2500" step="50" 
+                <input type="range" min="100" max="2500" step="50" 
                     [ngModel]="precioMax()"
                     (ngModelChange)="precioMax.set($event)" 
                     class="price-slider" 

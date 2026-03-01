@@ -331,10 +331,10 @@ propertiesFiltered = computed(() => {
   const listaOriginal = this.properties() || [];
 
   return listaOriginal.filter((p: Propiedad) => {
-    // 1. Filtro por Texto (Título o Dirección)
-    const titulo = (p.title || '').toLowerCase();
-    const direccion = (p.address || '').toLowerCase();
-    const matchQ = !q || titulo.includes(q) || direccion.includes(q);
+    // 1. Filtro por Texto (Zona y Ciudad)
+    const zona = (p.zone || '').toLowerCase();
+    const ciudad = (p.city || '').toLowerCase();
+    const matchQ = !q || zona.includes(q) || ciudad.includes(q);
 
     // 2. Filtro por Precio (Forzamos a número)
     // Usamos el campo mapeado 'priceMonth' que hicimos antes

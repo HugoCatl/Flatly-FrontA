@@ -64,8 +64,8 @@ ngAfterViewInit() {
 
   private initMap() {
     this.leafletMap = L.map('leaflet-map', {
-      center: [41.3951, 2.1734],
-      zoom: 14,
+      center: [40.2, -3.5],
+      zoom: 6,
       zoomControl: false,
     });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -100,6 +100,24 @@ ngAfterViewInit() {
     });
   }
 
+  async flyToSearch() {
+    const q = this.busqueda().trim();
+    if (!q) return;
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ', España')}&format=json&limit=1`
+      );
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        this.leafletMap.flyTo([lat, lon], 11, { animate: true, duration: 1.2 });
+      }
+    } catch (e) {
+      console.error('Error geocodificando:', e);
+    }
+  }
+
   toggleEtiqueta(tag: string) {
     const current = this.etiquetasSeleccionadas();
     this.etiquetasSeleccionadas.set(
@@ -117,7 +135,7 @@ ngAfterViewInit() {
   precioLabel = computed(() => this.precioMax() >= 2500 ? 'Sin límite' : `€${this.precioMax()}`);
 
   sliderFillStyle = computed(() => {
-    const pct = ((this.precioMax() - 400) / (2500 - 400)) * 100;
+    const pct = ((this.precioMax() - 100) / (2500 - 100)) * 100;
     return { background: `linear-gradient(to right, var(--emerald-500) ${pct}%, var(--gray-200) ${pct}%)` };
   });
 }
