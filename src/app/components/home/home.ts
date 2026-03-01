@@ -18,6 +18,8 @@ export class HomeComponent implements OnInit {
   user = this.dataService.user;
   loading = this.dataService.loading;
 
+  expenses = this.dataService.expenses;
+
   ngOnInit() {
     const session = localStorage.getItem('user_session');
     if (session) {

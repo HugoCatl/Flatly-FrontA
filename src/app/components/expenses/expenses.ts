@@ -24,6 +24,8 @@ export class Expenses {
   years = this.dataService.years;
   tabs = this.dataService.tabs;
 
+  
+
   // ── Estado ──
   activeTab = signal<'gastos' | 'saldos' | 'estadisticas'>('gastos');
   selectedMonth = signal(new Date().getMonth());

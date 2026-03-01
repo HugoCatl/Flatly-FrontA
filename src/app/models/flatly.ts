@@ -86,6 +86,7 @@ export interface Expense {
   paidBy: string;
   amount: number;
   icon: string;
+  type: BillType;
   iconClass: string;
   period_month: number;
   period_year: number;

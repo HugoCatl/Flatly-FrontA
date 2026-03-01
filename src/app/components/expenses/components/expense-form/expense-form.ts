@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
-import { BillStatus, Expense,NewBill } from '../../../../models/flatly';
+import { BillStatus, BillType, Expense,NewBill } from '../../../../models/flatly';
 
 
 
@@ -53,6 +53,7 @@ export class ExpenseForm {
     name: type.label,
     paidBy: 'Alex (Yo)',
     amount: this.newBill.amount!,
+    type: type.value as BillType,
     icon: type.icon,
     iconClass: type.iconClass,
     period_month: this.newBill.period_month,
