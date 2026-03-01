@@ -66,8 +66,11 @@ ngAfterViewInit() {
     this.leafletMap = L.map('leaflet-map', {
       center: [40.2, -3.5],
       zoom: 6,
+<<<<<<< HEAD
       maxZoom: 19,
 
+=======
+>>>>>>> origin/centalizedData
       zoomControl: false,
     });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -137,7 +140,7 @@ ngAfterViewInit() {
   precioLabel = computed(() => this.precioMax() >= 2500 ? 'Sin límite' : `€${this.precioMax()}`);
 
   sliderFillStyle = computed(() => {
-    const pct = ((this.precioMax() - 400) / (2500 - 400)) * 100;
+    const pct = ((this.precioMax() - 100) / (2500 - 100)) * 100;
     return { background: `linear-gradient(to right, var(--emerald-500) ${pct}%, var(--gray-200) ${pct}%)` };
   });
 }
