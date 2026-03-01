@@ -30,6 +30,6 @@ export class HomeComponent implements OnInit {
       }
     }
     this.dataService.loadHomeData();
-    this.dataService.loadHouseholdBills();
+    this.dataService.loadAllBills();
   }
 }

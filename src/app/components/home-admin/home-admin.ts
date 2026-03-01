@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, signal, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { DataService } from '../../services/data';
 import { TopBarComponent } from '../shared/top-bar/top-bar';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +8,7 @@ import { AdminUser } from '../../models/flatly';
 @Component({
   selector: 'app-home-admin',
   standalone: true,
-  imports: [CommonModule, RouterLink, TopBarComponent, FormsModule],
+  imports: [CommonModule, TopBarComponent, FormsModule],
   templateUrl: './home-admin.html',
   styleUrl: './home-admin.scss',
 })
