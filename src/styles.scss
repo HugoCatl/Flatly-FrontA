@@ -391,6 +391,68 @@ h3 {
     letter-spacing: -0.02em;
 }
 
+/* ========== ADMIN BOTTOM TAB BAR ========== */
+.admin-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+  height: calc(72px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.admin-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 24px;
+  border: none;
+  background: transparent;
+  border-radius: 14px;
+  color: var(--gray-400);
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &__icon {
+    font-size: 24px;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  &__label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: 0.01em;
+    transition: color 0.2s ease;
+  }
+
+  &:hover:not(.active) {
+    color: var(--emerald-500);
+    background: rgba(16, 185, 129, 0.06);
+
+    .admin-tab__icon { transform: translateY(-2px); }
+  }
+
+  &.active {
+    color: var(--emerald-500);
+    background: rgba(16, 185, 129, 0.1);
+
+    .admin-tab__icon { transform: translateY(-2px); }
+  }
+}
+
 /* ========== DARK MODE ========== */
 html.dark {
   --white: #1E293B;
@@ -438,6 +500,26 @@ html.dark {
   .bottom-nav {
     background: rgba(15, 23, 42, 0.94) !important;
     border-top-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  // Admin bottom tab bar
+  .admin-tab-bar {
+    background: rgba(15, 23, 42, 0.94) !important;
+    border-top-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .admin-tab {
+    color: var(--gray-400);
+
+    &:hover:not(.active) {
+      color: var(--emerald-500) !important;
+      background: rgba(16, 185, 129, 0.08) !important;
+    }
+
+    &.active {
+      color: var(--emerald-500) !important;
+      background: rgba(16, 185, 129, 0.15) !important;
+    }
   }
 
   // Content area

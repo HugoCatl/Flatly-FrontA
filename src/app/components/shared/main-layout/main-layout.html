@@ -1,21 +1,44 @@
-<app-top-bar [logoLink]="'/home'" />
+<app-top-bar [logoLink]="user()?.role === 'ADMIN' ? '/home-admin' : user()?.role === 'OWNER' ? '/home-owners' : '/home'" />
 
 <main class="content-area">
     <router-outlet></router-outlet>
 </main>
 
-<nav class="bottom-nav">
+@if (user()?.role === 'ADMIN') {
+  <nav class="admin-tab-bar">
+    <a class="admin-tab" routerLink="/home-admin">
+      <span class="material-icons-round admin-tab__icon">bar_chart</span>
+      <span class="admin-tab__label">Estadísticas</span>
+    </a>
+    <a class="admin-tab" routerLink="/home-admin">
+      <span class="material-icons-round admin-tab__icon">people</span>
+      <span class="admin-tab__label">Usuarios</span>
+    </a>
+    <a class="admin-tab" routerLink="/home-admin">
+      <span class="material-icons-round admin-tab__icon">label</span>
+      <span class="admin-tab__label">Tags</span>
+    </a>
+  </nav>
+} @else if (user()?.role === 'OWNER') {
+  <nav class="bottom-nav">
+    <a routerLink="/home-owners" routerLinkActive="active-link">
+      <span class="material-icons-round nav-icon">home_work</span>
+      <span class="nav-label">Mis Propiedades</span>
+    </a>
+  </nav>
+} @else {
+  <nav class="bottom-nav">
     <a routerLink="/home" routerLinkActive="active-link" id="nav-home">
-        <span class="material-icons-round nav-icon">home</span>
-        <span class="nav-label">Inicio</span>
+      <span class="material-icons-round nav-icon">home</span>
+      <span class="nav-label">Inicio</span>
     </a>
     <a routerLink="/map" routerLinkActive="active-link" id="nav-map">
-        <span class="material-icons-round nav-icon">map</span>
-        <span class="nav-label">Mapa</span>
+      <span class="material-icons-round nav-icon">map</span>
+      <span class="nav-label">Mapa</span>
     </a>
     <a routerLink="/expenses" routerLinkActive="active-link" id="nav-expenses">
-        <span class="material-icons-round nav-icon">receipt_long</span>
-        <span class="nav-label">Gastos</span>
+      <span class="material-icons-round nav-icon">receipt_long</span>
+      <span class="nav-label">Gastos</span>
     </a>
-</nav>
-
+  </nav>
+}
