@@ -22,8 +22,10 @@ export class CreateProperty implements AfterViewInit, OnDestroy, OnInit {
   private leafletMap!: L.Map;
   private marker: L.Marker | null = null;
 
+
+
   tags = signal<Tag[]>([]);
-  selectedTagNames = signal<string[]>([]); 
+  selectedTag = signal<Tag[]>([]); 
   selectedLocation = signal<{ lat: number; lng: number } | null>(null);
   imagePreviews = signal<string[]>([]);
   loading = signal(false);
@@ -92,12 +94,12 @@ form = this.fb.group({
   }
 
 // En create-property.ts
-toggleTag(tagName: string): void {
-  const current = this.selectedTagNames();
-  this.selectedTagNames.set(
-    current.includes(tagName) 
-      ? current.filter(t => t !== tagName) 
-      : [...current, tagName]
+toggleTag(tag: Tag): void {
+  const current = this.selectedTag();
+  this.selectedTag.set(
+    current.includes(tag) 
+      ? current.filter(t => t !== tag) 
+      : [...current, tag]
   );
 }
 
@@ -146,7 +148,7 @@ toggleTag(tagName: string): void {
       address:          null,
       latitude:         loc ? parseFloat(loc.lat.toFixed(6)) : null,
       longitude:        loc ? parseFloat(loc.lng.toFixed(6)) : null,
-      tagNames: this.dataService.etiquetasSeleccionadas()
+      tagNames: this.selectedTag().map(t => t.name)
     };
 
     this.loading.set(true);
