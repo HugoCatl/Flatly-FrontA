@@ -133,6 +133,30 @@
         </div>
       }
 
+      <!-- Botón unirse -->
+      <div class="join-section">
+        @if (joinStatus() === 'joined') {
+          <div class="join-success">
+            <span class="material-icons-round">check_circle</span>
+            ¡Te has unido al piso!
+          </div>
+        } @else if (joinStatus() === 'error') {
+          <div class="join-error">
+            <span class="material-icons-round">error_outline</span>
+            No se pudo unir. ¿Ya eres miembro?
+          </div>
+        } @else {
+          <button class="btn-join"
+            [disabled]="joinStatus() === 'joining'"
+            (click)="joinPiso()">
+            <span class="material-icons-round">
+              {{ joinStatus() === 'joining' ? 'hourglass_empty' : 'door_front' }}
+            </span>
+            {{ joinStatus() === 'joining' ? 'Uniéndose...' : 'Unirse al piso' }}
+          </button>
+        }
+      </div>
+
     </div>
   </div>
 }

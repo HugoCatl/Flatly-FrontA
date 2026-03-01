@@ -93,6 +93,11 @@ export class HomeAdmin implements OnInit {
     this.activeTab.set(key as 'stats' | 'users' | 'tags');
   }
 
+  goToUsers(role: string = ''): void {
+    this.filterRole.set(role);
+    this.activeTab.set('users');
+  }
+
   toggleSort(): void {
     this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
   }

@@ -69,55 +69,63 @@
 
     @if (pisoActivo(); as piso) {
         <div class="piso-preview glass-panel piso-preview--visible">
+
             <button class="preview-close" (click)="pisoActivo.set(null)" aria-label="Cerrar">
                 <span class="material-icons-round">close</span>
             </button>
 
-            <div class="preview-image-wrapper">
-                @if (piso.images && piso.images.length > 0) {
-                    <img [src]="piso.images[0].url" [alt]="piso.title" class="preview-img" />
-                } @else {
-                    <div class="preview-img-placeholder">
-                        <span class="material-icons-round">image</span>
-                    </div>
-                }
-                
-                <span class="preview-badge" [class.preview-badge--unavailable]="!piso.isAvailable">
-                    {{ piso.isAvailable ? 'Disponible' : 'No disponible' }}
-                </span>
-            </div>
-
-            <div class="preview-body">
-                <div class="preview-precio">€{{ piso.priceMonth }}<span>/mes</span></div>
-                <div class="preview-titulo">{{ piso.title }}</div>
-                
-                <div class="preview-dir">
-                    <span class="material-icons-round">place</span>
-                    {{ piso.address }}
-                </div>
-
-                <div class="preview-specs">
-                    <div class="spec-item">
-                        <span class="material-icons-round">bed</span>
-                        <span>{{ piso.rooms }} hab.</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="material-icons-round">square_foot</span>
-                        <span>{{ piso.squareMeters }} m²</span>
-                    </div>
-                </div>
-
-                <div class="preview-tags">
-                    @for (t of piso.tags; track t.id) {
-                        <span class="tag-pill">{{ t.name }}</span>
+            <!-- Fila principal: imagen + info -->
+            <div class="preview-main">
+                <div class="preview-thumb">
+                    @if (piso.images && piso.images.length > 0) {
+                        <img [src]="piso.images[0].url" [alt]="piso.title" />
+                    } @else {
+                        <div class="preview-thumb__placeholder">
+                            <span class="material-icons-round">apartment</span>
+                        </div>
                     }
+                    <span class="preview-badge" [class.preview-badge--unavailable]="!piso.isAvailable">
+                        {{ piso.isAvailable ? 'Disponible' : 'Ocupado' }}
+                    </span>
                 </div>
 
-                <button class="btn-ver glass-btn" [routerLink]="['/piso', piso.id]">
-                    Ver detalles 
-                    <span class="material-icons-round">arrow_forward</span>
-                </button>
+                <div class="preview-info">
+                    <div class="preview-precio">€{{ piso.priceMonth }}<span>/mes</span></div>
+                    <div class="preview-titulo">{{ piso.title }}</div>
+                    <div class="preview-specs">
+                        <span>
+                            <span class="material-icons-round">bed</span>
+                            {{ piso.rooms }} hab.
+                        </span>
+                        @if (piso.bathrooms) {
+                            <span>
+                                <span class="material-icons-round">bathroom</span>
+                                {{ piso.bathrooms }} baños
+                            </span>
+                        }
+                        @if (piso.squareMeters) {
+                            <span>
+                                <span class="material-icons-round">square_foot</span>
+                                {{ piso.squareMeters }} m²
+                            </span>
+                        }
+                    </div>
+                </div>
             </div>
+
+            <!-- Tags -->
+            <div class="preview-tags">
+                @for (t of (piso.tags ?? []); track t.id) {
+                    <span class="tag-pill">{{ t.name }}</span>
+                }
+            </div>
+
+            <!-- Botón -->
+            <a class="btn-ver" [routerLink]="['/piso', piso.id]">
+                Ver detalles
+                <span class="material-icons-round">arrow_forward</span>
+            </a>
+
         </div>
     }
 

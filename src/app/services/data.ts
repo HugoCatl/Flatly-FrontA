@@ -136,12 +136,10 @@ getProperties() {
       console.log('DATOS BRUTOS DEL BACKEND:', list[0]); // <--- Mira esto en la consola
       return list.map(p => ({
         ...p,
-        // Si en la consola ves "price_month", pon p.price_month
-        // Si en la consola ves "price", pon p.price
-        priceMonth: p.price_month || p.priceMonth || p.price || 0,
-        ownerId: p.owner_id || p.ownerId || 0,
+        priceMonth:  p.price_month  || p.priceMonth  || p.price || 0,
+        ownerId:     p.owner_id     || p.ownerId     || 0,
+        householdId: p.household_id || p.householdId || undefined,
         isAvailable: p.is_available ?? p.isAvailable ?? true,
-        // ... repite con los demás
       } as Propiedad));
     })
   );
@@ -153,6 +151,7 @@ getPropertyById(id: number) {
       ...p,
       priceMonth:  p.price_month  || p.priceMonth  || p.price || 0,
       ownerId:     p.owner_id     || p.ownerId     || 0,
+      householdId: p.household_id || p.householdId || undefined,
       isAvailable: p.is_available ?? p.isAvailable ?? true,
     } as Propiedad))
   );

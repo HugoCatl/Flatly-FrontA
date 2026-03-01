@@ -25,17 +25,17 @@
     <!-- ── ESTADÍSTICAS ── -->
     @if (activeTab() === 'stats') {
       <div class="stats-grid">
-        <div class="stat-card glass-card">
+        <div class="stat-card glass-card" style="cursor:pointer" (click)="goToUsers('')">
           <span class="stat-icon">👥</span>
           <span class="stat-value">{{ totalUsuarios() }}</span>
           <span class="stat-label">Total usuarios</span>
         </div>
-        <div class="stat-card glass-card">
+        <div class="stat-card glass-card" style="cursor:pointer" (click)="goToUsers('STUDENT')">
           <span class="stat-icon">🎓</span>
           <span class="stat-value">{{ totalEstudiantes() }}</span>
           <span class="stat-label">Estudiantes</span>
         </div>
-        <div class="stat-card glass-card">
+        <div class="stat-card glass-card" style="cursor:pointer" (click)="goToUsers('OWNER')">
           <span class="stat-icon">🏠</span>
           <span class="stat-value">{{ totalPropietarios() }}</span>
           <span class="stat-label">Propietarios</span>

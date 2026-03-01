@@ -19,6 +19,7 @@ export class MapDetails implements OnInit {
   piso        = signal<Propiedad | null>(null);
   loading     = signal(true);
   activeImage = signal(0);
+  joinStatus  = signal<'idle' | 'joining' | 'joined' | 'error'>('idle');
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -62,5 +63,18 @@ export class MapDetails implements OnInit {
 
   setImage(index: number): void {
     this.activeImage.set(index);
+  }
+
+  joinPiso(): void {
+    const householdId = this.piso()?.id;
+    if (!householdId) return;
+    this.joinStatus.set('joining');
+    this.dataService.joinHousehold(householdId).subscribe({
+      next: () => this.joinStatus.set('joined'),
+      error: (err) => {
+        console.error('joinHousehold error →', err.status, err.error);
+        this.joinStatus.set('error');
+      },
+    });
   }
 }
