@@ -35,7 +35,9 @@ export class Login implements OnInit {
         } else {
           this.router.navigate(['/home']);
           this.dataService.loadHomeData();
-          if (this.dataService.sesion()) { this.dataService.loadHouseholdBills(); }
+          if (this.dataService.sesion()) { 
+            this.dataService.loadAllBills();
+          }
         }
       },
       error: () => {

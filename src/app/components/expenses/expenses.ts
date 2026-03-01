@@ -18,7 +18,10 @@ export class Expenses {
 
   @ViewChild(ExpenseForm) expenseForm!: ExpenseForm;
 
+  user = this.dataService.user;
+
   expenses = this.dataService.expenses;
+  personalExpenses = this.dataService.personalExpenses;
 
   months = this.dataService.months;
   years = this.dataService.years;
@@ -34,6 +37,7 @@ export class Expenses {
   showYearDropdown = signal(false);
   selectedExpense = signal<Expense | null>(null);
 
+
   // ── Computed ──
   filteredExpenses = computed(() =>
     this.dataService.expenses().filter(e =>
@@ -42,10 +46,15 @@ export class Expenses {
     )
   );
 
+   filteredPersonalExpenses = computed(() =>
+    this.dataService.expenses().filter(e =>
+      e.period_month === this.selectedMonth() + 1 &&
+      e.period_year === this.selectedYear()
+    )
+  );
+
   myExpenses = computed(() =>
-    this.filteredExpenses()
-      .filter(e => e.paidBy.includes('Yo'))
-      .reduce((sum, e) => sum + e.amount, 0)
+    this.filteredPersonalExpenses().reduce((sum, e) => sum + e.amount, 0)
   );
 
   totalExpenses = computed(() =>

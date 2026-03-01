@@ -34,6 +34,8 @@ export class DataService {
   //este expenses es los datos necesarios para mostrar en expenses
   expenses = signal<Expense[]>([]);
 
+  personalExpenses = signal<Bills[]>(localStorage.getItem('app_personal_expenses') ? JSON.parse(localStorage.getItem('app_personal_expenses') || '{}') : null);
+
   
   hoseholdBills = signal<Bills[]>([]);
   properties = signal<Propiedad[]>([]);
@@ -62,6 +64,7 @@ export class DataService {
 
     effect(() => {
       localStorage.setItem('app_tags_list', JSON.stringify(this.availableTags()));
+      localStorage.setItem('app_personal_expenses', JSON.stringify(this.personalExpenses()));
     });
     this.loadTagsPublic();
   }
@@ -207,35 +210,53 @@ getAllTags() {
   
   //funcion para pasar facturas a expenses y mostrar el icono correspondiente
   billsToExpenses(){
-    this.hoseholdBills();
+    const bills = this.hoseholdBills();
+    const expenses: Expense[] = bills.map(bill => ({
+      name: bill.type,
+      paidBy: "pepe",
+      amount: bill.amount_total,
+      icon: this.getExpenseIconAndClass(bill.type).icon, // Obtener el icono según el tipo
+      type: bill.type,
+      iconClass: this.getExpenseIconAndClass(bill.type).iconClass, // Clase CSS para el icono
+      period_month: bill.period_month,
+      period_year: bill.period_year,
+      due_date: bill.due_date,
+      status: bill.status,
+      created_at: bill.created_at,
+    }));
+    this.expenses.set(expenses);
     
 
   }
-  /*
-  convertBillsToExpenses(bills: Factura[]): Expense[] {
-    return bills.map(bill => {
-      const { icon, iconClass } = this.getExpenseIcon(bill.type);
-      return {
-        ...bill,
-        icon,
-        iconClass
-      };
-    });
-  }
 
-  getExpenseIcon(expenseName: string): { icon: string; iconClass: string } {
-    const lowerName = expenseName.toLowerCase();
-    if (lowerName.includes('agua')) return { icon: 'water_drop', iconClass: 'icon-agua' };
-    if (lowerName.includes('luz') || lowerName.includes('electricidad')) return { icon: 'flash_on', iconClass: 'icon-luz' };
-    if (lowerName.includes('internet') || lowerName.includes('wifi')) return { icon: 'wifi', iconClass: 'icon-internet' };
-    if (lowerName.includes('gas')) return { icon: 'local_gas_station', iconClass: 'icon-gas' };
-    if (lowerName.includes('alquiler') || lowerName.includes('renta')) return { icon: 'home', iconClass: 'icon-alquiler' };
-    if (lowerName.includes('comida') || lowerName.includes('supermercado')) return { icon: 'restaurant', iconClass: 'icon-comida' };
-    return { icon: 'receipt_long', iconClass: 'icon-otros' };
+
+
+  // Función para asignar un icono y clase CSS según el nombre del gasto se basa en billTipe
+  getExpenseIconAndClass(type: string): { icon: string; iconClass: string } {
+    switch (type.toLowerCase()) {
+      case 'rent':
+        return { icon: '🏠', iconClass: 'rent-icon' };
+      case 'water':
+        return { icon: '💧', iconClass: 'water-icon' };
+      case 'electricity':
+        return { icon: '⚡', iconClass: 'electricity-icon' };
+      case 'internet':
+        return { icon: '🌐', iconClass: 'internet-icon' };
+      case 'gas':
+        return { icon: '🔥', iconClass: 'gas-icon' };
+      default:
+        return { icon: '📝', iconClass: 'default-icon' };
+    }
   }
-    */
+  
+
 
   //load
+  loadAllBills() {
+    this.loadPersonalExpenses();
+    this.loadHouseholdBills();
+    
+  }
 
 loadHomeData() {
     this.getMyProfile().subscribe({
@@ -353,6 +374,22 @@ loadUsers(): void {
     },
     error: (err) => {
       console.error('Error al cargar usuarios:', err);
+      this.loading.set(false);
+    }
+  });
+}
+
+loadPersonalExpenses(){
+  this.loading.set(true); // Activar carga
+  this.getPendingExpenses().subscribe({
+    next: (data: Bills[]) => {
+      this.personalExpenses.set(data); 
+      this.loading.set(false); // Desactivar carga
+      localStorage.setItem('app_personal_expenses', JSON.stringify(data));
+      console.log('Gastos personales cargados:', data);
+    },
+    error: (err) => {
+      console.error('Error al cargar gastos personales:', err);
       this.loading.set(false);
     }
   });
