@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data';
@@ -33,6 +33,15 @@ export class Profile implements OnInit {
   editPhone = signal('');
   editAvatarUrl = signal('');
   tempAvatarUrl = signal('');
+
+  memberSince = computed(() => {
+    const p = this.profile() as any;
+    const raw = p?.createdAt || p?.created_at;
+    if (!raw) return 'No especificado';
+    return new Date(raw).toLocaleDateString('es-ES', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+  });
 
   ngOnInit() {
     // Si la señal del usuario está vacía (ej. primera carga), pedir al server
