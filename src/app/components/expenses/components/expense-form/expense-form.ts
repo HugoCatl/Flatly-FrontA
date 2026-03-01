@@ -2,27 +2,11 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
+import { BillStatus, Expense,NewBill } from '../../../../models/flatly';
 
-interface NewBill {
-  type: string;
-  amount: number | null;
-  period_month: number;
-  period_year: number;
-  due_date?: string;
-}
 
-export interface Expense {
-  name: string;
-  paidBy: string;
-  amount: number;
-  icon: string;
-  iconClass: string;
-  period_month: number;
-  period_year: number;
-  due_date: string;
-  status: 'PENDING' | 'PAID' | 'OVERDUE';
-  created_at: string;
-}
+
+
 
 const BILL_TYPES = [
   { value: 'RENT',        label: 'Alquiler',     icon: '🏢', iconClass: 'icon-alquiler' },
@@ -74,7 +58,7 @@ export class ExpenseForm {
     period_month: this.newBill.period_month,
     period_year: this.newBill.period_year,
     due_date: this.newBill.due_date || '',
-    status: 'PENDING',
+    status: BillStatus.PENDING,
     created_at: new Date().toISOString(),
   });
   this.show = false;

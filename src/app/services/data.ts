@@ -1,49 +1,14 @@
 import { Injectable, inject, signal ,computed, effect} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Usuario, Propiedad, Factura, Tag } from '../models/flatly';
+import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense} from '../models/flatly';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-type Role = 'ADMIN' | 'USER' | 'PROPIETARIO';
 
-export interface User {
-  id?: number;
-  role: Role;
-  name: string;
-  email: string;
-  password_hash: string;
-  created_at: Date;
-  phone?: string;
-  avatarUrl: string;
-}
 
-interface Expense {
-  name: string;
-  paidBy: string;
-  amount: number;
-  icon: string;
-  iconClass: string;
-}
 
-interface AdminUser {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  created_at: string;
-}
-
-interface AdminStats {
-  totalUsuarios: number;
-  totalEstudiantes: number;
-  totalPropietarios: number;
-  totalAdmins: number;
-  totalPropiedades: number;
-  propiedadesDisponibles: number;
-  timestamp: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -63,9 +28,12 @@ export class DataService {
 
   profile = signal<Usuario | null>(JSON.parse(localStorage.getItem('app_user') || 'null')); 
   loading = signal(false);
-  expenses = signal<Factura[]>([]);
+
+  //este expenses es los datos necesarios para mostrar en expenses
+  expenses = signal<Expense[]>([]);
+
   
-  hoseholdBills = signal<Factura[]>([]);
+  hoseholdBills = signal<Bills[]>([]);
   properties = signal<Propiedad[]>([]);
 
   availableTags = signal<string[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));  
@@ -188,11 +156,11 @@ getAllTags() {
   getMyHousehold() { return this.http.get(`${this.url}/students/households/me`); }
   leaveHousehold() { return this.http.delete(`${this.url}/students/households/me`); }
 
-  getPendingExpenses() { return this.http.get<Factura[]>(`${this.url}/students/expenses`,{ withCredentials: true }); }
+  getPendingExpenses() { return this.http.get<Bills[]>(`${this.url}/students/expenses`,{ withCredentials: true }); }
   getExpenseHistory(year: number, month: number) {
-    return this.http.get<Factura[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`, { withCredentials: true });
+    return this.http.get<Bills[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`, { withCredentials: true });
   }
-  getHouseholdBills() { return this.http.get<Factura[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
+  getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
 
   // --- 4. BLOQUE: OWNERS (PROPIETARIOS)  ---
   createProperty(body: any) { return this.http.post(`${this.url}/owners/properties`, body); }
@@ -235,7 +203,6 @@ getAllTags() {
 
   adminEditTag(body: string) { return this.http.post(`${this.url}/admin/tags`, { body }); }
   //verifi
-  // ✅ Asegurar que los tags se cargan al iniciar la app
   private ensureTagsLoaded() {
     this.adminGetTags({}).subscribe({
       next: (data: any) => {
@@ -244,7 +211,35 @@ getAllTags() {
       }
     });
   } 
-  
+  //funcion para pasar facturas a expenses y mostrar el icono correspondiente
+  billsToExpenses(){
+    this.hoseholdBills();
+    
+
+  }
+  /*
+  convertBillsToExpenses(bills: Factura[]): Expense[] {
+    return bills.map(bill => {
+      const { icon, iconClass } = this.getExpenseIcon(bill.type);
+      return {
+        ...bill,
+        icon,
+        iconClass
+      };
+    });
+  }
+
+  getExpenseIcon(expenseName: string): { icon: string; iconClass: string } {
+    const lowerName = expenseName.toLowerCase();
+    if (lowerName.includes('agua')) return { icon: 'water_drop', iconClass: 'icon-agua' };
+    if (lowerName.includes('luz') || lowerName.includes('electricidad')) return { icon: 'flash_on', iconClass: 'icon-luz' };
+    if (lowerName.includes('internet') || lowerName.includes('wifi')) return { icon: 'wifi', iconClass: 'icon-internet' };
+    if (lowerName.includes('gas')) return { icon: 'local_gas_station', iconClass: 'icon-gas' };
+    if (lowerName.includes('alquiler') || lowerName.includes('renta')) return { icon: 'home', iconClass: 'icon-alquiler' };
+    if (lowerName.includes('comida') || lowerName.includes('supermercado')) return { icon: 'restaurant', iconClass: 'icon-comida' };
+    return { icon: 'receipt_long', iconClass: 'icon-otros' };
+  }
+    */
 
   //load
 
@@ -271,18 +266,18 @@ loadHomeData() {
     this.getPendingExpenses().subscribe({
       next: (list) => {
         console.log('Gastos cargados:', list);
-        this.expenses.set(list);
+        this.hoseholdBills.set(list);
       },
       error: (err) => console.error('Error al cargar gastos:', err)
     });
   }
-
-  //expenses 
-  downloadHouseholdBills() {
+ 
+  loadHouseholdBills() {
     this.getHouseholdBills().subscribe({
       next: (Bills) => { 
         this.hoseholdBills.set(Bills); 
         console.log('Facturas del hogar cargadas:', Bills);
+        //comvertir a expenses
       },
       error: (err) => console.error('Error al cargar facturas del hogar:', err)
     });
@@ -290,16 +285,6 @@ loadHomeData() {
     return (this.hoseholdBills());
   }
 
-  getExpenseIcon(expenseName: string): { icon: string; iconClass: string } {
-    const lowerName = expenseName.toLowerCase();
-    if (lowerName.includes('agua')) return { icon: 'water_drop', iconClass: 'icon-agua' };
-    if (lowerName.includes('luz') || lowerName.includes('electricidad')) return { icon: 'flash_on', iconClass: 'icon-luz' };
-    if (lowerName.includes('internet') || lowerName.includes('wifi')) return { icon: 'wifi', iconClass: 'icon-internet' };
-    if (lowerName.includes('gas')) return { icon: 'local_gas_station', iconClass: 'icon-gas' };
-    if (lowerName.includes('alquiler') || lowerName.includes('renta')) return { icon: 'home', iconClass: 'icon-alquiler' };
-    if (lowerName.includes('comida') || lowerName.includes('supermercado')) return { icon: 'restaurant', iconClass: 'icon-comida' };
-    return { icon: 'receipt_long', iconClass: 'icon-otros' };
-  }
 
 
 // loadMapData actualizado para usar la función simple
@@ -382,5 +367,18 @@ loadUsers(): void {
   });
 }
 
+  // ── Datos estáticos ──
+  tabs = [
+    { key: 'gastos',       label: 'Gastos'       },
+    { key: 'saldos',       label: 'Saldos'       },
+    { key: 'estadisticas', label: 'Estadísticas' },
+  ];
+
+  months = [
+    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+  ];
+
+  years = [2024, 2025, 2026];
 
 }

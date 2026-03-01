@@ -67,7 +67,7 @@ export interface Hogar {
   householdsCreatedAt: string;
 }
 
-export interface Factura {
+export interface Bills {
   id: number;
   household_id: number;
   type: BillType;
@@ -79,6 +79,26 @@ export interface Factura {
   created_at: string;
   status: BillStatus;
   splits?: BillSplit[];
+}
+
+export interface Expense {
+  name: string;
+  paidBy: string;
+  amount: number;
+  icon: string;
+  iconClass: string;
+  period_month: number;
+  period_year: number;
+  due_date: string;
+  status: BillStatus;
+  created_at: string;
+}
+export interface NewBill {
+  type: string;
+  amount: number | null;
+  period_month: number;
+  period_year: number;
+  due_date?: string;
 }
 
 export interface BillSplit {
@@ -147,4 +167,22 @@ export interface UserSession {
   email: string;
   id?: number;
   role: Role;
+}
+
+export interface AdminUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  created_at: string;
+}
+
+export interface AdminStats {
+  totalUsuarios: number;
+  totalEstudiantes: number;
+  totalPropietarios: number;
+  totalAdmins: number;
+  totalPropiedades: number;
+  propiedadesDisponibles: number;
+  timestamp: string;
 }
