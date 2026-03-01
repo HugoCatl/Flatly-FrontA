@@ -29,6 +29,11 @@ export class HomeAdmin implements OnInit {
   newRole         = signal('');
   newTagName      = signal('');
 
+  // ── Stats derivadas de la lista de usuarios ──
+  totalUsuarios     = computed(() => this.adminUsersList().length);
+  totalEstudiantes  = computed(() => this.adminUsersList().filter(u => u.role === 'STUDENT').length);
+  totalPropietarios = computed(() => this.adminUsersList().filter(u => u.role === 'OWNER').length);
+
   // ── Filtros y ordenación ──
   searchQuery = signal('');
   filterRole  = signal('');           // '' = todos

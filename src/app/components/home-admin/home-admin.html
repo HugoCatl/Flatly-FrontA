@@ -23,21 +23,21 @@
     </div>
 
     <!-- ── ESTADÍSTICAS ── -->
-    @if (activeTab() === 'stats' && stats()) {
+    @if (activeTab() === 'stats') {
       <div class="stats-grid">
         <div class="stat-card glass-card">
           <span class="stat-icon">👥</span>
-          <span class="stat-value">{{ stats()?.totalUsuarios || 0 }}</span>
+          <span class="stat-value">{{ totalUsuarios() }}</span>
           <span class="stat-label">Total usuarios</span>
         </div>
         <div class="stat-card glass-card">
           <span class="stat-icon">🎓</span>
-          <span class="stat-value">{{ stats()?.totalEstudiantes || 0 }}</span>
+          <span class="stat-value">{{ totalEstudiantes() }}</span>
           <span class="stat-label">Estudiantes</span>
         </div>
         <div class="stat-card glass-card">
           <span class="stat-icon">🏠</span>
-          <span class="stat-value">{{ stats()?.totalPropietarios || 0 }}</span>
+          <span class="stat-value">{{ totalPropietarios() }}</span>
           <span class="stat-label">Propietarios</span>
         </div>
       </div>
