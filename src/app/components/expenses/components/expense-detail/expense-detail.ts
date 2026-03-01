@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Expense } from '../expense-form/expense-form';
+import { Expense } from '../../../../models/flatly';
+import { DataService } from '../../../../services/data';
 
 @Component({
   selector: 'app-expense-detail',
@@ -9,6 +10,7 @@ import { Expense } from '../expense-form/expense-form';
   styleUrl: './expense-detail.scss',
 })
 export class ExpenseDetail {
+  private dataService = inject(DataService);
 
   @Input() expense!: Expense;
   @Output() onClose = new EventEmitter<void>();
@@ -16,10 +18,7 @@ export class ExpenseDetail {
 
   showDeleteConfirm = false;
 
-  months = [
-    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
-  ];
+  months = this.dataService.months;
 
   @HostListener('document:keydown.escape')
   onEscKey(): void {

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
-import { Expense } from '../expense-form/expense-form';
+import { Expense} from '../../../../models/flatly';
 import { BottomSheet } from '../../../shared/bottom-sheet/bottom-sheet';
 
 Chart.register(...registerables);

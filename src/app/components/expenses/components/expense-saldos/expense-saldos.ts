@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Expense } from '../expense-form/expense-form';
+import { Expense } from '../../../../models/flatly';
 
 interface Transferencia {
   de: string;

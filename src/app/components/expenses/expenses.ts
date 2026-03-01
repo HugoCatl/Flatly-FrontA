@@ -4,7 +4,7 @@ import { ExpenseForm } from './components/expense-form/expense-form';
 import { ExpenseDetail } from './components/expense-detail/expense-detail';
 import { ExpenseStats } from './components/expense-stats/expense-stats';
 import { ExpenseSaldos } from './components/expense-saldos/expense-saldos';
-import { BillStatus, Expense } from '../../models/flatly';
+import { Expense } from '../../models/flatly';
 import { DataService } from '../../services/data';
 
 @Component({
@@ -17,6 +17,12 @@ export class Expenses {
   private dataService = inject(DataService);
 
   @ViewChild(ExpenseForm) expenseForm!: ExpenseForm;
+
+  expenses = this.dataService.expenses;
+
+  months = this.dataService.months;
+  years = this.dataService.years;
+  tabs = this.dataService.tabs;
 
   // ── Estado ──
   activeTab = signal<'gastos' | 'saldos' | 'estadisticas'>('gastos');
@@ -43,7 +49,7 @@ export class Expenses {
   totalExpenses = computed(() =>
     this.filteredExpenses().reduce((sum, e) => sum + e.amount, 0)
   );
-  
+
 
   // ── Métodos ──
   toggleDropdown(event: Event): void {
