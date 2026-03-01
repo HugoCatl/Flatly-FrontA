@@ -66,11 +66,6 @@ ngAfterViewInit() {
     this.leafletMap = L.map('leaflet-map', {
       center: [40.2, -3.5],
       zoom: 6,
-<<<<<<< HEAD
-      maxZoom: 19,
-
-=======
->>>>>>> origin/centalizedData
       zoomControl: false,
     });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
