@@ -1,18 +1,9 @@
-import { Component, inject, OnInit, signal, effect } from '@angular/core';
+import { Component, inject, OnInit, signal, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../services/data';
 import { TopBarComponent } from '../shared/top-bar/top-bar';
 import { FormsModule } from '@angular/forms';
-
-// Interfaces necesarias para el tipado fuerte
-interface AdminUser {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  created_at: string;
-}
-
+import { AdminUser } from '../../models/flatly';
 
 @Component({
   selector: 'app-home-admin',
@@ -24,29 +15,51 @@ interface AdminUser {
 export class HomeAdmin implements OnInit {
   private dataService = inject(DataService);
 
-  // --- ESTRUCTURA CENTRALIZADA ---
-  
-  // Tags centralizados en el servicio
-  tags = this.dataService.availableTags;
-  loading = this.dataService.loading;
-  proces = this.dataService.proces;
-  stats = this.dataService.stats;
-  adminUsersList = this.dataService.adminUsersList; 
+  tags          = this.dataService.availableTags;
+  loading       = this.dataService.loading;
+  proces        = this.dataService.proces;
+  stats         = this.dataService.stats;
+  adminUsersList = this.dataService.adminUsersList;
 
-  // Signals locales para la UI de gestión de usuarios
-
-  userToDelete = signal<AdminUser | null>(null);
-  userToEditRole = signal<AdminUser | null>(null);
-  
-  activeTab = signal<'stats' | 'users' | 'tags'>('stats');
-  
-  // Signals para los modales
+  userToDelete    = signal<AdminUser | null>(null);
+  userToEditRole  = signal<AdminUser | null>(null);
+  activeTab       = signal<'stats' | 'users' | 'tags'>('stats');
   showDeleteModal = signal(false);
-  showRoleModal = signal(false); 
-  newRole = signal('');
-  
-  // Signal para el input de nuevos tags
-  newTagName = signal('');
+  showRoleModal   = signal(false);
+  newRole         = signal('');
+  newTagName      = signal('');
+
+  // ── Filtros y ordenación ──
+  searchQuery = signal('');
+  filterRole  = signal('');           // '' = todos
+  sortDir     = signal<'asc' | 'desc'>('asc');
+
+  usersFiltered = computed(() => {
+    const q    = this.searchQuery().toLowerCase().trim();
+    const role = this.filterRole();
+    const dir  = this.sortDir();
+
+    let list = this.adminUsersList();
+
+    if (q) {
+      list = list.filter(u =>
+        u.name?.toLowerCase().includes(q) ||
+        u.email?.toLowerCase().includes(q)
+      );
+    }
+
+    if (role) {
+      list = list.filter(u => u.role === role);
+    }
+
+    return [...list].sort((a, b) => {
+      const nameA = (a.name || a.email).toLowerCase();
+      const nameB = (b.name || b.email).toLowerCase();
+      return dir === 'asc'
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
+    });
+  });
 
   tabs = [
     { key: 'stats', label: 'Estadísticas', icon: 'bar_chart' },
@@ -57,18 +70,15 @@ export class HomeAdmin implements OnInit {
   roles = ['STUDENT', 'OWNER', 'ADMIN'];
 
   constructor() {
-    // Debug opcional para ver cambios en tiempo real
-    effect(() => {
-      console.log('Tags actualizados:', this.tags());
-    });
+    effect(() => { console.log('Tags actualizados:', this.tags()); });
   }
 
   ngOnInit() {
     this.loading.set(true);
     this.loadDates();
-
   }
-  loadDates(){
+
+  loadDates() {
     this.dataService.loadStats();
     this.dataService.loadUsers();
     this.dataService.loadTagsPublic();
@@ -78,8 +88,13 @@ export class HomeAdmin implements OnInit {
     this.activeTab.set(key as 'stats' | 'users' | 'tags');
   }
 
+  toggleSort(): void {
+    this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
+  }
 
-  // --- MÉTODOS DE GESTIÓN (CRUD) ---
+  setRoleFilter(role: string): void {
+    this.filterRole.set(this.filterRole() === role ? '' : role);
+  }
 
   confirmDelete(user: AdminUser): void {
     this.userToDelete.set(user);
@@ -118,7 +133,6 @@ export class HomeAdmin implements OnInit {
   doRoleChange(): void {
     const user = this.userToEditRole();
     if (!user || !user.id) return;
-    
     this.dataService.adminUpdateRole(user.id, this.newRole()).subscribe({
       next: () => {
         this.adminUsersList.update(list =>
@@ -131,14 +145,11 @@ export class HomeAdmin implements OnInit {
     });
   }
 
-  // ✅ Centralización: Usamos el método resiliente del servicio
-  createTag(){
+  createTag() {
     const name = this.newTagName().trim();
-    if (!name) return; 
+    if (!name) return;
     this.dataService.adminCreateTag({ name } as any).subscribe({
-      next: () => {
-        this.newTagName.set('');
-      },
+      next: () => { this.newTagName.set(''); },
       error: (err) => console.error('Error al crear tag:', err)
     });
   }

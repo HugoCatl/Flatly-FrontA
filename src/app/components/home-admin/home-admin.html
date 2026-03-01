@@ -31,29 +31,76 @@
       }
     </div>
 
+    <!-- ── ESTADÍSTICAS ── -->
     @if (activeTab() === 'stats' && stats()) {
-        <div class="stats-grid">
-          <div class="stat-card glass-card">
-            <span class="stat-icon">👥</span>
-            <span class="stat-value">{{ stats()?.totalUsuarios || 0 }}</span>
-            <span class="stat-label">Total usuarios</span>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-icon">🎓</span>
-            <span class="stat-value">{{ stats()?.totalEstudiantes || 0 }}</span>
-            <span class="stat-label">Estudiantes</span>
-          </div>
-          <div class="stat-card glass-card">
-            <span class="stat-icon">🏠</span>
-            <span class="stat-value">{{ stats()?.totalPropietarios || 0 }}</span>
-            <span class="stat-label">Propietarios</span>
-          </div>
+      <div class="stats-grid">
+        <div class="stat-card glass-card">
+          <span class="stat-icon">👥</span>
+          <span class="stat-value">{{ stats()?.totalUsuarios || 0 }}</span>
+          <span class="stat-label">Total usuarios</span>
         </div>
+        <div class="stat-card glass-card">
+          <span class="stat-icon">🎓</span>
+          <span class="stat-value">{{ stats()?.totalEstudiantes || 0 }}</span>
+          <span class="stat-label">Estudiantes</span>
+        </div>
+        <div class="stat-card glass-card">
+          <span class="stat-icon">🏠</span>
+          <span class="stat-value">{{ stats()?.totalPropietarios || 0 }}</span>
+          <span class="stat-label">Propietarios</span>
+        </div>
+      </div>
     }
 
+    <!-- ── USUARIOS ── -->
     @if (activeTab() === 'users') {
+
+      <!-- Controles: búsqueda + ordenación -->
+      <div class="users-controls glass-card">
+        <div class="search-input-wrapper">
+          <span class="material-icons-round">search</span>
+          <input
+            type="text"
+            placeholder="Buscar usuario por nombre o email..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="searchQuery.set($event)" />
+          @if (searchQuery()) {
+            <button class="clear-btn" (click)="searchQuery.set('')">
+              <span class="material-icons-round">close</span>
+            </button>
+          }
+        </div>
+
+        <!-- Filtros de rol + botón ordenar -->
+        <div class="filter-row">
+          <div class="role-filter-bar">
+            @for (role of roles; track role) {
+              <button
+                class="role-filter-btn"
+                [class.active]="filterRole() === role"
+                [class.student]="role === 'STUDENT'"
+                [class.owner]="role === 'OWNER'"
+                [class.admin]="role === 'ADMIN'"
+                (click)="setRoleFilter(role)">
+                {{ role }}
+              </button>
+            }
+          </div>
+
+          <button class="sort-btn" (click)="toggleSort()" [title]="sortDir() === 'asc' ? 'Orden A→Z' : 'Orden Z→A'">
+            <span class="material-icons-round">sort_by_alpha</span>
+            <span class="material-icons-round sort-arrow">
+              {{ sortDir() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+            </span>
+          </button>
+        </div>
+
+        <!-- Contador de resultados -->
+        <p class="results-count">{{ usersFiltered().length }} usuario{{ usersFiltered().length !== 1 ? 's' : '' }}</p>
+      </div>
+
       <div class="section-list">
-        @for (user of adminUsersList(); track user.id) {
+        @for (user of usersFiltered(); track user.id) {
           <div class="user-card glass-card">
             <div class="user-avatar">{{ user.name.charAt(0) || user.email.charAt(0) }}</div>
             <div class="user-info">
@@ -75,9 +122,17 @@
             </div>
           </div>
         }
+
+        @if (usersFiltered().length === 0) {
+          <div class="empty-state glass-card">
+            <span class="material-icons-round">person_search</span>
+            <p>No se encontraron usuarios</p>
+          </div>
+        }
       </div>
     }
 
+    <!-- ── TAGS ── -->
     @if (activeTab() === 'tags') {
       <div class="tags-section glass-card">
         <div class="tags-add">
@@ -103,5 +158,44 @@
       </div>
     }
 
+  </div>
+}
+
+<!-- Modal eliminar usuario -->
+@if (showDeleteModal()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+      <span class="modal-icon">🗑️</span>
+      <h3>¿Eliminar usuario?</h3>
+      <p>Se eliminará permanentemente a <strong>{{ userToDelete()?.email }}</strong>.</p>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" (click)="doDelete()">Sí, eliminar</button>
+        <button class="modal-btn cancel" (click)="cancelDelete()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal cambiar rol -->
+@if (showRoleModal()) {
+  <div class="modal-overlay" (click)="cancelRoleChange()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+      <span class="modal-icon">👤</span>
+      <h3>Cambiar rol</h3>
+      <p>{{ userToEditRole()?.email }}</p>
+      <div class="role-options">
+        @for (role of roles; track role) {
+          <button class="role-option"
+            [class.active]="newRole() === role"
+            (click)="newRole.set(role)">
+            {{ role }}
+          </button>
+        }
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" (click)="doRoleChange()">Guardar</button>
+        <button class="modal-btn cancel" (click)="cancelRoleChange()">Cancelar</button>
+      </div>
+    </div>
   </div>
 }
