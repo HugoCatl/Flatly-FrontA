@@ -64,8 +64,10 @@ ngAfterViewInit() {
 
   private initMap() {
     this.leafletMap = L.map('leaflet-map', {
-      center: [41.3951, 2.1734],
-      zoom: 14,
+      center: [40.2, -3.5],
+      zoom: 6,
+      maxZoom: 19,
+
       zoomControl: false,
     });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -98,6 +100,24 @@ ngAfterViewInit() {
 
       this.markers.push(marker);
     });
+  }
+
+  async flyToSearch() {
+    const q = this.busqueda().trim();
+    if (!q) return;
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q + ', España')}&format=json&limit=1`
+      );
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        this.leafletMap.flyTo([lat, lon], 11, { animate: true, duration: 1.2 });
+      }
+    } catch (e) {
+      console.error('Error geocodificando:', e);
+    }
   }
 
   toggleEtiqueta(tag: string) {
