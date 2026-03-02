@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Expense } from '../../../../models/flatly';
+import { DataService } from '../../../../services/data';
 
 interface Transferencia {
   de: string;
@@ -22,6 +23,7 @@ interface BalancePersona {
   styleUrl: './expense-saldos.scss',
 })
 export class ExpenseSaldos {
+  private readonly dataService = inject(DataService);
 
   @Input() set expenses(value: Expense[]) {
     this._expenses = value;
@@ -32,7 +34,9 @@ export class ExpenseSaldos {
   transferencias: Transferencia[] = [];
   balances: BalancePersona[] = [];
 
-  readonly yo = 'Alex (Yo)';
+  get yo(): string {
+    return this.dataService.user()?.name ?? '';
+  }
 
   get mePagan(): Transferencia[] {
     return this.transferencias.filter(t => t.a === this.yo && !t.saldada);

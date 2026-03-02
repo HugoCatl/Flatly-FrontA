@@ -233,9 +233,8 @@ joinHousehold(householdId: number) {
         this.loadHouseholdBills();
       }),
       catchError((err) => {
-        console.error('Error al crear factura en backend:', err);
-        // 🔥 No lanzamos error aquí para no romper el flujo del componente
-        return of(null); 
+        console.error('Error al crear la factura:', err);
+        return throwError(() => err);
       })
     );
   }
@@ -315,12 +314,13 @@ createHousehold(title: string, propertyId: number): Observable<any> {
   billsToExpenses(){
     const bills = this.hoseholdBills();
     const expenses: Expense[] = bills.map(bill => ({
+      id: bill.id,
       name: bill.type,
       paidBy: this.user()?.name || "Desconocido",
       amount: bill.amount_total,
-      icon: this.getExpenseIconAndClass(bill.type).icon, // Obtener el icono según el tipo
+      icon: this.getExpenseIconAndClass(bill.type).icon,
       type: bill.type,
-      iconClass: this.getExpenseIconAndClass(bill.type).iconClass, // Clase CSS para el icono
+      iconClass: this.getExpenseIconAndClass(bill.type).iconClass,
       period_month: bill.period_month,
       period_year: bill.period_year,
       due_date: bill.due_date,
@@ -392,10 +392,9 @@ loadHomeData() {
  
   loadHouseholdBills() {
     this.getHouseholdBills().subscribe({
-      next: (Bills) => { 
-        this.hoseholdBills.set(Bills); 
-        console.log('Facturas del hogar cargadas:', Bills);
-        //comvertir a expenses
+      next: (Bills) => {
+        this.hoseholdBills.set(Bills);
+        this.billsToExpenses();
       },
       error: (err) => console.error('Error al cargar facturas del hogar:', err)
     });

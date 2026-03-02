@@ -1,4 +1,4 @@
-import { Component, ViewChild, HostListener, signal, computed, inject} from '@angular/core';
+import { Component, ViewChild, HostListener, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExpenseForm } from './components/expense-form/expense-form';
 import { ExpenseDetail } from './components/expense-detail/expense-detail';
@@ -14,7 +14,7 @@ import { DataService } from '../../services/data';
   templateUrl: './expenses.html',
   styleUrl: './expenses.scss',
 })
-export class Expenses {
+export class Expenses implements OnInit {
   // ✅ SonarLint: Marcado como readonly
   private readonly dataService = inject(DataService);
 
@@ -45,9 +45,12 @@ tabs: Tab[] = [
 
   // ── Computados ──
   filteredExpenses = computed(() => {
-    return this.expenses().filter(e => 
-      new Date(e.created_at).getMonth() === this.selectedMonth() &&
-      new Date(e.created_at).getFullYear() === this.selectedYear()
+    const all = this.expenses();
+    const month = this.selectedMonth();
+    const year  = this.selectedYear();
+    return all.filter(e =>
+      e.period_month - 1 === month &&
+      e.period_year === year
     );
   });
 
@@ -60,6 +63,10 @@ tabs: Tab[] = [
   totalExpenses = computed(() =>
     this.filteredExpenses().reduce((sum, e) => sum + e.amount, 0)
   );
+
+  ngOnInit(): void {
+    this.dataService.loadHouseholdBills();
+  }
 
   // ── Métodos ──
   toggleDropdown(event: Event): void {
