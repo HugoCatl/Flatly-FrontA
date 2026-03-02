@@ -211,9 +211,9 @@ joinHousehold(householdId: number) {
   }
   getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
 
-  // Devuelve miembros del hogar con {userId, name} para resolver nombres
+  // Devuelve miembros del hogar con {id, name, email} — shape real del backend
   getHouseholdMembers() {
-    return this.http.get<{userId: number; name: string}[]>(
+    return this.http.get<{id: number; name: string; email: string}[]>(
       `${this.url}/students/households/me/members`,
       { withCredentials: true }
     );
@@ -223,7 +223,7 @@ joinHousehold(householdId: number) {
     this.getHouseholdMembers().subscribe({
       next: (members) => {
         const map: Record<number, string> = {};
-        members.forEach(m => { if (m.userId && m.name) map[m.userId] = m.name; });
+        members.forEach(m => { if (m.id && m.name) map[m.id] = m.name; });
         this.householdMembersMap.set(map);
         // Re-mapear facturas con los nombres reales
         this.billsToExpenses();
