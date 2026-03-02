@@ -64,8 +64,8 @@ export class ExpenseStats {
   get filteredExpenses(): Expense[] {
     return this._expenses.filter(e => {
       const eDate = e.period_year * 12 + e.period_month;
-      const from = this.config.fromYear * 12 + (this.config.fromMonth + 1);
-      const to = this.config.toYear * 12 + (this.config.toMonth + 1);
+      const from = Number(this.config.fromYear) * 12 + (Number(this.config.fromMonth) + 1);
+      const to   = Number(this.config.toYear)   * 12 + (Number(this.config.toMonth)   + 1);
       return eDate >= from && eDate <= to;
     });
   }

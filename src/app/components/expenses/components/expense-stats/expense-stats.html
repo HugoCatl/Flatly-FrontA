@@ -90,12 +90,12 @@
     <div class="period-row">
       <select class="period-select" [(ngModel)]="config.fromMonth">
         @for (month of months; track $index) {
-          <option [value]="$index">{{ month }}</option>
+          <option [ngValue]="$index">{{ month }}</option>
         }
       </select>
       <select class="period-select" [(ngModel)]="config.fromYear">
         @for (year of years; track year) {
-          <option [value]="year">{{ year }}</option>
+          <option [ngValue]="year">{{ year }}</option>
         }
       </select>
     </div>
@@ -106,12 +106,12 @@
     <div class="period-row">
       <select class="period-select" [(ngModel)]="config.toMonth">
         @for (month of months; track $index) {
-          <option [value]="$index">{{ month }}</option>
+          <option [ngValue]="$index">{{ month }}</option>
         }
       </select>
       <select class="period-select" [(ngModel)]="config.toYear">
         @for (year of years; track year) {
-          <option [value]="year">{{ year }}</option>
+          <option [ngValue]="year">{{ year }}</option>
         }
       </select>
     </div>

@@ -1,9 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../../services/data';
 import { Propiedad } from '../../../models/flatly';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-map-details',
@@ -14,16 +13,29 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class MapDetails implements OnInit {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  readonly router = inject(Router);
   private dataService = inject(DataService);
 
   piso = signal<Propiedad | null>(null);
   loading = signal(true);
   activeImage = signal(0);
-  
-  // Señal para almacenar el ID del hogar
-  householdId = signal<number | null>(null); 
-  
+
+  // Hogar de esta propiedad (recibido del backend)
+  householdId = signal<number | null>(null);
+
+  // Hogar al que pertenece el usuario actualmente
+  userHouseholdId = this.dataService.householdId;
+
+  // El usuario ya está en ESTE hogar
+  alreadyInThisHousehold = computed(() =>
+    !!this.userHouseholdId() && this.userHouseholdId() === this.householdId()
+  );
+
+  // El usuario está en un hogar DIFERENTE
+  alreadyInAnotherHousehold = computed(() =>
+    !!this.userHouseholdId() && this.userHouseholdId() !== this.householdId()
+  );
+
   // Estado de carga para el botón de acción
   actionLoading = signal(false);
 

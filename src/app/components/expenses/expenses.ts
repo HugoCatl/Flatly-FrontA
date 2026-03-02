@@ -65,7 +65,21 @@ tabs: Tab[] = [
   );
 
   ngOnInit(): void {
-    this.dataService.loadHouseholdBills();
+    // Cargar miembros del hogar en paralelo (para resolver nombres de compañeros)
+    this.dataService.loadHouseholdMembers();
+
+    if (!this.dataService.user()?.name) {
+      // Perfil incompleto en localStorage — recargarlo y luego mapear facturas
+      this.dataService.getMyProfile().subscribe({
+        next: (profile) => {
+          this.dataService.user.set(profile);
+          this.dataService.loadHouseholdBills();
+        },
+        error: () => this.dataService.loadHouseholdBills()
+      });
+    } else {
+      this.dataService.loadHouseholdBills();
+    }
   }
 
   // ── Métodos ──

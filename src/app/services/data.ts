@@ -41,6 +41,8 @@ propertiedId = signal<number | null>(Number(localStorage.getItem('app_property_i
   householdId = signal<number | null>(Number(localStorage.getItem('app_household_id')) || null);
   
   hoseholdBills = signal<Bills[]>([]);
+  // Mapa userId → nombre para miembros del hogar
+  householdMembersMap = signal<Record<number, string>>({});
   properties = signal<Propiedad[]>([]);
 
   availableTags = signal<Tag[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));  
@@ -209,6 +211,27 @@ joinHousehold(householdId: number) {
   }
   getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
 
+  // Devuelve miembros del hogar con {userId, name} para resolver nombres
+  getHouseholdMembers() {
+    return this.http.get<{userId: number; name: string}[]>(
+      `${this.url}/students/households/me/members`,
+      { withCredentials: true }
+    );
+  }
+
+  loadHouseholdMembers(): void {
+    this.getHouseholdMembers().subscribe({
+      next: (members) => {
+        const map: Record<number, string> = {};
+        members.forEach(m => { if (m.userId && m.name) map[m.userId] = m.name; });
+        this.householdMembersMap.set(map);
+        // Re-mapear facturas con los nombres reales
+        this.billsToExpenses();
+      },
+      error: () => {} // Fallo silencioso: se mantiene "Yo" / "Compañero/a"
+    });
+  }
+
   createBill(billData: any): Observable<any> {
     // ✅ SOLUCIÓN: Estructura exacta que requiere el backend
     const formattedData = {
@@ -313,10 +336,13 @@ createHousehold(title: string, propertyId: number): Observable<any> {
   //funcion para pasar facturas a expenses y mostrar el icono correspondiente
   billsToExpenses(){
     const bills = this.hoseholdBills();
+    const currentUser = this.user();
     const expenses: Expense[] = bills.map(bill => ({
       id: bill.id,
       name: bill.type,
-      paidBy: this.user()?.name || "Desconocido",
+      paidBy: bill.created_by === currentUser?.id
+        ? (currentUser?.name || 'Yo')
+        : (this.householdMembersMap()[bill.created_by] || 'Compañero/a'),
       amount: bill.amount_total,
       icon: this.getExpenseIconAndClass(bill.type).icon,
       type: bill.type,
@@ -328,8 +354,6 @@ createHousehold(title: string, propertyId: number): Observable<any> {
       created_at: bill.created_at,
     }));
     this.expenses.set(expenses);
-    
-
   }
 
 

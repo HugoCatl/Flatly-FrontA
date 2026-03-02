@@ -69,10 +69,28 @@
 
 @if (householdId()) {
   <div class="section">
-    <button class="btn-enter-household" (click)="enterHousehold()">
-      <span class="material-icons-round">login</span>
-      Entrar al hogar
-    </button>
+    @if (alreadyInThisHousehold()) {
+      <!-- Ya estás en este hogar → navegar directamente -->
+      <button class="btn-enter-household btn-ya-miembro"
+        (click)="router.navigate(['/household', householdId()])">
+        <span class="material-icons-round">home</span>
+        Mi hogar actual
+      </button>
+    } @else if (alreadyInAnotherHousehold()) {
+      <!-- Estás en otro hogar → botón deshabilitado -->
+      <button class="btn-enter-household btn-bloqueado" disabled>
+        <span class="material-icons-round">block</span>
+        Ya perteneces a otro hogar
+      </button>
+    } @else {
+      <!-- No estás en ningún hogar → permitir entrar -->
+      <button class="btn-enter-household"
+        (click)="enterHousehold()"
+        [disabled]="actionLoading()">
+        <span class="material-icons-round">{{ actionLoading() ? 'hourglass_empty' : 'login' }}</span>
+        {{ actionLoading() ? 'Uniéndose...' : 'Entrar al hogar' }}
+      </button>
+    }
   </div>
 }
 
