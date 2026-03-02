@@ -6,8 +6,6 @@
 </div>
 
 <div class="expenses-page">
-
-  <!-- Summary cards -->
   <div class="summary-row">
     <div class="summary-card glass-card">
       <span class="summary-label">Mis Gastos</span>
@@ -19,7 +17,6 @@
     </div>
   </div>
 
-  <!-- Tabs -->
   <div class="tabs-wrapper glass-card">
     @for (tab of tabs; track tab.key) {
       <button
@@ -31,12 +28,9 @@
     }
   </div>
 
-  <!-- Tab Gastos -->
   @if (activeTab() === 'gastos') {
-
     <div class="month-row">
       <div class="month-selectors">
-
         <div class="year-dropdown-wrapper">
           <button class="month-trigger" (click)="toggleYearDropdown($event)">
             <span>{{ selectedYear() }}</span>
@@ -57,7 +51,6 @@
             </div>
           }
         </div>
-
         <div class="month-dropdown-wrapper">
           <button class="month-trigger" (click)="toggleDropdown($event)">
             <span>{{ months[selectedMonth()] }}</span>
@@ -78,23 +71,24 @@
             </div>
           }
         </div>
-
       </div>
-
-      <button class="add-expense-btn" (click)="openForm()">
+      <button class="add-btn" (click)="expenseForm.open()">
         <span class="material-icons-round">add</span>
-        Añadir gasto
+        Añadir Gasto
       </button>
     </div>
 
-    <div class="expense-list">
+    <div class="expenses-list">
       @if (filteredExpenses().length === 0) {
         <div class="empty-month glass-card">
           <p>No hay gastos en {{ months[selectedMonth()] }} de {{ selectedYear() }}</p>
         </div>
       } @else {
-        @for (expense of filteredExpenses(); track expense.name) {
-          <div class="expense-card glass-card" (click)="openDetail(expense)">
+        @for (expense of filteredExpenses(); track expense.id) {
+          <button
+            class="expense-card glass-card"
+            (click)="openDetail(expense)"
+            type="button">
             <div class="expense-icon" [ngClass]="expense.iconClass">
               {{ expense.icon }}
             </div>
@@ -103,34 +97,28 @@
               <span class="expense-payer">Pagado por {{ expense.paidBy }}</span>
             </div>
             <span class="expense-amount">{{ expense.amount | number:'1.2-2' }} €</span>
-          </div>
+          </button>
         }
       }
     </div>
-
-  } @else if (activeTab() === 'saldos') {
-    <app-expense-saldos [expenses]="expenses()"></app-expense-saldos>
-  } @else if (activeTab() === 'estadisticas') {
-    <app-expense-stats [expenses]="expenses()"></app-expense-stats>
-  } @else {
-    <div class="empty-tab glass-card">
-      <p>Próximamente...</p>
-    </div>
   }
-
+  
+  @else if (activeTab() === 'saldos') {
+    <app-expense-saldos [expenses]="expenses()"></app-expense-saldos>
+  }
+  @else if (activeTab() === 'estadisticas') {
+    <app-expense-stats [expenses]="expenses()"></app-expense-stats>
+  }
 </div>
 
-<!-- Detalle del gasto -->
-@if (selectedExpense()) {
+@if (selectedExpense(); as expense) {
   <app-expense-detail
-    [expense]="selectedExpense()!"
+    [expense]="expense"
     (onClose)="closeDetail()"
     (onDelete)="onExpenseDeleted($event)">
   </app-expense-detail>
 }
 
-<!-- Formulario -->
-<app-expense-form
-  (onExpenseCreated)="onExpenseCreated($event)"
-  (onDismiss)="false">
+<app-expense-form 
+  (expenseCreatedEvent)="handleExpenseCreated($event)">
 </app-expense-form>

@@ -4,63 +4,61 @@ import { ExpenseForm } from './components/expense-form/expense-form';
 import { ExpenseDetail } from './components/expense-detail/expense-detail';
 import { ExpenseStats } from './components/expense-stats/expense-stats';
 import { ExpenseSaldos } from './components/expense-saldos/expense-saldos';
-import { Expense } from '../../models/flatly';
+import { Expense,ExpenseTabType,Tab } from '../../models/flatly';
 import { DataService } from '../../services/data';
 
 @Component({
   selector: 'app-expenses',
+  standalone: true,
   imports: [CommonModule, ExpenseForm, ExpenseDetail, ExpenseStats, ExpenseSaldos],
   templateUrl: './expenses.html',
   styleUrl: './expenses.scss',
 })
 export class Expenses {
-  private dataService = inject(DataService);
+  // ✅ SonarLint: Marcado como readonly
+  private readonly dataService = inject(DataService);
 
   @ViewChild(ExpenseForm) expenseForm!: ExpenseForm;
 
+  // Signals heredadas del servicio
   user = this.dataService.user;
-
   expenses = this.dataService.expenses;
   personalExpenses = this.dataService.personalExpenses;
-
   months = this.dataService.months;
   years = this.dataService.years;
-  tabs = this.dataService.tabs;
+tabs: Tab[] = [
+    { key: 'gastos',       label: 'Gastos'       },
+    { key: 'saldos',       label: 'Saldos'       },
+    { key: 'estadisticas', label: 'Estadísticas' },
+  ];
 
-  
-
-  // ── Estado ──
-  activeTab = signal<'gastos' | 'saldos' | 'estadisticas'>('gastos');
+  // ── Estado Local ──
+  activeTab = signal<ExpenseTabType>('gastos');
   selectedMonth = signal(new Date().getMonth());
   selectedYear = signal(new Date().getFullYear());
+  
   showMonthDropdown = signal(false);
   showYearDropdown = signal(false);
+  
   selectedExpense = signal<Expense | null>(null);
 
-
-  // ── Computed ──
-  filteredExpenses = computed(() =>
-    this.dataService.expenses().filter(e =>
-      e.period_month === this.selectedMonth() + 1 &&
-      e.period_year === this.selectedYear()
-    )
-  );
-
-   filteredPersonalExpenses = computed(() =>
-    this.dataService.expenses().filter(e =>
-      e.period_month === this.selectedMonth() + 1 &&
-      e.period_year === this.selectedYear()
-    )
-  );
+  // ── Computados ──
+  filteredExpenses = computed(() => {
+    return this.expenses().filter(e => 
+      new Date(e.created_at).getMonth() === this.selectedMonth() &&
+      new Date(e.created_at).getFullYear() === this.selectedYear()
+    );
+  });
 
   myExpenses = computed(() =>
-    this.filteredPersonalExpenses().reduce((sum, e) => sum + e.amount, 0)
+    this.filteredExpenses()
+      .filter(e => e.paidBy === this.user()?.name)
+      .reduce((sum, e) => sum + e.amount, 0)
   );
 
   totalExpenses = computed(() =>
     this.filteredExpenses().reduce((sum, e) => sum + e.amount, 0)
   );
-
 
   // ── Métodos ──
   toggleDropdown(event: Event): void {
@@ -99,20 +97,37 @@ export class Expenses {
     this.selectedExpense.set(null);
   }
 
+  // ✅ CORRECCIÓN: Método para borrar usando el servicio
   onExpenseDeleted(expense: Expense): void {
-    this.dataService.expenses.update(prev => prev.filter(e => e !== expense));
-    this.selectedExpense.set(null);
+    console.log('Solicitando eliminación:', expense);
+    
+    if (expense.id) {
+        this.dataService.deleteBill(expense.id).subscribe({
+            next: () => {
+                console.log('Factura eliminada');
+                this.closeDetail();
+                // El servicio ya debería recargar la lista automáticamente con tap()
+            },
+            error: (err) => {
+                console.error('Error al eliminar factura:', err);
+            }
+        });
+    }
   }
 
-  setTab(key: string): void {
-    this.activeTab.set(key as 'gastos' | 'saldos' | 'estadisticas');
+  // ✅ CORRECCIÓN: Método para crear usando el servicio
+  handleExpenseCreated(newExpense: Expense): void {
+    console.log('Gasto creado:', newExpense);
+    this.dataService.createBill(newExpense).subscribe({
+        next: () => {
+            console.log('Gasto guardado');
+            // Aquí podrías cerrar el formulario si fuera necesario
+        },
+        error: (err) => console.error('Error al guardar gasto', err)
+    });
   }
 
-  openForm(): void {
-    this.expenseForm.open();
-  }
-
-  onExpenseCreated(expense: Expense): void {
-    this.dataService.expenses.update(prev => [expense, ...prev]);
+setTab(tab: ExpenseTabType): void {
+    this.activeTab.set(tab);
   }
 }

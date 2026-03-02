@@ -170,7 +170,11 @@ getAllTags() {
   removeFavorite(id: number) { return this.http.delete(`${this.url}/users/me/favorites/${id}`); }
 
   // --- 3. BLOQUE: ESTUDIANTES (HOUSEHOLDS & EXPENSES)  ---
-  joinHousehold(householdId: number) { return this.http.post(`${this.url}/students/households/join`, { householdId }); }
+  joinHousehold(householdId: number) { 
+  console.log('Intentando unirse al hogar:', householdId);
+  // ✅ Asegúrate de enviar withCredentials si tu backend usa cookies/sesiones
+  return this.http.post(`${this.url}/students/households/join`, { householdId }, { withCredentials: true }); 
+}
   getMyHousehold() { return this.http.get(`${this.url}/students/households/me`); }
   leaveHousehold() { return this.http.delete(`${this.url}/students/households/me`); }
 
@@ -179,6 +183,37 @@ getAllTags() {
     return this.http.get<Bills[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`, { withCredentials: true });
   }
   getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
+
+createBill(expense: Expense): Observable<Expense> {
+  // ✅ Comprueba este log en la consola del navegador
+  console.log('Enviando datos de factura:', expense);
+  
+  return this.http.post<Expense>(`${this.url}/students/households/bills`, expense, {
+    withCredentials: true
+  }).pipe(
+    tap(() => {
+      this.loadHouseholdBills();
+    }),
+    catchError((err) => {
+      console.error('Error al crear factura:', err);
+      return of(null as any);
+    })
+  );
+  }
+
+deleteBill(billId: number): Observable<void> {
+  return this.http.delete<void>(`${this.url}/students/households/bills/${billId}`, { withCredentials: true }).pipe(
+    tap(() => {
+      // Recargar las facturas después de eliminar
+      this.loadHouseholdBills();
+    })
+  );
+}
+
+  getHouseholdByPropertyId(propertyId: number): Observable<any> {
+  // Ajusta la ruta a /properties/${propertyId}/household según tu backend
+  return this.http.get(`${this.url}/properties/${propertyId}/household`);
+}
 
   // --- 4. BLOQUE: OWNERS (PROPIETARIOS)  ---
   createProperty(body: Propiedad) { return this.http.post(`${this.url}/owners/properties`, body); }
@@ -241,7 +276,7 @@ createHousehold(title: string, propertyId: number): Observable<any> {
     const bills = this.hoseholdBills();
     const expenses: Expense[] = bills.map(bill => ({
       name: bill.type,
-      paidBy: "pepe",
+      paidBy: this.user()?.name || "Desconocido",
       amount: bill.amount_total,
       icon: this.getExpenseIconAndClass(bill.type).icon, // Obtener el icono según el tipo
       type: bill.type,
@@ -424,11 +459,13 @@ loadPersonalExpenses(){
 }
 
   // ── Datos estáticos ──
-  tabs = [
-    { key: 'gastos',       label: 'Gastos'       },
-    { key: 'saldos',       label: 'Saldos'       },
-    { key: 'estadisticas', label: 'Estadísticas' },
-  ];
+
+    tabs = [
+      { key: 'gastos',       label: 'Gastos'       },
+      { key: 'saldos',       label: 'Saldos'       },
+      { key: 'estadisticas', label: 'Estadísticas' },
+    ];
+  
 
   months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
