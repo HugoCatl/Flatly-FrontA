@@ -58,15 +58,41 @@
     <!-- ── Contenido ── -->
     <div class="details-content">
 
-      <!-- Precio -->
-      <div class="price-row">
-        <span class="price">
-          €{{ p.priceMonth }}<span class="price__mes">/mes</span>
-        </span>
-        @if (p.expensesIncluded) {
-          <span class="badge-expenses">Gastos incluidos</span>
-        }
-      </div>
+  <h1 class="title">{{ p.title }}</h1>
+
+  @if (piso()?.description) {
+  <div class="section">
+    <h3 class="section__title">Descripción</h3>
+    <p class="description">{{ piso()?.description }}</p>
+  </div>
+}
+
+@if (householdId()) {
+  <div class="section">
+    @if (alreadyInThisHousehold()) {
+      <!-- Ya estás en este hogar → navegar directamente -->
+      <button class="btn-enter-household btn-ya-miembro"
+        (click)="router.navigate(['/household', householdId()])">
+        <span class="material-icons-round">home</span>
+        Mi hogar actual
+      </button>
+    } @else if (alreadyInAnotherHousehold()) {
+      <!-- Estás en otro hogar → botón deshabilitado -->
+      <button class="btn-enter-household btn-bloqueado" disabled>
+        <span class="material-icons-round">block</span>
+        Ya perteneces a otro hogar
+      </button>
+    } @else {
+      <!-- No estás en ningún hogar → permitir entrar -->
+      <button class="btn-enter-household"
+        (click)="enterHousehold()"
+        [disabled]="actionLoading()">
+        <span class="material-icons-round">{{ actionLoading() ? 'hourglass_empty' : 'login' }}</span>
+        {{ actionLoading() ? 'Uniéndose...' : 'Entrar al hogar' }}
+      </button>
+    }
+  </div>
+}
 
       <!-- Título -->
       <h1 class="title">{{ p.title }}</h1>

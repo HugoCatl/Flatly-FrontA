@@ -38,7 +38,9 @@ export class ExpenseDetail {
     this.showDeleteConfirm = false;
   }
 
-  deleteExpense(): void {
-    this.onDelete.emit(this.expense);
-  }
+ deleteExpense(): void {
+  this.onDelete.emit(this.expense); // Emite el gasto completo
+}
+
+  
 }

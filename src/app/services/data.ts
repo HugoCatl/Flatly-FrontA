@@ -2,10 +2,11 @@ import { Observable } from 'rxjs';
 import { Injectable, inject, signal ,computed, effect} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense, PropertyImage} from '../models/flatly';
+import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense, PropertyImage, NewBill} from '../models/flatly';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 
 
@@ -36,9 +37,12 @@ export class DataService {
   expenses = signal<Expense[]>([]);
 
   personalExpenses = signal<Bills[]>(localStorage.getItem('app_personal_expenses') ? JSON.parse(localStorage.getItem('app_personal_expenses') || '{}') : null);
-
+propertiedId = signal<number | null>(Number(localStorage.getItem('app_property_id')) || null);
+  householdId = signal<number | null>(Number(localStorage.getItem('app_household_id')) || null);
   
   hoseholdBills = signal<Bills[]>([]);
+  // Mapa userId → nombre para miembros del hogar
+  householdMembersMap = signal<Record<number, string>>({});
   properties = signal<Propiedad[]>([]);
 
   availableTags = signal<Tag[]>(JSON.parse(localStorage.getItem('app_tags_list') || '[]'));  
@@ -56,6 +60,8 @@ export class DataService {
     effect(() => {
       localStorage.setItem('app_user', JSON.stringify(this.user()));
       localStorage.setItem('app_session', String(this.sesion()));
+      localStorage.setItem('app_property_id', String(this.propertiedId()));
+      localStorage.setItem('app_household_id', String(this.householdId()));
     });
 
     effect(() => {
@@ -123,6 +129,12 @@ export class DataService {
     })
   );
 }
+  setContext(propertyId: number, householdId: number) {
+      this.propertiedId.set(propertyId);
+      this.householdId.set(householdId);
+      // Los effects se encargan de guardar automáticamente
+    }
+
   deleteMyAccount() { return this.http.delete(`${this.url}/users/me`); }
   becomeOwner() { return this.http.put(`${this.url}/users/me/becomeOwner`, {withCredentials: true}); }
   returnStudent() { return this.http.put(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
@@ -170,7 +182,26 @@ getAllTags() {
   removeFavorite(id: number) { return this.http.delete(`${this.url}/users/me/favorites/${id}`); }
 
   // --- 3. BLOQUE: ESTUDIANTES (HOUSEHOLDS & EXPENSES)  ---
-  joinHousehold(householdId: number) { return this.http.post(`${this.url}/students/households/join`, { householdId }); }
+joinHousehold(householdId: number) { 
+    console.log('Intentando unirse al hogar:', householdId);
+    
+    return this.http.post(`${this.url}/students/households/join`, { householdId }, { withCredentials: true }).pipe(
+      tap(() => {
+        // Si tiene éxito, recargamos el perfil
+        this.getMyProfile().subscribe();
+      }),
+      catchError((error) => {
+        // ✅ SOLUCIÓN: Manejar el 409 (Ya unido) aquí
+        if (error.status === 409) {
+          console.warn('El usuario ya pertenece a este hogar.');
+          // Devolvemos un observable de éxito para no romper el flujo del componente
+          return of({ message: 'Ya eres miembro' });
+        }
+        // Si es otro error, lo lanzamos
+        return throwError(() => error);
+      })
+    );
+  }
   getMyHousehold() { return this.http.get(`${this.url}/students/households/me`); }
   leaveHousehold() { return this.http.delete(`${this.url}/students/households/me`); }
 
@@ -179,6 +210,72 @@ getAllTags() {
     return this.http.get<Bills[]>(`${this.url}/students/expenses/history?year=${year}&month=${month}`, { withCredentials: true });
   }
   getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
+
+  // Devuelve miembros del hogar con {id, name, email} — shape real del backend
+  getHouseholdMembers() {
+    return this.http.get<{id: number; name: string; email: string}[]>(
+      `${this.url}/students/households/me/members`,
+      { withCredentials: true }
+    );
+  }
+
+  loadHouseholdMembers(): void {
+    this.getHouseholdMembers().subscribe({
+      next: (members) => {
+        const map: Record<number, string> = {};
+        members.forEach(m => { if (m.id && m.name) map[m.id] = m.name; });
+        this.householdMembersMap.set(map);
+        // Re-mapear facturas con los nombres reales
+        this.billsToExpenses();
+      },
+      error: () => {} // Fallo silencioso: se mantiene "Yo" / "Compañero/a"
+    });
+  }
+
+  createBill(billData: any): Observable<any> {
+    // ✅ SOLUCIÓN: Estructura exacta que requiere el backend
+    const formattedData = {
+      type: billData.type,
+      amountTotal: billData.amount, // Ojo: camelCase en DTO backend
+      periodMonth: billData.period_month, // Ojo: camelCase
+      periodYear: billData.period_year, // Ojo: camelCase
+      dueDate: billData.due_date || new Date().toISOString().split('T')[0], // Obligatorio
+      // 🔥 IMPORTANTE: El backend requiere los repartos (splits)
+      splits: billData.splits || [
+        { userId: this.user()?.id, amount: billData.amount } // Ejemplo: tú pagas todo
+      ]
+    };
+
+    console.log('Enviando datos al backend:', formattedData);
+    
+      return this.http.post(`${this.url}/students/households/bills`, formattedData, {
+      withCredentials: true
+    }).pipe(
+      tap(() => {
+        // ✅ Solo recargamos si no hubo error
+        this.loadHouseholdBills();
+      }),
+      catchError((err) => {
+        console.error('Error al crear la factura:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+
+deleteBill(billId: number): Observable<void> {
+  return this.http.delete<void>(`${this.url}/students/households/bills/${billId}`, { withCredentials: true }).pipe(
+    tap(() => {
+      // Recargar las facturas después de eliminar
+      this.loadHouseholdBills();
+    })
+  );
+}
+
+  getHouseholdByPropertyId(propertyId: number): Observable<any> {
+  // Ajusta la ruta a /properties/${propertyId}/household según tu backend
+  return this.http.get(`${this.url}/properties/${propertyId}/household`);
+}
 
   // --- 4. BLOQUE: OWNERS (PROPIETARIOS)  ---
   createProperty(body: Propiedad) { return this.http.post(`${this.url}/owners/properties`, body); }
@@ -239,13 +336,17 @@ createHousehold(title: string, propertyId: number): Observable<any> {
   //funcion para pasar facturas a expenses y mostrar el icono correspondiente
   billsToExpenses(){
     const bills = this.hoseholdBills();
+    const currentUser = this.user();
     const expenses: Expense[] = bills.map(bill => ({
+      id: bill.id,
       name: bill.type,
-      paidBy: "pepe",
+      paidBy: bill.created_by === currentUser?.id
+        ? (currentUser?.name || 'Yo')
+        : (this.householdMembersMap()[bill.created_by] || 'Compañero/a'),
       amount: bill.amount_total,
-      icon: this.getExpenseIconAndClass(bill.type).icon, // Obtener el icono según el tipo
+      icon: this.getExpenseIconAndClass(bill.type).icon,
       type: bill.type,
-      iconClass: this.getExpenseIconAndClass(bill.type).iconClass, // Clase CSS para el icono
+      iconClass: this.getExpenseIconAndClass(bill.type).iconClass,
       period_month: bill.period_month,
       period_year: bill.period_year,
       due_date: bill.due_date,
@@ -253,8 +354,6 @@ createHousehold(title: string, propertyId: number): Observable<any> {
       created_at: bill.created_at,
     }));
     this.expenses.set(expenses);
-    
-
   }
 
 
@@ -317,10 +416,9 @@ loadHomeData() {
  
   loadHouseholdBills() {
     this.getHouseholdBills().subscribe({
-      next: (Bills) => { 
-        this.hoseholdBills.set(Bills); 
-        console.log('Facturas del hogar cargadas:', Bills);
-        //comvertir a expenses
+      next: (Bills) => {
+        this.hoseholdBills.set(Bills);
+        this.billsToExpenses();
       },
       error: (err) => console.error('Error al cargar facturas del hogar:', err)
     });
@@ -424,11 +522,13 @@ loadPersonalExpenses(){
 }
 
   // ── Datos estáticos ──
-  tabs = [
-    { key: 'gastos',       label: 'Gastos'       },
-    { key: 'saldos',       label: 'Saldos'       },
-    { key: 'estadisticas', label: 'Estadísticas' },
-  ];
+
+    tabs = [
+      { key: 'gastos',       label: 'Gastos'       },
+      { key: 'saldos',       label: 'Saldos'       },
+      { key: 'estadisticas', label: 'Estadísticas' },
+    ];
+  
 
   months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 

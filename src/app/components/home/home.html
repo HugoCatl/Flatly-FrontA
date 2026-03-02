@@ -19,35 +19,35 @@
     <div class="glass-card summary-card">
       <div class="amount-row">
         <span class="currency">€</span>
-        <span class="amount">482.35</span>
-        <span class="badge-success">↘ 8.2%</span>
+        <span class="amount">{{ currentMonthTotal() | number:'1.2-2' }}</span>
+        <span class="badge-success">Este mes</span>
       </div>
       <div class="progress-container">
-        <div class="progress-bar" style="width: 60%"></div>
+        <div class="progress-bar" [style.width.%]="myMonthPercent()"></div>
       </div>
       <div class="progress-labels">
-        <span>60%</span>
-        <span>Límite €800</span>
+        <span>Mis gastos: {{ myMonthTotal() | number:'1.2-2' }} €</span>
+        <span>Total piso: {{ currentMonthTotal() | number:'1.2-2' }} €</span>
       </div>
     </div>
 
     <div class="section-title">Pagos pendientes</div>
     <div class="pending-list">
 
-      @if (expenses().length === 0) {
+      @if (pendingExpenses().length === 0) {
         <div class="glass-card empty-state">
           <p>¡Todo pagado! No tienes deudas. 🎉</p>
         </div>
       }
 
-      @for (expense of expenses(); track expense.name) {
+      @for (expense of pendingExpenses(); track expense.id) {
         <div class="glass-card payment-item">
           <div class="payment-icon">💸</div>
           <div class="payment-details">
-            <div class="payment-title">{{ expense.type }}</div>
+            <div class="payment-title">{{ expense.name }}</div>
             <div class="payment-date">Vence: {{ expense.due_date | date:'dd/MM/yyyy' }}</div>
           </div>
-          <div class="payment-amount">€{{ expense.amount }}</div>
+          <div class="payment-amount">€{{ expense.amount | number:'1.2-2' }}</div>
         </div>
       }
 
