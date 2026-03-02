@@ -41,6 +41,7 @@ tabs: Tab[] = [
   showYearDropdown = signal(false);
   
   selectedExpense = signal<Expense | null>(null);
+  billStatus = signal<'idle' | 'success' | 'error'>('idle');
 
   // ── Computados ──
   filteredExpenses = computed(() => {
@@ -117,13 +118,15 @@ tabs: Tab[] = [
 
   // ✅ CORRECCIÓN: Método para crear usando el servicio
   handleExpenseCreated(newExpense: Expense): void {
-    console.log('Gasto creado:', newExpense);
     this.dataService.createBill(newExpense).subscribe({
-        next: () => {
-            console.log('Gasto guardado');
-            // Aquí podrías cerrar el formulario si fuera necesario
-        },
-        error: (err) => console.error('Error al guardar gasto', err)
+      next: () => {
+        this.billStatus.set('success');
+        setTimeout(() => this.billStatus.set('idle'), 3000);
+      },
+      error: () => {
+        this.billStatus.set('error');
+        setTimeout(() => this.billStatus.set('idle'), 3000);
+      }
     });
   }
 

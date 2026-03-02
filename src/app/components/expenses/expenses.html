@@ -119,6 +119,19 @@
   </app-expense-detail>
 }
 
-<app-expense-form 
+@if (billStatus() === 'success') {
+  <div class="bill-toast bill-toast--success">
+    <span class="material-icons-round">check_circle</span>
+    Gasto añadido correctamente
+  </div>
+}
+@if (billStatus() === 'error') {
+  <div class="bill-toast bill-toast--error">
+    <span class="material-icons-round">error_outline</span>
+    Error al guardar el gasto
+  </div>
+}
+
+<app-expense-form
   (expenseCreatedEvent)="handleExpenseCreated($event)">
 </app-expense-form>
