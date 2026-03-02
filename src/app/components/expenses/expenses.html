@@ -72,13 +72,13 @@
           }
         </div>
       </div>
-      <button class="add-btn" (click)="expenseForm.open()">
+      <button class="add-expense-btn" (click)="expenseForm.open()">
         <span class="material-icons-round">add</span>
         Añadir Gasto
       </button>
     </div>
 
-    <div class="expenses-list">
+    <div class="expense-list">
       @if (filteredExpenses().length === 0) {
         <div class="empty-month glass-card">
           <p>No hay gastos en {{ months[selectedMonth()] }} de {{ selectedYear() }}</p>
@@ -102,7 +102,7 @@
       }
     </div>
   }
-  
+
   @else if (activeTab() === 'saldos') {
     <app-expense-saldos [expenses]="expenses()"></app-expense-saldos>
   }
