@@ -6,9 +6,7 @@ on:
   # También se lanza automáticamente al hacer push a estas ramas
   push:
     branches:
-      - Saul
-      - main
-      - saul2
+     -movil
 
 jobs:
   build-apk:
