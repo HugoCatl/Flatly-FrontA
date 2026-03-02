@@ -2,10 +2,11 @@ import { Observable } from 'rxjs';
 import { Injectable, inject, signal ,computed, effect} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense, PropertyImage} from '../models/flatly';
+import { Usuario, Propiedad, Bills, Tag,AdminStats,AdminUser,Expense, PropertyImage, NewBill} from '../models/flatly';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 
 
@@ -36,7 +37,8 @@ export class DataService {
   expenses = signal<Expense[]>([]);
 
   personalExpenses = signal<Bills[]>(localStorage.getItem('app_personal_expenses') ? JSON.parse(localStorage.getItem('app_personal_expenses') || '{}') : null);
-
+propertiedId = signal<number | null>(Number(localStorage.getItem('app_property_id')) || null);
+  householdId = signal<number | null>(Number(localStorage.getItem('app_household_id')) || null);
   
   hoseholdBills = signal<Bills[]>([]);
   properties = signal<Propiedad[]>([]);
@@ -56,6 +58,8 @@ export class DataService {
     effect(() => {
       localStorage.setItem('app_user', JSON.stringify(this.user()));
       localStorage.setItem('app_session', String(this.sesion()));
+      localStorage.setItem('app_property_id', String(this.propertiedId()));
+      localStorage.setItem('app_household_id', String(this.householdId()));
     });
 
     effect(() => {
@@ -123,6 +127,12 @@ export class DataService {
     })
   );
 }
+  setContext(propertyId: number, householdId: number) {
+      this.propertiedId.set(propertyId);
+      this.householdId.set(householdId);
+      // Los effects se encargan de guardar automáticamente
+    }
+
   deleteMyAccount() { return this.http.delete(`${this.url}/users/me`); }
   becomeOwner() { return this.http.put(`${this.url}/users/me/becomeOwner`, {withCredentials: true}); }
   returnStudent() { return this.http.put(`${this.url}/users/me/returnStudent`, {withCredentials: true}); }
@@ -170,11 +180,26 @@ getAllTags() {
   removeFavorite(id: number) { return this.http.delete(`${this.url}/users/me/favorites/${id}`); }
 
   // --- 3. BLOQUE: ESTUDIANTES (HOUSEHOLDS & EXPENSES)  ---
-  joinHousehold(householdId: number) { 
-  console.log('Intentando unirse al hogar:', householdId);
-  // ✅ Asegúrate de enviar withCredentials si tu backend usa cookies/sesiones
-  return this.http.post(`${this.url}/students/households/join`, { householdId }, { withCredentials: true }); 
-}
+joinHousehold(householdId: number) { 
+    console.log('Intentando unirse al hogar:', householdId);
+    
+    return this.http.post(`${this.url}/students/households/join`, { householdId }, { withCredentials: true }).pipe(
+      tap(() => {
+        // Si tiene éxito, recargamos el perfil
+        this.getMyProfile().subscribe();
+      }),
+      catchError((error) => {
+        // ✅ SOLUCIÓN: Manejar el 409 (Ya unido) aquí
+        if (error.status === 409) {
+          console.warn('El usuario ya pertenece a este hogar.');
+          // Devolvemos un observable de éxito para no romper el flujo del componente
+          return of({ message: 'Ya eres miembro' });
+        }
+        // Si es otro error, lo lanzamos
+        return throwError(() => error);
+      })
+    );
+  }
   getMyHousehold() { return this.http.get(`${this.url}/students/households/me`); }
   leaveHousehold() { return this.http.delete(`${this.url}/students/households/me`); }
 
@@ -184,22 +209,37 @@ getAllTags() {
   }
   getHouseholdBills() { return this.http.get<Bills[]>(`${this.url}/students/households/myBills`, { withCredentials: true }); }
 
-createBill(expense: Expense): Observable<Expense> {
-  // ✅ Comprueba este log en la consola del navegador
-  console.log('Enviando datos de factura:', expense);
-  
-  return this.http.post<Expense>(`${this.url}/students/households/bills`, expense, {
-    withCredentials: true
-  }).pipe(
-    tap(() => {
-      this.loadHouseholdBills();
-    }),
-    catchError((err) => {
-      console.error('Error al crear factura:', err);
-      return of(null as any);
-    })
-  );
+  createBill(billData: any): Observable<any> {
+    // ✅ SOLUCIÓN: Estructura exacta que requiere el backend
+    const formattedData = {
+      type: billData.type,
+      amountTotal: billData.amount, // Ojo: camelCase en DTO backend
+      periodMonth: billData.period_month, // Ojo: camelCase
+      periodYear: billData.period_year, // Ojo: camelCase
+      dueDate: billData.due_date || new Date().toISOString().split('T')[0], // Obligatorio
+      // 🔥 IMPORTANTE: El backend requiere los repartos (splits)
+      splits: billData.splits || [
+        { userId: this.user()?.id, amount: billData.amount } // Ejemplo: tú pagas todo
+      ]
+    };
+
+    console.log('Enviando datos al backend:', formattedData);
+    
+      return this.http.post(`${this.url}/students/households/bills`, formattedData, {
+      withCredentials: true
+    }).pipe(
+      tap(() => {
+        // ✅ Solo recargamos si no hubo error
+        this.loadHouseholdBills();
+      }),
+      catchError((err) => {
+        console.error('Error al crear factura en backend:', err);
+        // 🔥 No lanzamos error aquí para no romper el flujo del componente
+        return of(null); 
+      })
+    );
   }
+
 
 deleteBill(billId: number): Observable<void> {
   return this.http.delete<void>(`${this.url}/students/households/bills/${billId}`, { withCredentials: true }).pipe(

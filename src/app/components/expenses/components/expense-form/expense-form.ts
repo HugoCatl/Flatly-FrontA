@@ -60,25 +60,16 @@ export class ExpenseForm {
   submit(): void {
     if (!this.isFormValid) return;
 
-    // ✅ CORRECCIÓN: Mapear NewBill a Expense antes de emitir
-    const type = this.billTypes.find(t => t.value === this.newBill.type)!;
-    
-    // Mapeamos lo que tenemos en el formulario a la estructura que espera la lista
-    const mappedExpense: Expense = {
-        name: type.label,
-        paidBy: this.dataService.user()?.name || 'Desconocido',
+    const billToSubmit = {
+        type: this.newBill.type,
         amount: this.newBill.amount!,
-        type: type.value as BillType,
-        icon: type.icon,
-        iconClass: type.iconClass,
         period_month: this.newBill.period_month,
         period_year: this.newBill.period_year,
-        due_date: this.newBill.due_date || '',
-        status: BillStatus.PENDING, // Estado por defecto
-        created_at: new Date().toISOString()
+        due_date: this.newBill.due_date,
+        // Los splits se pueden manejar aquí o en el servicio
     };
 
-    this.expenseCreatedEvent.emit(mappedExpense);
+    this.expenseCreatedEvent.emit(billToSubmit as any);
     this.dismiss();
   }
 }

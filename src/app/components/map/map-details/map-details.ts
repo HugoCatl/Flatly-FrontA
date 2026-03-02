@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../../services/data';
 import { Propiedad } from '../../../models/flatly';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-map-details',
@@ -12,16 +13,19 @@ import { Propiedad } from '../../../models/flatly';
   styleUrls: ['./map-details.scss']
 })
 export class MapDetails implements OnInit {
-  private route       = inject(ActivatedRoute);
-  private router      = inject(Router);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private dataService = inject(DataService);
 
-  piso        = signal<Propiedad | null>(null);
-  loading     = signal(true);
+  piso = signal<Propiedad | null>(null);
+  loading = signal(true);
   activeImage = signal(0);
   
-  // ✅ Señal para almacenar el ID del hogar
+  // Señal para almacenar el ID del hogar
   householdId = signal<number | null>(null); 
+  
+  // Estado de carga para el botón de acción
+  actionLoading = signal(false);
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -35,7 +39,6 @@ export class MapDetails implements OnInit {
     if (cached) {
       this.piso.set(cached);
       this.loading.set(false);
-      // ✅ Solución TS: Garantizamos que cached.id no sea undefined
       if (cached.id) this.fetchHouseholdId(cached.id); 
       return;
     }
@@ -44,7 +47,6 @@ export class MapDetails implements OnInit {
       next: (data) => {
         this.piso.set(data);
         this.loading.set(false);
-        // ✅ Solución TS: Garantizamos que data.id no sea undefined
         if (data.id) this.fetchHouseholdId(data.id); 
       },
       error: () => {
@@ -54,7 +56,6 @@ export class MapDetails implements OnInit {
     });
   }
 
-  // ✅ Función para buscar el ID del hogar en el backend
   private fetchHouseholdId(propertyId: number): void {
     this.dataService.getHouseholdByPropertyId(propertyId).subscribe({
         next: (response: any) => {
@@ -66,55 +67,54 @@ export class MapDetails implements OnInit {
     });
   }
 
-  // ✅ Función para navegar al hogar
-  enterHousehold(): void {
-    const hId = this.householdId();
-    if (hId) {
+  // ✅ FUNCIÓN REESTRUCTURADA: Maneja el error 409
+ enterHousehold(): void {
+  const hId = this.householdId();
+  const pId = this.piso()?.id; // Asumiendo que piso tiene id
+
+  if (!hId || !pId) return;
+
+  this.actionLoading.set(true);
+
+  this.dataService.joinHousehold(hId).subscribe({
+    next: () => {
+      // ✅ VINCULACIÓN: Guardar contexto en localStorage vía servicio
+      this.dataService.setContext(pId, hId);
+      
+      this.actionLoading.set(false);
       this.router.navigate(['/household', hId]);
-    }
+    },
+    // ... error handling
+  });
+}
+
+  // Helper para recargar perfil y navegar
+  private finalizarAccion(hId: number) {
+    this.dataService.getMyProfile().subscribe({
+      next: () => {
+        this.actionLoading.set(false);
+        this.router.navigate(['/household', hId]);
+      },
+      error: (err) => {
+        console.error('Error al recargar perfil', err);
+        this.actionLoading.set(false);
+        // Navegamos igualmente aunque falle la recarga del perfil
+        this.router.navigate(['/household', hId]);
+      }
+    });
   }
 
-  goBack(): void {
-    this.router.navigate(['/map']);
-  }
-
+  // Funciones de UI
+  goBack(): void { this.router.navigate(['/map']); }
   prevImage(): void {
-    // ✅ CORRECCIÓN SONARLINT: Uso de optional chaining y ?? para asegurar número
     const total = this.piso()?.images?.length ?? 0;
     if (total < 2) return;
     this.activeImage.update(i => (i - 1 + total) % total);
   }
-
   nextImage(): void {
-    // ✅ CORRECCIÓN SONARLINT: Uso de optional chaining y ?? para asegurar número
     const total = this.piso()?.images?.length ?? 0;
     if (total < 2) return;
     this.activeImage.update(i => (i + 1) % total);
   }
-
-  setImage(index: number): void {
-    this.activeImage.set(index);
-  }
-
-  onJoinClick(householdId: number) {
-  this.dataService.joinHousehold(householdId).subscribe({
-    next: (response) => {
-      console.log('Unido al hogar con éxito', response);
-      // 🔥 IMPORTANTE: Recargar el perfil del usuario para actualizar su estado
-      this.dataService.getMyProfile().subscribe();
-    },
-    error: (err) => console.error('Error al unirse', err)
-  });
-}
-  
-joinPiso(pisoId: number) {
-  this.dataService.joinHousehold(pisoId).subscribe({
-    next: () => {
-      console.log('Te has unido al hogar exitosamente');
-      // 🔥 RECARGA EL PERFIL PARA QUE EL BACKEND RECONOZCA AL USUARIO
-      this.dataService.getMyProfile().subscribe();
-    },
-    error: (err) => console.error('Error al unirse:', err)
-  });
-}
+  setImage(index: number): void { this.activeImage.set(index); }
 }
