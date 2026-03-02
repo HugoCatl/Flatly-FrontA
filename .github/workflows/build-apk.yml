@@ -8,6 +8,7 @@ on:
     branches:
       - Saul
       - main
+      - saul2
 
 jobs:
   build-apk:
